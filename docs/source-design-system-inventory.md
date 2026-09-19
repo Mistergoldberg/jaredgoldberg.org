@@ -19,6 +19,7 @@ All source paths below are relative to the source repository. “Copy” means s
 | --- | --- | --- | --- |
 | `assets/css/tokens.css` | Raleway/Avenir Next/Segoe UI/sans-serif family; weights 400/700/900; fluid type sizes; display line-height .95, body 1.55; tracking .04/.11/.08/.002em | Copy tokens, remove obsolete compatibility aliases | Values are source facts; declared Raleway is not evidence that Raleway renders |
 | `assets/css/tokens.css`, `index.html` font comments | Explicitly say fonts are not embedded yet | Adapt into `src/styles/fonts.css` documentation; retain fallback stack | No font files or @font-face exist; provenance, format and licensing cannot be established |
+| `about/index.html:13` and other inner HTML | Google Fonts stylesheet for Raleway 400/600/700 | Exclude third-party font loading from homepage-system shell | External font service; no local binaries/provenance or formats recorded in repo |
 | Entire current source file inventory | No WOFF, WOFF2, TTF, OTF, EOT or font license files | Nothing to copy | Required downloadable font set is empty. Local font licensing/availability remains unresolved; do not download substitutes |
 | `assets/css/tokens.css` color rules | Background #eceae4; surface #f7f5f0; muted #e3e0d9; primary #141412; secondary #57544f; inverse #f8f7f3; focus #1f5fff; alpha borders | Copy | Homepage text-stage background separately uses #efefef |
 | `assets/css/tokens.css` spacing/layout | 0/.25/.5/.75/1/1.5/2/3/4/5/7rem scale; 82rem page, 94rem stage, 70rem content; fluid gutters and section spacing | Copy | `--gutter` switches in responsive layer; CSS breakpoint tokens document values but cannot drive media queries |
@@ -51,3 +52,12 @@ SSH to `root@5.161.223.134` succeeds. Production root resolves from `/var/www/ja
 Inspected neighboring established deployment documentation at `../pixilation.org/docs/deployment.md`, and `../duchamped-wordpress/scripts/deploy-qa.sh`; inspected the existing `qa.duchamped.com` Nginx configuration read-only. Adopt immutable exact-SHA artifacts and atomic release symlinks from the static-site pattern. Do not reuse the WordPress mutable-root or production-media fallback model.
 
 No server, DNS, TLS, Cloudflare, production symlink or unrelated site changes are authorized by infrastructure discovery. Per the brief, missing prerequisites mean prepare tooling and stop before deployment.
+
+## Baseline screenshots
+
+`docs/screenshots/source/` contains local/live open and closed states at 1440×900,
+1024×768, 390×844 and 375×667, plus geometry/network observations. Captured with
+Chromium 147 in reduced-motion mode to hold the carousel still. Direct browser
+HTTPS timed out; live source responses were fetched by curl (normal TLS validation)
+and fulfilled into the browser. No page content was imported into the public build.
+Reference captures do contain the source page text by design.

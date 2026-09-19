@@ -1,0 +1,58 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import { files, digest } from '../scripts/build.mjs';
+import { startServer } from '../scripts/serve.mjs';
+
+test('artifact contains only intended public files, verified checksums and local references',async()=>{
+  const names=await files('dist');
+  const manifest=JSON.parse(await readFile('dist/artifact-manifest.json','utf8'));
+  assert.deepEqual(names.filter(x=>x!=='artifact-manifest.json').sort(),Object.keys(manifest.files).sort());
+  for(const name of names) {
+    assert.match(name,/^(index\.html|robots\.txt|favicon\.svg|release\.json|artifact-manifest\.json|assets\/[\w.-]+\.(css|js)|fonts\/[\w.-]+\.(woff2?|ttf|otf))$/);
+    const buffer=await readFile(join('dist',name));
+    if(name!=='artifact-manifest.json') assert.equal(digest(buffer),manifest.files[name]);
+    if(/\.(woff2?|ttf|otf)$/.test(name)) continue;
+    const content=buffer.toString();
+    assert.doesNotMatch(content,/jaredgoldberg\.ca|googletagmanager|google-analytics|gtag\(|\bG-[A-Z0-9]{6,}\b|GTM-[A-Z0-9]+|UA-\d+-\d+|cloudflareinsights|data-track|application\/ld\+json|rel=["']canonical|property=["']og:|https:\/\/jaredgoldberg\.org/i);
+    for(const match of content.matchAll(/(?:src|href)=["']([^"']+)|url\(["']?([^\s)"']+)/g)) {
+      const ref=match[1]||match[2];
+      assert.ok(!/^(https?:)?\/\//.test(ref),`External asset/link: ${ref}`);
+      const path=ref.split(/[?#]/)[0];
+      if(path) assert.ok(names.includes(path==='/'?'index.html':path.replace(/^\//,'')),`Missing ${ref}`);
+      if(ref.includes('#')) assert.ok((await readFile('dist/index.html','utf8')).includes(`id="${ref.split('#')[1]}"`),`Missing anchor ${ref}`);
+    }
+  }
+  assert.match(await readFile('dist/robots.txt','utf8'),/User-agent: \*\s+Disallow: \//);
+  const html=await readFile('dist/index.html','utf8');
+  assert.match(html,/<meta name="robots" content="noindex, nofollow">/);
+  assert.doesNotMatch(html,/maximum-scale|user-scalable=no/);
+});
+
+test('font policy is explicit and source does not pretend to embed absent fonts',async()=>{
+  const policy=JSON.parse(await readFile('tests/font-policy.json','utf8'));
+  const manifest=JSON.parse(await readFile('dist/artifact-manifest.json','utf8'));
+  const actual=Object.keys(manifest.files).filter(x=>/\.(woff2?|ttf|otf)$/.test(x));
+  assert.deepEqual(actual.sort(),policy.requiredFiles.slice().sort());
+  const css=await readFile(join('dist',Object.keys(manifest.files).find(x=>x.endsWith('.css'))),'utf8');
+  const rules=css.replace(/\/\*[\s\S]*?\*\//g,'');
+  if(!policy.requiredFiles.length) assert.doesNotMatch(rules,/@font-face/);
+  for(const file of policy.requiredFiles) assert.ok(rules.includes('/'+file));
+});
+
+test('HTTP routes, QA headers, hashed cache rules and private paths',async()=>{
+  const server=await startServer({port:0});
+  const url=`http://127.0.0.1:${server.address().port}`;
+  try {
+    for(const file of await files('dist')) {
+      const response=await fetch(url+'/'+file);
+      assert.equal(response.status,200,file);
+      assert.equal(response.headers.get('x-robots-tag'),'noindex, nofollow');
+      assert.match(response.headers.get('cache-control'),/\.[a-f0-9]{16}\.(css|js)$/.test(file)?/immutable/:/no-store/);
+    }
+    assert.equal((await fetch(url+'/')).status,200);
+    for(const path of ['/missing','/.git/config','/src/navigation.js','/docs/qa-runbook.md','/package.json']) assert.equal((await fetch(url+path)).status,404,path);
+    assert.equal((await fetch(url+'/',{method:'POST'})).status,405);
+  } finally { await new Promise(done=>server.close(done)); }
+});

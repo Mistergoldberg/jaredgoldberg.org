@@ -1,0 +1,6 @@
+/* No @font-face: the inspected source ships no font binaries or font license.
+   Preserve its declared Raleway -> Avenir Next -> Segoe UI -> sans-serif stack.
+   Do not add local() aliases that falsely identify a fallback as Raleway.
+   When licensed source files are supplied, preserve formats under public/fonts/,
+   declare weights 400/700/900 here, and update tests/font-policy.json.
+   See docs/source-design-system-inventory.md for provenance and uncertainty. */

@@ -5,3 +5,7 @@
 node_modules/
 dist/
 
+test-results/
+artifacts/
+__pycache__/
+*.pyc

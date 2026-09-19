@@ -1,0 +1,121 @@
+:root {
+  color-scheme: light;
+
+  /* Source family declarations; see fonts.css for availability. */
+  --font-family-display: "Raleway", "Avenir Next", "Segoe UI", sans-serif;
+  --font-family-body: "Raleway", "Avenir Next", "Segoe UI", sans-serif;
+
+  --font-weight-regular: 400;
+  --font-weight-bold: 700;
+  --font-weight-heavy: 900;
+
+  --type-size-display-hero: clamp(2.35rem, 1.65rem + 3.55vw, 4.9rem);
+  --type-size-h2: clamp(1.95rem, 1.5rem + 1.95vw, 3.2rem);
+  --type-size-h3: clamp(1.3rem, 1.1rem + 0.95vw, 1.95rem);
+  --type-size-h4: clamp(1.05rem, 0.95rem + 0.4vw, 1.32rem);
+  --type-size-body: clamp(0.98rem, 0.94rem + 0.2vw, 1.08rem);
+  --type-size-meta: clamp(0.68rem, 0.66rem + 0.14vw, 0.82rem);
+  --type-size-caption: clamp(0.74rem, 0.71rem + 0.12vw, 0.86rem);
+  --type-size-nav: clamp(0.74rem, 0.71rem + 0.14vw, 0.88rem);
+  --type-size-button: clamp(0.74rem, 0.71rem + 0.14vw, 0.88rem);
+  --type-size-utility: clamp(0.7rem, 0.68rem + 0.12vw, 0.84rem);
+
+  --line-height-display: 0.95;
+  --line-height-tight: 1.06;
+  --line-height-title: 1.14;
+  --line-height-body: 1.55;
+
+  --tracking-display: 0.04em;
+  --tracking-caps: 0.11em;
+  --tracking-ui: 0.08em;
+  --tracking-body: 0.002em;
+
+  --color-background: #eceae4;
+  --color-surface: #f7f5f0;
+  --color-surface-muted: #e3e0d9;
+  --color-text-primary: #141412;
+  --color-text-secondary: #57544f;
+  --color-text-inverse: #f8f7f3;
+  --color-border-subtle: rgba(20, 20, 18, 0.18);
+  --color-border-strong: rgba(20, 20, 18, 0.45);
+  --color-overlay: rgba(13, 13, 12, 0.56);
+  --color-focus: #1f5fff;
+  --color-interactive-default: #141412;
+  --color-interactive-hover: #2f2d28;
+
+  --space-0: 0;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 5rem;
+  --space-10: 7rem;
+
+  --section-space-tight: clamp(2rem, 3vw, 3rem);
+  --section-space: clamp(3rem, 6vw, 5.5rem);
+  --section-space-loose: clamp(4rem, 8vw, 7rem);
+
+  --container-page-max: 82rem;
+  --container-stage-max: 94rem;
+  --container-content-max: 70rem;
+
+  --gutter-desktop: clamp(1.4rem, 2.8vw, 2.8rem);
+  --gutter-tablet: clamp(1rem, 3vw, 1.6rem);
+  --gutter-mobile: 1rem;
+
+  --grid-columns-desktop: 12;
+  --grid-columns-tablet: 8;
+  --grid-columns-mobile: 4;
+  --grid-gap: clamp(0.9rem, 1.6vw, 1.8rem);
+
+  --stage-safe-top: clamp(0.9rem, 2vw, 1.4rem);
+  --stage-safe-right: clamp(1rem, 2.2vw, 2rem);
+  --stage-safe-bottom: clamp(1.15rem, 2.4vw, 2.2rem);
+  --stage-safe-left: clamp(1rem, 2.2vw, 2rem);
+
+  --radius-none: 0;
+  --radius-xs: 0.12rem;
+  --radius-s: 0.22rem;
+  --radius-m: 0.4rem;
+  --radius-l: 0.75rem;
+  --radius-pill: 999px;
+
+  --stroke-1: 1px;
+  --stroke-2: 2px;
+
+  --shadow-soft: 0 8px 26px rgba(20, 20, 18, 0.12);
+  --shadow-panel: 0 18px 50px rgba(0, 0, 0, 0.35);
+
+  --z-base: 1;
+  --z-stage-overlay: 8;
+  --z-header: 20;
+  --z-menu: 80;
+  --z-modal: 100;
+
+  --duration-1: 120ms;
+  --duration-2: 220ms;
+  --duration-3: 360ms;
+  --duration-4: 520ms;
+
+  --easing-standard: cubic-bezier(0.24, 0.7, 0.24, 1);
+  --easing-emphasized: cubic-bezier(0.2, 0.88, 0.2, 1);
+
+  --motion-menu-reveal-duration: var(--duration-3);
+  --motion-menu-reveal-easing: var(--easing-emphasized);
+  --motion-slide-hover-duration: var(--duration-2);
+  --motion-slide-hover-easing: var(--easing-standard);
+  --motion-stage-shift-duration: var(--duration-3);
+  --motion-stage-shift-easing: var(--easing-emphasized);
+  --motion-micro-duration: var(--duration-1);
+  --motion-fade-duration: var(--duration-2);
+
+  --bp-mobile-max: 47.99rem; /* 767px */
+  --bp-tablet-max: 63.99rem; /* 1023px */
+  --bp-desktop-min: 64rem; /* 1024px */
+
+  --gutter: var(--gutter-desktop);
+}

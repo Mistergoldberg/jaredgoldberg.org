@@ -1,0 +1,16 @@
+{
+  "name": "jaredgoldberg-org",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "dev": "node scripts/serve.mjs --watch",
+    "build": "node scripts/build.mjs",
+    "preview": "node scripts/serve.mjs",
+    "test": "npm run build && node --test tests/*.test.mjs",
+    "test:browser": "node --test tests/browser.test.mjs",
+    "capture:source": "node scripts/capture-source.mjs"
+  },
+  "devDependencies": { "@axe-core/playwright": "4.13.0", "playwright": "1.63.0" }
+}

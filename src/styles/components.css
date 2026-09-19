@@ -1,0 +1,96 @@
+.page {
+  position: relative;
+  background: linear-gradient(180deg, #e8e5dd 0%, var(--color-background) 14%, var(--color-background) 100%);
+}
+
+.section-header {
+  margin-bottom: var(--space-6);
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--grid-gap);
+}
+
+.card {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  border: var(--stroke-1) solid var(--color-border-subtle);
+  border-radius: var(--radius-m);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+}
+
+.card__meta {
+  margin: 0;
+  font-family: var(--font-family-display);
+  font-size: var(--type-size-meta);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.btn {
+  --btn-bg: transparent;
+  --btn-border: var(--color-border-strong);
+  --btn-color: var(--color-text-primary);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.6rem;
+  padding: 0.4rem 0.85rem;
+  border: var(--stroke-1) solid var(--btn-border);
+  border-radius: var(--radius-xs);
+  background: var(--btn-bg);
+  color: var(--btn-color);
+  font-family: var(--font-family-display);
+  font-size: var(--type-size-button);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  text-decoration: none;
+  transition:
+    transform var(--motion-micro-duration) var(--easing-standard),
+    background-color var(--motion-micro-duration) var(--easing-standard),
+    color var(--motion-micro-duration) var(--easing-standard);
+}
+
+.btn:hover,
+.btn:focus-visible {
+  transform: translateY(-1px);
+}
+
+.btn--primary {
+  --btn-bg: var(--color-interactive-default);
+  --btn-border: var(--color-interactive-default);
+  --btn-color: var(--color-text-inverse);
+}
+
+.btn--secondary {
+  --btn-bg: transparent;
+  --btn-border: var(--color-border-strong);
+  --btn-color: var(--color-text-primary);
+}
+
+.btn--muted {
+  --btn-bg: var(--color-surface-muted);
+  --btn-border: var(--color-border-subtle);
+  --btn-color: var(--color-text-primary);
+}
+
+.site-footer {
+  padding-block: var(--section-space-tight);
+  border-top: var(--stroke-1) solid var(--color-border-subtle);
+  background: var(--color-surface);
+}
+
+.site-footer__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-5);
+  align-items: end;
+}
