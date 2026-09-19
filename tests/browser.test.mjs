@@ -77,6 +77,7 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
       await page.locator('[data-menu-toggle]').click();
       const duration=await page.locator('.menu-panel__sheet').evaluate(e=>parseFloat(getComputedStyle(e).transitionDuration));
       assert.ok(duration<.001);
+      assert.equal(await page.locator('.menu-panel').evaluate(e=>parseFloat(getComputedStyle(e).transitionDelay)),0);
       await page.keyboard.press('Escape');
       assert.equal(await page.locator('[data-menu-toggle]').getAttribute('aria-expanded'),'false');
       assert.deepEqual(errors,[]); assert.deepEqual(external,[]); assert.deepEqual(badResponses,[]);

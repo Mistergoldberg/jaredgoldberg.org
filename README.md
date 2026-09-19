@@ -21,7 +21,7 @@ Open `http://127.0.0.1:4173`. Development rebuilds when `src/` or `public/` chan
 reload the browser after a change. Override the port with `PORT=4175` if needed.
 
 ```sh
-npm test                 # build + artifact/HTTP/browser/accessibility checks
+npm test                 # build + artifact/HTTP/browser/accessibility/release checks
 npm run build            # dist/ only; no deployment
 npm run preview          # serve the existing dist/ at 127.0.0.1:4173
 npm run test:browser     # browser checks against the existing build
