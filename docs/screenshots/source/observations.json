@@ -1,0 +1,178 @@
+[
+  {
+    "kind": "live",
+    "url": "https://jaredgoldberg.ca/",
+    "width": 1440,
+    "height": 900,
+    "fonts": 0,
+    "fontFamily": "Raleway, \"Avenir Next\", \"Segoe UI\", sans-serif",
+    "background": "rgba(0, 0, 0, 0)",
+    "sheetWidth": 352,
+    "trigger": {
+      "x": 1239.6640625,
+      "y": 22.390625,
+      "width": 63.734375,
+      "height": 32,
+      "top": 22.390625,
+      "right": 1303.3984375,
+      "bottom": 54.390625,
+      "left": 1239.6640625
+    },
+    "scrollLocked": "fixed",
+    "fontRequests": []
+  },
+  {
+    "kind": "live",
+    "url": "https://jaredgoldberg.ca/",
+    "width": 1024,
+    "height": 768,
+    "fonts": 0,
+    "fontFamily": "Raleway, \"Avenir Next\", \"Segoe UI\", sans-serif",
+    "background": "rgba(0, 0, 0, 0)",
+    "sheetWidth": 352,
+    "trigger": {
+      "x": 873.34375,
+      "y": 20.46875,
+      "width": 61.75,
+      "height": 32,
+      "top": 20.46875,
+      "right": 935.09375,
+      "bottom": 52.46875,
+      "left": 873.34375
+    },
+    "scrollLocked": "fixed",
+    "fontRequests": []
+  },
+  {
+    "kind": "live",
+    "url": "https://jaredgoldberg.ca/",
+    "width": 390,
+    "height": 844,
+    "fonts": 0,
+    "fontFamily": "Raleway, \"Avenir Next\", \"Segoe UI\", sans-serif",
+    "background": "rgba(0, 0, 0, 0)",
+    "sheetWidth": 327.59375,
+    "trigger": {
+      "x": 16,
+      "y": 14.390625,
+      "width": 58.703125,
+      "height": 36,
+      "top": 14.390625,
+      "right": 74.703125,
+      "bottom": 50.390625,
+      "left": 16
+    },
+    "scrollLocked": "fixed",
+    "fontRequests": []
+  },
+  {
+    "kind": "live",
+    "url": "https://jaredgoldberg.ca/",
+    "width": 375,
+    "height": 667,
+    "fonts": 0,
+    "fontFamily": "Raleway, \"Avenir Next\", \"Segoe UI\", sans-serif",
+    "background": "rgba(0, 0, 0, 0)",
+    "sheetWidth": 315,
+    "trigger": {
+      "x": 16,
+      "y": 14.390625,
+      "width": 58.640625,
+      "height": 36,
+      "top": 14.390625,
+      "right": 74.640625,
+      "bottom": 50.390625,
+      "left": 16
+    },
+    "scrollLocked": "fixed",
+    "fontRequests": []
+  },
+  {
+    "kind": "local",
+    "url": "http://127.0.0.1:4174/",
+    "width": 1440,
+    "height": 900,
+    "fonts": 0,
+    "fontFamily": "Raleway, \"Avenir Next\", \"Segoe UI\", sans-serif",
+    "background": "rgba(0, 0, 0, 0)",
+    "sheetWidth": 352,
+    "trigger": {
+      "x": 1239.6640625,
+      "y": 22.390625,
+      "width": 63.734375,
+      "height": 32,
+      "top": 22.390625,
+      "right": 1303.3984375,
+      "bottom": 54.390625,
+      "left": 1239.6640625
+    },
+    "scrollLocked": "fixed",
+    "fontRequests": []
+  },
+  {
+    "kind": "local",
+    "url": "http://127.0.0.1:4174/",
+    "width": 1024,
+    "height": 768,
+    "fonts": 0,
+    "fontFamily": "Raleway, \"Avenir Next\", \"Segoe UI\", sans-serif",
+    "background": "rgba(0, 0, 0, 0)",
+    "sheetWidth": 352,
+    "trigger": {
+      "x": 873.34375,
+      "y": 20.46875,
+      "width": 61.75,
+      "height": 32,
+      "top": 20.46875,
+      "right": 935.09375,
+      "bottom": 52.46875,
+      "left": 873.34375
+    },
+    "scrollLocked": "fixed",
+    "fontRequests": []
+  },
+  {
+    "kind": "local",
+    "url": "http://127.0.0.1:4174/",
+    "width": 390,
+    "height": 844,
+    "fonts": 0,
+    "fontFamily": "Raleway, \"Avenir Next\", \"Segoe UI\", sans-serif",
+    "background": "rgba(0, 0, 0, 0)",
+    "sheetWidth": 327.59375,
+    "trigger": {
+      "x": 16,
+      "y": 14.390625,
+      "width": 58.703125,
+      "height": 36,
+      "top": 14.390625,
+      "right": 74.703125,
+      "bottom": 50.390625,
+      "left": 16
+    },
+    "scrollLocked": "fixed",
+    "fontRequests": []
+  },
+  {
+    "kind": "local",
+    "url": "http://127.0.0.1:4174/",
+    "width": 375,
+    "height": 667,
+    "fonts": 0,
+    "fontFamily": "Raleway, \"Avenir Next\", \"Segoe UI\", sans-serif",
+    "background": "rgba(0, 0, 0, 0)",
+    "sheetWidth": 315,
+    "trigger": {
+      "x": 16,
+      "y": 14.390625,
+      "width": 58.640625,
+      "height": 36,
+      "top": 14.390625,
+      "right": 74.640625,
+      "bottom": 50.390625,
+      "left": 16
+    },
+    "scrollLocked": "fixed",
+    "fontRequests": []
+  }
+]
