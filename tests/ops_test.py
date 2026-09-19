@@ -95,6 +95,22 @@ class RollbackGateTests(unittest.TestCase):
         self.assertEqual(state['target'],BASE)
         self.assertIn(('verified-previous',),calls)
         self.assertIn(('record','automatic-rollback',NEXT,BASE),calls)
+    def test_browser_failure_after_http_success_rolls_back(self):
+        spec=importlib.util.spec_from_file_location('deploy_qa',Path(__file__).resolve().parents[1]/'scripts/deploy-qa.py')
+        deploy=importlib.util.module_from_spec(spec);spec.loader.exec_module(deploy)
+        state={'target':BASE};calls=[]
+        def remote(action,*args):
+            calls.append((action,*args))
+            if action=='switch':state['target']=args[0]
+            if action=='inspect':return json.dumps({'previous':state['target']})
+        class Verifier:
+            def verify(self,directory):calls.append(('http-verified',directory))
+        def browser():raise ValueError('Browser accessibility gate failed')
+        with self.assertRaises(ValueError):deploy.activate_with_rollback(remote,Verifier(),NEXT,BASE,'candidate','previous',browser)
+        self.assertEqual(state['target'],BASE)
+        self.assertIn(('http-verified','previous'),calls)
+        self.assertNotIn(('record','verified',BASE,NEXT),calls)
+        self.assertIn(('record','automatic-rollback',NEXT,BASE),calls)
     def test_lost_activation_response_is_reconciled(self):
         spec=importlib.util.spec_from_file_location('deploy_qa',Path(__file__).resolve().parents[1]/'scripts/deploy-qa.py')
         deploy=importlib.util.module_from_spec(spec);spec.loader.exec_module(deploy)

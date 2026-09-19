@@ -5,13 +5,15 @@ import AxeBuilder from '@axe-core/playwright';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { startServer } from '../scripts/serve.mjs';
 
+const publicQA=process.env.QA_PUBLIC==='1';
+const results=publicQA?'test-results/public-qa':'test-results';
 const sizes=[[1440,900],[1024,768],[390,844],[375,667]];
 test('responsive browser, navigation, focus, assets, motion and accessibility gates', {timeout:120000},async(t)=>{
-  const server=await startServer({port:0});
-  const base=`http://127.0.0.1:${server.address().port}`;
+  const server=publicQA?null:await startServer({port:0});
+  const base=publicQA?'https://qa.jaredgoldberg.org':`http://127.0.0.1:${server.address().port}`;
   const browser=await chromium.launch(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE?{executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE}:{});
-  await mkdir('test-results/screenshots',{recursive:true});
-  const report={browser:browser.version(),fontNote:'Source-served Raleway 4.026 WOFF2 loaded locally; 400/700/900 verified as custom webfonts.',viewports:[]};
+  await mkdir(`${results}/screenshots`,{recursive:true});
+  const report={url:base,browser:browser.version(),fontNote:'Source-served Raleway 4.026 WOFF2 loaded locally; 400/700/900 verified as custom webfonts.',viewports:[]};
   try {
     for(const [width,height] of sizes) await t.test(`${width}x${height}`,async()=>{
       const context=await browser.newContext({viewport:{width,height},isMobile:width<768,hasTouch:width<768});
@@ -23,6 +25,8 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
       page.on('response',response=>{if(response.status()>=400) badResponses.push(response.url());});
       assert.equal((await page.goto(base)).status(),200);
       await page.evaluate(()=>document.fonts.ready);
+      assert.equal(await page.locator('link[rel=canonical]').count(),0);
+      assert.equal(await page.locator('meta[name=robots]').getAttribute('content'),'noindex, nofollow');
       const computed=await page.evaluate(()=>({fontFamily:getComputedStyle(document.body).fontFamily,fonts:document.fonts.size,overflow:document.documentElement.scrollWidth>innerWidth,menuTrigger:document.querySelector('[data-menu-toggle]').getBoundingClientRect().toJSON()}));
       assert.equal(computed.overflow,false);
       assert.match(computed.fontFamily,/Raleway.*Avenir Next.*Segoe UI/);
@@ -36,7 +40,7 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
         const {fonts}=await cdp.send('CSS.getPlatformFontsForNode',{nodeId});
         assert.ok(fonts.some(font=>font.isCustomFont && font.familyName.startsWith('Raleway')),`Font fallback on ${selector}`);
       }
-      await page.screenshot({path:`test-results/screenshots/qa-${width}x${height}-closed.png`,fullPage:false});
+      await page.screenshot({path:`${results}/screenshots/qa-${width}x${height}-closed.png`,fullPage:false});
       const closedAxe=await new AxeBuilder({page}).analyze();
       assert.deepEqual(closedAxe.violations,[]);
       await page.keyboard.press('Tab');
@@ -53,7 +57,7 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
       await page.locator('.menu-panel__sheet').evaluate(e=>Promise.all(e.getAnimations().map(a=>a.finished)));
       const sheetWidth=await page.locator('.menu-panel__sheet').evaluate(e=>e.getBoundingClientRect().width);
       assert.ok(Math.abs(sheetWidth-Math.min(352,.84*width))<1);
-      await page.screenshot({path:`test-results/screenshots/qa-${width}x${height}-menu.png`});
+      await page.screenshot({path:`${results}/screenshots/qa-${width}x${height}-menu.png`});
       const openAxe=await new AxeBuilder({page}).analyze();
       assert.deepEqual(openAxe.violations,[]);
       // With details closed, Tab cycles only visible controls (no hidden leaf links).
@@ -106,6 +110,6 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
         await context.close();
       }
     });
-    await writeFile('test-results/browser-report.json',JSON.stringify(report,null,2)+'\n');
-  } finally { await browser.close(); await new Promise(done=>server.close(done)); }
+    await writeFile(`${results}/browser-report.json`,JSON.stringify(report,null,2)+'\n');
+  } finally { await browser.close(); if(server) await new Promise(done=>server.close(done)); }
 });

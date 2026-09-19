@@ -24,7 +24,8 @@ reload the browser after a change. Override the port with `PORT=4175` if needed.
 npm test                 # build + artifact/HTTP/browser/accessibility/release checks
 npm run build            # dist/ only; no deployment
 npm run preview          # serve the existing dist/ at 127.0.0.1:4173
-npm run test:browser     # browser checks against the existing build
+npm run test:browser     # browser checks against the existing local build
+npm run test:public      # direct HTTPS browser checks of the public QA site
 ```
 
 On this macOS 12 workspace, current Playwright cannot download a supported browser.
@@ -67,8 +68,9 @@ comparison. The initial fallback policy is superseded by this correction.
 
 ## QA deployment
 
-See [the QA runbook](docs/qa-runbook.md). QA deployment is blocked until DNS, a
-QA-only certificate and virtual host are ready. No infrastructure was changed.
+See [the QA runbook](docs/qa-runbook.md). The isolated QA DNS record, separate
+certificate and virtual host are configured. Public deployment runs HTTP and
+browser verification inside the automatic rollback boundary.
 The new workflow exports an exact clean `main` SHA, runs tests, and prepares an
 artifact before any upload. It never pushes Git or changes production.
 

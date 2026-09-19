@@ -13,7 +13,8 @@
     "test": "npm run build && node --test tests/*.test.mjs && npm run test:ops",
     "test:browser": "node --test tests/browser.test.mjs",
     "capture:source": "node scripts/capture-source.mjs",
-    "test:ops": "python3 -m unittest discover -s tests -p '*_test.py'"
+    "test:ops": "python3 -m unittest discover -s tests -p '*_test.py'",
+    "test:public": "QA_PUBLIC=1 node --test tests/browser.test.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",

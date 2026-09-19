@@ -53,3 +53,18 @@ and its notice, preserving filename and format. This removes machine dependence
 without introducing a runtime provider. Its wght axis supports the required 900.
 The network-served version differs from the old local installation; report the
 subpixel trigger-width difference rather than adjusting exact source layout tokens.
+
+## 2026-09-19 — isolated public QA
+
+Verified authoritative Cloudflare account/zone, unchanged origin, configured SSH,
+Nginx conventions and installed Certbot before authorized writes. Use a DNS-only
+QA A record and a separate webroot certificate with automatic renewal; production
+DNS, certificates and vhosts are not inputs to the change. Candidate Nginx syntax
+is tested before activation. The quoted hashed-asset regex fixes an issue caught
+by that preactivation test.
+
+Extend existing immutable-release tooling rather than adding another deploy path.
+Public HTTP and browser checks must both pass before recording a release verified;
+a browser failure now triggers the same tested rollback as an HTTP failure. Keep
+first-deploy maintenance fallback explicitly distinct from a prior working QA site.
+Public browser tests run from the same exported SHA as the deployed artifact.

@@ -32,10 +32,11 @@ def artifact_manifest(directory,sha):
     files={str(path.relative_to(directory)):hashlib.sha256(path.read_bytes()).hexdigest() for path in sorted(directory.rglob('*')) if path.is_file()}
     (directory/'artifact-manifest.json').write_text(json.dumps({'schema':1,'gitSha':sha,'files':files},indent=2)+'\n')
 
-def activate_with_rollback(remote, verifier, candidate, previous, candidate_dir, previous_dir):
+def activate_with_rollback(remote, verifier, candidate, previous, candidate_dir, previous_dir, public_gate=None):
     try:
         remote('switch',candidate,previous)
         verifier.verify(candidate_dir)
+        if public_gate: public_gate()
         remote('record','verified',previous,candidate)
     except BaseException:
         # A lost SSH response may occur after the atomic rename. Inspect before recovery.
@@ -88,18 +89,21 @@ def main():
         # scp reads only a prevalidated QA artifact; no production secrets/source tree.
         run(['scp','-q','-r',f'{HOST}:{REMOTE}/releases/{identifier}/.',str(directory)])
         return directory
+    env={**os.environ,'QA_BUILD_SHA':args.sha}
+    env.pop('QA_PUBLIC',None)
+    checkout=ROOT
     if not args.rollback:
-        with tempfile.TemporaryDirectory(prefix='jaredgoldberg-org-build-') as tmp:
-            checkout=Path(tmp)
-            archive=run(['git','archive','--format=tar',args.sha],capture_output=True).stdout
-            run(['tar','-xf','-','-C',str(checkout)],input=archive)
-            env={**os.environ,'QA_BUILD_SHA':args.sha}
-            run(['npm','ci','--no-audit','--no-fund'],cwd=checkout,env=env)
-            run(['npm','test'],cwd=checkout,env=env)
-            shutil.copytree(checkout/'dist',out/'site')
-            shutil.copytree(checkout/'test-results',out/'test-results')
-            shutil.copytree(checkout/'ops/qa-baseline',out/'baseline')
-            artifact_manifest(out/'baseline',args.sha)
+        build_workspace=tempfile.TemporaryDirectory(prefix='jaredgoldberg-org-build-')
+        tmp=build_workspace.name
+        checkout=Path(tmp)
+        archive=run(['git','archive','--format=tar',args.sha],capture_output=True).stdout
+        run(['tar','-xf','-','-C',str(checkout)],input=archive)
+        run(['npm','ci','--no-audit','--no-fund'],cwd=checkout,env=env)
+        run(['npm','test'],cwd=checkout,env=env)
+        shutil.copytree(checkout/'dist',out/'site')
+        shutil.copytree(checkout/'test-results',out/'test-results')
+        shutil.copytree(checkout/'ops/qa-baseline',out/'baseline')
+        artifact_manifest(out/'baseline',args.sha)
         (out/'deployment.json').write_text(json.dumps({'id':release,'gitSha':args.sha,'status':'prepared','url':verifier.URL},indent=2)+'\n')
         print('Prepared exact-SHA artifact: '+str(out),flush=True)
     if not args.apply: return
@@ -140,10 +144,18 @@ def main():
         else:
             candidate=release;candidate_dir=out/'site'
             upload(candidate_dir,candidate)
-        activate_with_rollback(remote,verifier,candidate,previous,candidate_dir,previous_dir)
-        record={'id':candidate,'gitSha':args.sha,'previous':previous,'target':f'{REMOTE}/releases/{candidate}',
+        def public_gate():
+            try:
+                run(['npm','run','test:public'],cwd=checkout,env=env)
+            finally:
+                if (checkout/'test-results/public-qa').exists():
+                    shutil.copytree(checkout/'test-results/public-qa',out/'public-qa')
+        activate_with_rollback(remote,verifier,candidate,previous,candidate_dir,previous_dir,
+            public_gate if not candidate.startswith('baseline-') else None)
+        record={'id':candidate,'gitSha':json.loads((candidate_dir/'release.json').read_text())['gitSha'],'previous':previous,'target':f'{REMOTE}/releases/{candidate}',
             'rollbackCommand':f'python3 scripts/deploy-qa.py --sha {args.sha} --apply --rollback {previous}',
-            'url':verifier.URL,'status':'verified'}
+            'url':verifier.URL,'status':'verified',
+            'manifestSha256':hashlib.sha256((candidate_dir/'artifact-manifest.json').read_bytes()).hexdigest()}
         (out/'deployment.json').write_text(json.dumps(record,indent=2)+'\n')
         print(json.dumps(record,indent=2))
     finally:

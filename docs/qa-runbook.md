@@ -1,177 +1,140 @@
 # QA runbook
 
-## Current status and boundary
+## Boundary and infrastructure
 
-Local foundation is working. **Public deployment has not occurred.** Read-only
-inspection found SSH access but `qa.jaredgoldberg.org` returns NXDOMAIN, no QA
-Nginx virtual host exists, and the existing apex/www certificate does not cover QA.
-No server files, symlinks, services, DNS, Cloudflare or TLS settings were changed.
-No deployment ID or server rollback target exists yet.
+QA URL: `https://qa.jaredgoldberg.org/`. Verified origin: `root@5.161.223.134`
+(`ubuntu-4gb-ash-1`). QA root is `/var/www/jaredgoldberg.org/qa-current`, pointing
+only to immutable `/var/www/jaredgoldberg.org/releases/<timestamp>-<sha12>`.
+The separate production `current` symlink is never written by these tools.
+Private deployment ledger: `/var/www/jaredgoldberg.org/shared/qa/ledger.jsonl`.
 
-Fixed QA URL: `https://qa.jaredgoldberg.org/`.
-Fixed server: `root@5.161.223.134`.
-QA release root: `/var/www/jaredgoldberg.org/releases/<timestamp>-<sha12>`.
-QA symlink: `/var/www/jaredgoldberg.org/qa-current`.
-Private QA ledger: `/var/www/jaredgoldberg.org/shared/qa/ledger.jsonl`.
-Production's separate `current` symlink is never written by these tools.
+On 2026-09-19 the authorized continuation established:
 
-## Local verification and preparation
+- Cloudflare DNS-only A `qa` → `5.161.223.134`, TTL 300. Existing proxied apex A and
+  www CNAME remain unchanged; no AAAA exists. Zone SSL remains strict.
+- Separate `/etc/nginx/sites-available/qa.jaredgoldberg.org` and matching enabled
+  symlink; source template `ops/nginx/qa.jaredgoldberg.org.conf`.
+- Separate Let's Encrypt certificate, only `qa.jaredgoldberg.org`, issued using
+  installed Certbot's webroot authenticator. Renewal uses the existing timer,
+  `/var/www/jaredgoldberg.org/shared/qa-acme`, and a certificate-specific deploy hook
+  `nginx -t && systemctl reload nginx`. Initial expiry: 2026-12-18.
+- HTTP redirects to QA HTTPS except the certificate challenge path. HTML/unhashed
+  files use no-store; only hashed CSS/JS use immutable caching. All public responses
+  have noindex/nofollow, nosniff, frame denial, same-origin referrer policy and
+  restricted camera/microphone/geolocation permissions. Routes are allowlisted.
+
+Infrastructure installation used `scripts/install-qa-vhost.py` on the verified
+server. It checks collisions, guards the existing QA file by checksum, backs up
+that file, tests the complete candidate configuration before activation, then tests
+again and gracefully reloads. It never edits another vhost or the main nginx.conf.
+The HTTP-only bootstrap template retains the ACME path needed for issuance.
+Staging and validation evidence stays under `shared/qa-infrastructure/`.
+The final HTTPS install evidence is `20260919T065008Z`; configuration SHA-256 is
+`27087fe9a071efa6af8cf287f11980a8676b5a4020fea26515b71ab0481926ba`.
+Existing mixed listen/protocol conventions produce warnings; nginx -t succeeds.
+
+See the continuation validation report for the actual deployed release, manifest
+checksum, screenshots and preservation checks. The earlier validation report
+records the initial local-only milestone, not current infrastructure status.
+
+## Local verification and exact-SHA preparation
 
 ```sh
 npm ci
 npx playwright install chromium
 npm test
-npm run build
 npm run preview
 ```
 
-Use `PLAYWRIGHT_CHROMIUM_EXECUTABLE` as documented in README on this macOS 12 host.
-The tests cover the emitted artifact, not the legacy root placeholder.
+On this macOS 12 workspace use `PLAYWRIGHT_CHROMIUM_EXECUTABLE` from README.
+Tests exercise the emitted artifact, not the legacy root placeholder.
 
-Prepare from a clean, committed `main` with the confirmed origin:
+From clean committed `main` and the confirmed origin:
 
 ```sh
 QA_SHA=$(git rev-parse HEAD)
 python3 scripts/deploy-qa.py --sha "$QA_SHA"
 ```
 
-This **does not contact or change the server**. It checks branch, full SHA, clean
-working tree and exact origin URL; exports that Git commit into a temporary
-checkout; runs `npm ci` and all tests with `QA_BUILD_SHA`; and saves the tested
-artifact, browser evidence, maintenance baseline and deployment record under
-`artifacts/<timestamp>-<sha12>/`. Dependencies, screenshots, source, secrets and
-operational files never enter `site/`. A prepared artifact is not a deployment.
+Without `--apply`, this performs no server operations. It exports the exact Git
+commit, installs locked dependencies, runs all tests with QA_BUILD_SHA, and saves
+`artifacts/<id>/site`, local browser evidence and a maintenance baseline. Only
+site files are uploaded. Source, documentation, scripts and dependencies are
+excluded. `release.json` reports the full SHA; `artifact-manifest.json` hashes all
+other emitted files. Mutable local builds report worktree.
 
-`release.json` reports the full SHA; `artifact-manifest.json` contains a SHA-256
-checksum for every other emitted file. Mutable local builds report `worktree`.
+## Deployment and rollback
 
-## Prerequisites to resolve before deployment
-
-These are operator tasks for a later infrastructure step, not changes made here:
-
-1. Create only the QA hostname DNS record pointing to the verified origin. Do not
-   change apex/www records, redirects, other sites or zone-wide Cloudflare settings.
-   If proxying QA, confirm its SSL path and cache behavior independently; no zone
-   assumptions are built into deployment.
-2. Issue a certificate specifically covering QA. Do not expand/replace the
-   production certificate. One explicit DNS-challenge route, if Certbot/manual DNS
-   access is available, is:
-
-   ```sh
-   ssh -t root@5.161.223.134 'certbot certonly --manual --preferred-challenges dns --cert-name qa.jaredgoldberg.org -d qa.jaredgoldberg.org'
-   ```
-
-   Complete only that certificate's requested DNS challenge. Certificate files must
-   exist at `/etc/letsencrypt/live/qa.jaredgoldberg.org/{fullchain,privkey}.pem`.
-   The repository contains no TLS private keys or provider credentials.
-3. Install the separate QA virtual host only after DNS and TLS are ready. Inspect
-   for an existing QA configuration again; if one now exists, reconcile it rather
-   than overwriting it. The following commands refuse existing paths, clean up only
-   the newly enabled QA link if validation fails, and use a graceful reload:
-
-   ```sh
-   scp ops/nginx/qa.jaredgoldberg.org.conf root@5.161.223.134:/tmp/qa.jaredgoldberg.org.conf
-   ssh root@5.161.223.134 'bash -s' <<'REMOTE'
-   set -euo pipefail
-   available=/etc/nginx/sites-available/qa.jaredgoldberg.org
-   enabled=/etc/nginx/sites-enabled/qa.jaredgoldberg.org
-   test ! -e "$available" && test ! -L "$available"
-   test ! -e "$enabled" && test ! -L "$enabled"
-   test -s /etc/letsencrypt/live/qa.jaredgoldberg.org/fullchain.pem
-   test -s /etc/letsencrypt/live/qa.jaredgoldberg.org/privkey.pem
-   openssl x509 -in /etc/letsencrypt/live/qa.jaredgoldberg.org/fullchain.pem -noout -checkhost qa.jaredgoldberg.org
-   install -m 644 /tmp/qa.jaredgoldberg.org.conf "$available"
-   ln -s "$available" "$enabled"
-   if nginx -t; then
-     systemctl reload nginx
-   else
-     unlink "$enabled"
-     exit 1
-   fi
-   REMOTE
-   ```
-
-   On validation failure, the new disabled file remains available for diagnosis.
-   No production vhost is edited. No reload is performed on a failed config test.
-   With no `qa-current` yet, HTTPS returns 404 with QA headers. HTTP returns 404;
-   no domain redirects are introduced. Do not weaken TLS checks to bypass a failure.
-
-The template has **not** been run through Nginx here: Nginx is not installed locally,
-and missing QA TLS/vhost infrastructure prevents enabling it safely on the server.
-The server's existing configuration passed `nginx -T` during read-only inspection,
-with pre-existing protocol-option warnings in existing sites. These were not altered.
-
-## First deployment, subsequent deployments and rollback
-
-Once the prerequisites pass, commit any remaining work and run:
+First deployment only, with no QA target:
 
 ```sh
-QA_SHA=$(git rev-parse HEAD)
 python3 scripts/deploy-qa.py --sha "$QA_SHA" --apply --bootstrap
 ```
 
-This exports and tests the exact SHA again before upload. It checks HTTPS QA headers,
-certificate hostname coverage and `nginx -t`; acquires a QA-only exclusion lock;
-creates an immutable `baseline-<timestamp>-<sha12>` maintenance release; atomically
-sets `qa-current`; and verifies all baseline bytes publicly. If that gate fails,
-it returns QA to its previous absent-root state. Only after that baseline passes
-is the candidate uploaded, checksummed, sealed read-only and atomically activated.
-All public routes/assets, robots/cache headers, manifest and expected HTML bytes
-must pass; otherwise the prevalidated baseline is restored and checked publicly.
+There was no previously accepted public QA release at the start of this task.
+Bootstrap creates, seals and publicly verifies an explicit maintenance baseline
+before activating a candidate. Failed baseline verification removes the newly
+created qa-current activation symlink. This baseline is a maintenance page, not
+an earlier working site, and its verification does not claim fixture functionality.
 
-For later releases, omit `--bootstrap`:
+Subsequent deployments omit `--bootstrap`:
 
 ```sh
 python3 scripts/deploy-qa.py --sha "$QA_SHA" --apply
 ```
 
-Before switching, the prior QA release is rehashed and publicly verified. New
-release directories are never overwritten. Neither QA nor production shares a
-mutable build directory. Symlink switches do not require Nginx reloads. Only the
-one-time vhost installation requires the validated graceful reload above.
+Every deployment reexports and tests the exact clean SHA. It checks TLS hostname
+coverage, nginx -t and public routing, then acquires a QA-only lock. Uploaded files
+must match the local manifest checksum before sealing read-only (files 444,
+directories 555). The prior target is rehashed and verified publicly before the
+atomic QA switch. No release is overwritten; no Nginx reload is needed to switch.
 
-After success, `artifacts/<id>/deployment.json` and the server's private ledger
-record previous/new targets. Run the **recorded rollback command**, for example:
+After switching, HTTP checks verify trusted HTTPS, redirects, all artifact bytes,
+MIME types, security/cache/robots headers and private-path 404s. The same archived
+checkout then runs `npm run test:public`: real Chromium HTTPS, font use, desktop
+and mobile navigation, nested navigation, keyboard/focus, Escape, reduced motion,
+overflow, console/network and axe checks. These browser gates are inside the
+rollback boundary. Only after both sets pass is the release recorded as verified.
+Failures restore the prior QA target and verify its public bytes. Browser evidence
+is retained even on test failure. No risky live repair is attempted.
+
+`artifacts/<id>/deployment.json` records the current/previous target, full build SHA,
+manifest SHA-256 and rollback command. Server ledger entries record atomic switches
+and successful verification. The retained verified fixture release becomes the
+baseline for the next QA deployment.
+
+Use the recorded previous ID for manual rollback:
 
 ```sh
-python3 scripts/deploy-qa.py --sha "$QA_SHA" --apply --rollback '20260919T020001Z-aaaaaaaaaaaa'
+python3 scripts/deploy-qa.py --sha "$QA_SHA" --apply --rollback 'ACTUAL_PREVIOUS_ID'
 ```
 
-The ID above is an illustrative format, not an existing target. Replace it with
-the actual recorded `previous` ID (including `baseline-` on the first release).
-Rollback revalidates both targets, switches only QA, checks exact public bytes,
-and restores the pre-rollback target if those gates fail. With no deployment in
-this milestone, there is no valid server rollback command to execute yet.
+Replace the placeholder; do not execute it literally. Manual rollback requires
+clean main and verifies the eligible target before switching. Fixture rollback
+also runs browser gates; maintenance baseline rollback verifies HTTP only.
+After a later docs-only commit, set QA_SHA to current clean HEAD for the tooling
+repository gate; release.json remains the source of deployed artifact identity.
 
-Verify a known local prepared/deployed artifact independently:
+Independent public recheck of a retained artifact:
 
 ```sh
-python3 scripts/verify-qa.py artifacts/ACTUAL_DEPLOYMENT_ID/site
+python3 scripts/verify-qa.py artifacts/ACTUAL_ID/site
+npm run test:public
 ```
+
+The browser command saves fresh evidence under `test-results/public-qa`; deployed
+runs retain it under `artifacts/<id>/public-qa`. Local captures remain separate.
 
 ## Failure handling
 
-- Stop on DNS, TLS, SSH, unexpected paths, missing rollback target or hash mismatch.
-- A failed candidate stays in its unique release directory for diagnosis; nothing
-  deletes production or other releases. Unused releases can be reviewed later.
-- A lock under `shared/qa/lock` prevents concurrent QA deployments. If a process
-  crashes, inspect the ledger, actual symlink and active SSH processes before
-  manually clearing that lock. Do not clear a live deployment's lock.
-- Automatic rollback covers detected activation/public-gate failures while SSH
-  remains usable. A machine crash or complete SSH outage can interrupt recovery;
-  use the recorded prior release after connectivity returns. Do not claim an
-  unverified public deployment succeeded.
-- No changes to the production deployment script or vhost are required. Never use
-  `scripts/deploy.sh` for this workflow.
+Stop on unexpected DNS/TLS/SSH/path/hash state. Preserve failed candidate releases
+and logs. A QA-only lock prevents concurrent deploys; inspect the ledger, actual
+symlink and active processes before clearing any stale lock. Machine crashes or
+complete SSH outages can interrupt automatic recovery; do not claim success until
+public verification completes. Never use legacy `scripts/deploy.sh` for QA.
 
-## Reference capture
+## Source references
 
-```sh
-npm run capture:source
-# If direct browser HTTPS cannot load in this environment:
-SOURCE_CURL_TRANSPORT=1 npm run capture:source
-```
-
-Set `SOURCE_ROOT` only if the read-only source moved. New captures go to ignored
-`artifacts/source-*/`. Committed milestone references are in
-`docs/screenshots/source/`; QA captures are in `test-results/screenshots/`.
+`npm run capture:source` reads the source site and writes ignored artifacts. Prior
+source references are under `docs/screenshots/source`; new font captures are under
+`docs/screenshots/qa-fonts`. Source repositories and production files stay read-only.
