@@ -68,7 +68,9 @@ comparison. The initial fallback policy is superseded by this correction.
 
 ## QA deployment
 
-See [the QA runbook](docs/qa-runbook.md). The isolated QA DNS record, separate
+Public QA is verified at https://qa.jaredgoldberg.org/. See the
+[completion report](docs/public-qa-validation-report.md) and
+[QA runbook](docs/qa-runbook.md). The isolated QA DNS record, separate
 certificate and virtual host are configured. Public deployment runs HTTP and
 browser verification inside the automatic rollback boundary.
 The new workflow exports an exact clean `main` SHA, runs tests, and prepares an

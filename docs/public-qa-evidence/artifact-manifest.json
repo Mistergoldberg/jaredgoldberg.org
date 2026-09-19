@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "gitSha": "1def54455a07f6c305460e561fd1157aa6ec256f",
+  "files": {
+    "assets/navigation.af549929e0b00f70.js": "af549929e0b00f7059a387f29665311b814bd7f514513ab4243359b41d2ad79d",
+    "assets/site.366732e3172f7f7e.css": "366732e3172f7f7e73a7ee5c41a6dfa8186126acf145174cf359fcfadfce2d61",
+    "favicon.svg": "6c3c4d1d5853fdeced0697e4c357814ab97382ca3e2c3c7284305f9b2955ed79",
+    "fonts/1Ptug8zYS_SKggPNyC0IT4ttDfA.woff2": "10f1a0ef3f3497901c1c3e9987d0cb97d092a6ce1ff45669a1aed503cf67e6ef",
+    "fonts/OFL.txt": "c62d0f4b78825cbf2d99ac7ea3dd163f645210efa032243731184c9f86a6eab6",
+    "index.html": "122141ed0325bb5e8786e3b6ff308b13e71c9e67fd3924a2cbe132e4e353bdaa",
+    "release.json": "4422fbcea4b3681f304626671351169b63a744131f4684e18003102bdc37ca1a",
+    "robots.txt": "331ea9090db0c9f6f597bd9840fd5b171830f6e0b3ba1cb24dfa91f0c95aedc1"
+  }
+}

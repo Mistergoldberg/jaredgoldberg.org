@@ -33,7 +33,7 @@ The final HTTPS install evidence is `20260919T065008Z`; configuration SHA-256 is
 `27087fe9a071efa6af8cf287f11980a8676b5a4020fea26515b71ab0481926ba`.
 Existing mixed listen/protocol conventions produce warnings; nginx -t succeeds.
 
-See the continuation validation report for the actual deployed release, manifest
+See [the completion report](public-qa-validation-report.md) for the actual deployed release, manifest
 checksum, screenshots and preservation checks. The earlier validation report
 records the initial local-only milestone, not current infrastructure status.
 

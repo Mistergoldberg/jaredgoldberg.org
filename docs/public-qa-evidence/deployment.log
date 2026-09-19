@@ -1,0 +1,82 @@
+tar: Failed to set default locale
+
+added 4 packages in 416ms
+
+> jaredgoldberg-org@0.1.0 test
+> npm run build && node --test tests/*.test.mjs && npm run test:ops
+
+
+> jaredgoldberg-org@0.1.0 build
+> node scripts/build.mjs
+
+Built QA artifact: 8 files + manifest (1def54455a07f6c305460e561fd1157aa6ec256f)
+✔ artifact contains only intended public files, verified checksums and local references (12.585ms)
+✔ required licensed webfont is unmodified and embedded locally (1.74425ms)
+✔ HTTP routes, QA headers, hashed cache rules and private paths (43.50325ms)
+▶ responsive browser, navigation, focus, assets, motion and accessibility gates
+  ✔ 1440x900 (2266.894708ms)
+  ✔ 1024x768 (2052.974458ms)
+  ✔ 390x844 (2183.614541ms)
+  ✔ 375x667 (2271.140125ms)
+  ✔ tablet, narrow mobile and coarse landscape remain usable (4540.255834ms)
+✔ responsive browser, navigation, focus, assets, motion and accessibility gates (13718.612583ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 14103.201625
+
+> jaredgoldberg-org@0.1.0 test:ops
+> python3 -m unittest discover -s tests -p '*_test.py'
+
+.........
+----------------------------------------------------------------------
+Ran 9 tests in 0.037s
+
+OK
+Prepared exact-SHA artifact: /Users/jaredgoldberg/Desktop/jaredgoldberg.org/artifacts/20260919T065328Z-1def54455a07
+Hostname qa.jaredgoldberg.org does match certificate
+2026/09/19 06:53:44 [warn] 274021#274021: protocol options redefined for [::]:443 in /etc/nginx/sites-enabled/jaredgoldberg.org:15
+2026/09/19 06:53:44 [warn] 274021#274021: protocol options redefined for 0.0.0.0:443 in /etc/nginx/sites-enabled/jaredgoldberg.org:16
+2026/09/19 06:53:44 [warn] 274021#274021: protocol options redefined for 0.0.0.0:443 in /etc/nginx/sites-enabled/jaredthejew.com:10
+2026/09/19 06:53:44 [warn] 274021#274021: protocol options redefined for [::]:443 in /etc/nginx/sites-enabled/picarty.com:8
+2026/09/19 06:53:44 [warn] 274021#274021: protocol options redefined for 0.0.0.0:443 in /etc/nginx/sites-enabled/qa.jaredgoldberg.org:17
+2026/09/19 06:53:44 [warn] 274021#274021: protocol options redefined for [::]:443 in /etc/nginx/sites-enabled/qa.jaredgoldberg.org:18
+2026/09/19 06:53:44 [warn] 274021#274021: protocol options redefined for 0.0.0.0:443 in /etc/nginx/sites-enabled/staging.duchamped.com:8
+2026/09/19 06:53:44 [warn] 274021#274021: protocol options redefined for [::]:443 in /etc/nginx/sites-enabled/the-money-club.org:12
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+Public QA TLS, MIME, artifact, redirects and headers verified: dd4bdabc5be4d895e105206673edc6cffdf4e5e5
+Public QA TLS, MIME, artifact, redirects and headers verified: 1def54455a07f6c305460e561fd1157aa6ec256f
+
+> jaredgoldberg-org@0.1.0 test:public
+> QA_PUBLIC=1 node --test tests/browser.test.mjs
+
+▶ responsive browser, navigation, focus, assets, motion and accessibility gates
+  ✔ 1440x900 (2730.646959ms)
+  ✔ 1024x768 (2493.594458ms)
+  ✔ 390x844 (2568.6685ms)
+  ✔ 375x667 (2833.417ms)
+  ✔ tablet, narrow mobile and coarse landscape remain usable (6103.937292ms)
+✔ responsive browser, navigation, focus, assets, motion and accessibility gates (17117.540541ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 17463.399958
+{
+  "id": "20260919T065328Z-1def54455a07",
+  "gitSha": "1def54455a07f6c305460e561fd1157aa6ec256f",
+  "previous": "baseline-20260919T065153Z-dd4bdabc5be4",
+  "target": "/var/www/jaredgoldberg.org/releases/20260919T065328Z-1def54455a07",
+  "rollbackCommand": "python3 scripts/deploy-qa.py --sha 1def54455a07f6c305460e561fd1157aa6ec256f --apply --rollback baseline-20260919T065153Z-dd4bdabc5be4",
+  "url": "https://qa.jaredgoldberg.org",
+  "status": "verified",
+  "manifestSha256": "4db3def23faf1c8ec4f8811b583e4a6f7e0e75017442223272687bae0dabde38"
+}

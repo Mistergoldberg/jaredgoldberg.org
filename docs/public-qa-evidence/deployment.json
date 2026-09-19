@@ -1,0 +1,10 @@
+{
+  "id": "20260919T065328Z-1def54455a07",
+  "gitSha": "1def54455a07f6c305460e561fd1157aa6ec256f",
+  "previous": "baseline-20260919T065153Z-dd4bdabc5be4",
+  "target": "/var/www/jaredgoldberg.org/releases/20260919T065328Z-1def54455a07",
+  "rollbackCommand": "python3 scripts/deploy-qa.py --sha 1def54455a07f6c305460e561fd1157aa6ec256f --apply --rollback baseline-20260919T065153Z-dd4bdabc5be4",
+  "url": "https://qa.jaredgoldberg.org",
+  "status": "verified",
+  "manifestSha256": "4db3def23faf1c8ec4f8811b583e4a6f7e0e75017442223272687bae0dabde38"
+}
