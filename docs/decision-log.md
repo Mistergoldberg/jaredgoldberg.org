@@ -68,3 +68,8 @@ Public HTTP and browser checks must both pass before recording a release verifie
 a browser failure now triggers the same tested rollback as an HTTP failure. Keep
 first-deploy maintenance fallback explicitly distinct from a prior working QA site.
 Public browser tests run from the same exported SHA as the deployed artifact.
+
+The first bootstrap passed public maintenance verification, then the local SCP
+client rejected a trailing `/.` in the rollback-download source. No candidate was
+activated. Download the validated release directory to a new destination without
+the rejected suffix; retain the verified baseline and retry a freshly tested SHA.

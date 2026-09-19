@@ -85,9 +85,10 @@ def main():
         remote('seal',identifier,hashlib.sha256((directory/'artifact-manifest.json').read_bytes()).hexdigest())
     def download(identifier):
         remote('validate',identifier)
-        directory=out/('previous-'+identifier);directory.mkdir()
+        directory=out/('previous-'+identifier)
+        if directory.exists():raise ValueError('Previous artifact destination already exists')
         # scp reads only a prevalidated QA artifact; no production secrets/source tree.
-        run(['scp','-q','-r',f'{HOST}:{REMOTE}/releases/{identifier}/.',str(directory)])
+        run(['scp','-q','-r',f'{HOST}:{REMOTE}/releases/{identifier}',str(directory)])
         return directory
     env={**os.environ,'QA_BUILD_SHA':args.sha}
     env.pop('QA_PUBLIC',None)
