@@ -11,7 +11,7 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
   const base=`http://127.0.0.1:${server.address().port}`;
   const browser=await chromium.launch(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE?{executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE}:{});
   await mkdir('test-results/screenshots',{recursive:true});
-  const report={browser:browser.version(),fontNote:'No source font binaries exist; fallback stack verified, embedded-font gate explicitly not applicable.',viewports:[]};
+  const report={browser:browser.version(),fontNote:'Source-served Raleway 4.026 WOFF2 loaded locally; 400/700/900 verified as custom webfonts.',viewports:[]};
   try {
     for(const [width,height] of sizes) await t.test(`${width}x${height}`,async()=>{
       const context=await browser.newContext({viewport:{width,height},isMobile:width<768,hasTouch:width<768});
@@ -28,6 +28,14 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
       assert.match(computed.fontFamily,/Raleway.*Avenir Next.*Segoe UI/);
       const fontPolicy=JSON.parse(await readFile('tests/font-policy.json','utf8'));
       for(const font of fontPolicy.requiredFiles) assert.ok(requests.includes(base+'/'+font),`Font not loaded: ${font}`);
+      const cdp=await context.newCDPSession(page);
+      await cdp.send('DOM.enable');await cdp.send('CSS.enable');
+      const {root}=await cdp.send('DOM.getDocument');
+      for(const selector of ['h1','[data-menu-toggle]','.fixture-intro p:not([class])']) {
+        const {nodeId}=await cdp.send('DOM.querySelector',{nodeId:root.nodeId,selector});
+        const {fonts}=await cdp.send('CSS.getPlatformFontsForNode',{nodeId});
+        assert.ok(fonts.some(font=>font.isCustomFont && font.familyName.startsWith('Raleway')),`Font fallback on ${selector}`);
+      }
       await page.screenshot({path:`test-results/screenshots/qa-${width}x${height}-closed.png`,fullPage:false});
       const closedAxe=await new AxeBuilder({page}).analyze();
       assert.deepEqual(closedAxe.violations,[]);

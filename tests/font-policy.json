@@ -1,6 +1,9 @@
 {
-  "sourceStatus": "No font binaries or @font-face declarations in the inspected source",
-  "requiredFiles": [],
+  "sourceStatus": "Exact source-served Raleway 4.026 Latin WOFF2, self-hosted unchanged under SIL OFL 1.1",
+  "requiredFiles": ["fonts/1Ptug8zYS_SKggPNyC0IT4ttDfA.woff2"],
   "family": "Raleway",
-  "weights": [400, 700, 900]
+  "weights": [400, 700, 900],
+  "style": "normal",
+  "axisRange": [100, 900],
+  "sha256": "10f1a0ef3f3497901c1c3e9987d0cb97d092a6ce1ff45669a1aed503cf67e6ef"
 }

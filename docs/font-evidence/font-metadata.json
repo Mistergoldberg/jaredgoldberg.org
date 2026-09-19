@@ -1,0 +1,53 @@
+[
+  {
+    "file": "public/fonts/1Ptug8zYS_SKggPNyC0IT4ttDfA.woff2",
+    "sha256": "10f1a0ef3f3497901c1c3e9987d0cb97d092a6ce1ff45669a1aed503cf67e6ef",
+    "bytes": 43120,
+    "names": {
+      "0": "Copyright 2010 The Raleway Project Authors (impallari@gmail.com), with Reserved Font Name \"Raleway\".",
+      "1": "Raleway Thin",
+      "2": "Regular",
+      "5": "Version 4.026",
+      "6": "Raleway-Thin",
+      "14": "http://scripts.sil.org/OFL"
+    },
+    "axes": [
+      {
+        "tag": "wght",
+        "min": 100.0,
+        "default": 100.0,
+        "max": 900.0
+      }
+    ]
+  },
+  {
+    "file": "/Users/jaredgoldberg/Library/Fonts/Raleway-Regular.ttf",
+    "sha256": "169dfb506b814bd50fd1876b301c78ce8213af7e5dcbbb1f5da713f9d67fd909",
+    "bytes": 130128,
+    "names": {
+      "0": "Copyright (c) 2010 - 2012, Matt McInerney (matt@pixelspread.com), Pablo Impallari(impallari@gmail.com), Rodrigo Fuenzalida (hello@rfuenzalida.com) with Reserved Font Name \"Raleway\"",
+      "1": "Raleway",
+      "2": "Regular",
+      "5": "Version 2.001; ttfautohint (v0.8) -G 200 -r 50",
+      "6": "Raleway",
+      "13": "This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL",
+      "14": "http://scripts.sil.org/OFL"
+    },
+    "axes": []
+  },
+  {
+    "file": "/Users/jaredgoldberg/Library/Fonts/Raleway-Heavy.ttf",
+    "sha256": "771a5ddb734f5483bb869d3afa41983dbdf3334e5e4d76d141fbc9f4864cd1d9",
+    "bytes": 129520,
+    "names": {
+      "0": "Copyright (c) 2010 - 2012, Matt McInerney (matt@pixelspread.com), Pablo Impallari(impallari@gmail.com), Rodrigo Fuenzalida (hello@rfuenzalida.com) with Reserved Font Name \"Raleway\"",
+      "1": "Raleway",
+      "2": "Heavy",
+      "5": "Version 2.001; ttfautohint (v0.8) -G 200 -r 50",
+      "6": "Raleway-Heavy",
+      "13": "This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL",
+      "14": "http://scripts.sil.org/OFL"
+    },
+    "axes": []
+  }
+]

@@ -10,7 +10,7 @@ test('artifact contains only intended public files, verified checksums and local
   const manifest=JSON.parse(await readFile('dist/artifact-manifest.json','utf8'));
   assert.deepEqual(names.filter(x=>x!=='artifact-manifest.json').sort(),Object.keys(manifest.files).sort());
   for(const name of names) {
-    assert.match(name,/^(index\.html|robots\.txt|favicon\.svg|release\.json|artifact-manifest\.json|assets\/[\w.-]+\.(css|js)|fonts\/[\w.-]+\.(woff2?|ttf|otf))$/);
+    assert.match(name,/^(index\.html|robots\.txt|favicon\.svg|release\.json|artifact-manifest\.json|assets\/[\w.-]+\.(css|js)|fonts\/OFL\.txt|fonts\/[\w.-]+\.(woff2?|ttf|otf))$/);
     const buffer=await readFile(join('dist',name));
     if(name!=='artifact-manifest.json') assert.equal(digest(buffer),manifest.files[name]);
     if(/\.(woff2?|ttf|otf)$/.test(name)) continue;
@@ -30,7 +30,7 @@ test('artifact contains only intended public files, verified checksums and local
   assert.doesNotMatch(html,/maximum-scale|user-scalable=no/);
 });
 
-test('font policy is explicit and source does not pretend to embed absent fonts',async()=>{
+test('required licensed webfont is unmodified and embedded locally',async()=>{
   const policy=JSON.parse(await readFile('tests/font-policy.json','utf8'));
   const manifest=JSON.parse(await readFile('dist/artifact-manifest.json','utf8'));
   const actual=Object.keys(manifest.files).filter(x=>/\.(woff2?|ttf|otf)$/.test(x));
@@ -38,7 +38,13 @@ test('font policy is explicit and source does not pretend to embed absent fonts'
   const css=await readFile(join('dist',Object.keys(manifest.files).find(x=>x.endsWith('.css'))),'utf8');
   const rules=css.replace(/\/\*[\s\S]*?\*\//g,'');
   if(!policy.requiredFiles.length) assert.doesNotMatch(rules,/@font-face/);
-  for(const file of policy.requiredFiles) assert.ok(rules.includes('/'+file));
+  for(const file of policy.requiredFiles) {
+    assert.ok(rules.includes('/'+file));
+    assert.equal(digest(await readFile(join('dist',file))),policy.sha256);
+  }
+  assert.match(await readFile('dist/fonts/OFL.txt','utf8'),/SIL OPEN FONT LICENSE Version 1.1/);
+  assert.match(rules,/font-weight: 100 900/);
+  assert.match(rules,/font-display: swap/);
 });
 
 test('HTTP routes, QA headers, hashed cache rules and private paths',async()=>{

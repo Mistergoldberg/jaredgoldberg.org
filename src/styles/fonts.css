@@ -1,6 +1,13 @@
-/* No @font-face: the inspected source ships no font binaries or font license.
-   Preserve its declared Raleway -> Avenir Next -> Segoe UI -> sans-serif stack.
-   Do not add local() aliases that falsely identify a fallback as Raleway.
-   When licensed source files are supplied, preserve formats under public/fonts/,
-   declare weights 400/700/900 here, and update tests/font-policy.json.
-   See docs/source-design-system-inventory.md for provenance and uncertainty. */
+/* Exact, unmodified Latin WOFF2 observed on the source site's inner pages.
+   Raleway 4.026, SIL OFL 1.1; copyright/license: /fonts/OFL.txt.
+   Source and checksum: docs/font-evidence/font-metadata.json.
+   The file's verified variable wght axis covers 100–900, including our 400/700/900.
+   No local() source: an older installed Raleway must not override this webfont. */
+@font-face {
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/1Ptug8zYS_SKggPNyC0IT4ttDfA.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}

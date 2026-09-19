@@ -1,0 +1,94 @@
+{
+  "browser": "147.0.7727.15",
+  "fontNote": "Source-served Raleway 4.026 WOFF2 loaded locally; 400/700/900 verified as custom webfonts.",
+  "viewports": [
+    {
+      "width": 1440,
+      "height": 900,
+      "fontFamily": "Raleway, \"Avenir Next\", \"Segoe UI\", sans-serif",
+      "fonts": 1,
+      "overflow": false,
+      "menuTrigger": {
+        "x": 1239.671875,
+        "y": 22.390625,
+        "width": 63.71875,
+        "height": 32,
+        "top": 22.390625,
+        "right": 1303.390625,
+        "bottom": 54.390625,
+        "left": 1239.671875
+      },
+      "sheetWidth": 352,
+      "axeViolations": 0,
+      "consoleErrors": 0,
+      "externalRequests": 0,
+      "reducedMotionSeconds": 0.00001
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "fontFamily": "Raleway, \"Avenir Next\", \"Segoe UI\", sans-serif",
+      "fonts": 1,
+      "overflow": false,
+      "menuTrigger": {
+        "x": 873.3515625,
+        "y": 20.46875,
+        "width": 61.734375,
+        "height": 32,
+        "top": 20.46875,
+        "right": 935.0859375,
+        "bottom": 52.46875,
+        "left": 873.3515625
+      },
+      "sheetWidth": 352,
+      "axeViolations": 0,
+      "consoleErrors": 0,
+      "externalRequests": 0,
+      "reducedMotionSeconds": 0.00001
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "fontFamily": "Raleway, \"Avenir Next\", \"Segoe UI\", sans-serif",
+      "fonts": 1,
+      "overflow": false,
+      "menuTrigger": {
+        "x": 16,
+        "y": 14.390625,
+        "width": 58.6875,
+        "height": 36,
+        "top": 14.390625,
+        "right": 74.6875,
+        "bottom": 50.390625,
+        "left": 16
+      },
+      "sheetWidth": 327.59375,
+      "axeViolations": 0,
+      "consoleErrors": 0,
+      "externalRequests": 0,
+      "reducedMotionSeconds": 0.00001
+    },
+    {
+      "width": 375,
+      "height": 667,
+      "fontFamily": "Raleway, \"Avenir Next\", \"Segoe UI\", sans-serif",
+      "fonts": 1,
+      "overflow": false,
+      "menuTrigger": {
+        "x": 16,
+        "y": 14.390625,
+        "width": 58.625,
+        "height": 36,
+        "top": 14.390625,
+        "right": 74.625,
+        "bottom": 50.390625,
+        "left": 16
+      },
+      "sheetWidth": 315,
+      "axeViolations": 0,
+      "consoleErrors": 0,
+      "externalRequests": 0,
+      "reducedMotionSeconds": 0.00001
+    }
+  ]
+}

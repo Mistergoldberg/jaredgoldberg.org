@@ -43,3 +43,13 @@
     are not proof of browser-to-origin networking performance.
 12. Validation uses cached Chromium 147 because current Playwright downloads do not
     support macOS 12. Physical iOS Safari and another browser engine remain untested.
+
+## 2026-09-19 — font resolution
+
+Direct browser/CDP evidence found local Raleway 2.001 on the inspection Mac and
+Google-hosted Raleway 4.026 on source inner pages. The network-served WOFF2 is
+redistributable under verified SIL OFL 1.1. Self-host that exact unmodified binary
+and its notice, preserving filename and format. This removes machine dependence
+without introducing a runtime provider. Its wght axis supports the required 900.
+The network-served version differs from the old local installation; report the
+subpixel trigger-width difference rather than adjusting exact source layout tokens.

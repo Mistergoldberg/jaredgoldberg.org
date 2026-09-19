@@ -44,8 +44,8 @@ Other supported environments should use the normally installed Playwright browse
 - `src/components/`: HTML rendering and data-driven navigation components.
 - `src/content/qa-fixture.mjs`: temporary identity, labels and specimen content.
 - `src/navigation.js`: menu behavior; contains no navigation data.
-- `public/`: only public assets and QA robots policy. No source-site images/fonts
-  were available or needed for transfer. The favicon is a neutral QA square.
+- `public/`: only public assets and QA robots policy. No source-site images are transferred. The verified source-served Raleway
+  webfont and its OFL license are self-hosted under `public/fonts/`. The favicon is a neutral QA square.
 - `scripts/`: build, local server, source captures and isolated QA deployment.
 - `ops/`: QA Nginx template, immutable release operations and first-deploy baseline.
 - `tests/`: artifact, browser/accessibility, font policy and release safety checks.
@@ -58,10 +58,12 @@ styles or navigation logic. General controls and headings remain semantic HTML.
 
 ## Fonts
 
-The source homepage declares Raleway but embeds no font files and issues no font
-requests. Its fallback stack is preserved. Inner pages use Google Fonts, a separate
-system that is deliberately excluded. No claim is made that Raleway is self-hosted.
-`src/styles/fonts.css` and `tests/font-policy.json` record the missing source assets.
+The exact Raleway 4.026 Latin WOFF2 observed in the source site's network requests
+is self-hosted with its SIL OFL license. Its verified variable weight axis covers
+100–900; the fixture uses 400/700/900. No external font requests or system-installed
+Raleway files are required. See [font evidence](docs/font-evidence/README.md) for
+URLs, hashes, license, the older installed font discovered on this Mac, and visual
+comparison. The initial fallback policy is superseded by this correction.
 
 ## QA deployment
 

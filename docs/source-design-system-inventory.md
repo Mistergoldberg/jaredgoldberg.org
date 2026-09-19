@@ -61,3 +61,16 @@ Chromium 147 in reduced-motion mode to hold the carousel still. Direct browser
 HTTPS timed out; live source responses were fetched by curl (normal TLS validation)
 and fulfilled into the browser. No page content was imported into the public build.
 Reference captures do contain the source page text by design.
+
+## Font correction — 2026-09-19 (supersedes initial font disposition)
+
+Direct live browser network and platform-font inspection confirmed two versions:
+the homepage uses this Mac's installed Raleway 2.001 without requesting fonts;
+inner pages load Google Fonts Raleway 4.026 normal 400/600/700. No source-server
+webfont files were found. The exact source-served Latin WOFF2 is now copied
+unmodified into `public/fonts/`, with original filename and SIL OFL 1.1 notice.
+Its verified variable range is 100–900, supporting the homepage design's 900.
+`src/styles/fonts.css` declares local normal 100–900, swap, original unicode range,
+and retains fallback tokens. No external provider or source-domain requests remain.
+See [complete font evidence](font-evidence/README.md) for source URLs, checksum,
+metadata, licensing, browser traces and measured subpixel geometry differences.

@@ -1,0 +1,224 @@
+[
+  {
+    "url": "https://jaredgoldberg.ca/",
+    "requests": [
+      {
+        "url": "https://jaredgoldberg.ca/assets/css/tokens.css",
+        "type": "stylesheet"
+      },
+      {
+        "url": "https://jaredgoldberg.ca/assets/css/global.css",
+        "type": "stylesheet"
+      },
+      {
+        "url": "https://jaredgoldberg.ca/assets/css/components.css?v=20260502-menu-compass",
+        "type": "stylesheet"
+      },
+      {
+        "url": "https://jaredgoldberg.ca/assets/css/responsive.css",
+        "type": "stylesheet"
+      }
+    ],
+    "responses": [],
+    "samples": [
+      {
+        "selector": ".project-slide__text-word",
+        "fonts": [
+          {
+            "familyName": "Raleway",
+            "postScriptName": "Raleway",
+            "isCustomFont": false,
+            "glyphCount": 5
+          }
+        ],
+        "computed": {
+          "family": "Raleway, \"Avenir Next\", \"Segoe UI\", sans-serif",
+          "weight": "400",
+          "style": "normal"
+        }
+      },
+      {
+        "selector": ".menu-trigger",
+        "fonts": [
+          {
+            "familyName": "Raleway",
+            "postScriptName": "Raleway-Bold",
+            "isCustomFont": false,
+            "glyphCount": 4
+          }
+        ],
+        "computed": {
+          "family": "Raleway, \"Avenir Next\", \"Segoe UI\", sans-serif",
+          "weight": "700",
+          "style": "normal"
+        }
+      }
+    ],
+    "fontFaces": []
+  },
+  {
+    "url": "https://jaredgoldberg.ca/about/index.html",
+    "requests": [
+      {
+        "url": "https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700&display=swap",
+        "type": "stylesheet"
+      },
+      {
+        "url": "https://jaredgoldberg.ca/assets/css/wiki.css?v=20260502-layout-shell",
+        "type": "stylesheet"
+      },
+      {
+        "url": "https://fonts.gstatic.com/s/raleway/v37/1Ptug8zYS_SKggPNyC0IT4ttDfA.woff2",
+        "type": "font"
+      }
+    ],
+    "responses": [
+      {
+        "url": "https://fonts.gstatic.com/s/raleway/v37/1Ptug8zYS_SKggPNyC0IT4ttDfA.woff2",
+        "status": 200
+      }
+    ],
+    "samples": [
+      {
+        "selector": "h1",
+        "fonts": [
+          {
+            "familyName": "Raleway Thin",
+            "postScriptName": "RalewayRoman-Bold",
+            "isCustomFont": true,
+            "glyphCount": 71
+          }
+        ],
+        "computed": {
+          "family": "Raleway, system-ui, -apple-system, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+          "weight": "700",
+          "style": "normal"
+        }
+      },
+      {
+        "selector": "p",
+        "fonts": [
+          {
+            "familyName": "Raleway Thin",
+            "postScriptName": "RalewayRoman-Regular",
+            "isCustomFont": true,
+            "glyphCount": 114
+          }
+        ],
+        "computed": {
+          "family": "Raleway, system-ui, -apple-system, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+          "weight": "400",
+          "style": "normal"
+        }
+      },
+      {
+        "selector": ".menu-icon",
+        "fonts": [
+          {
+            "familyName": "Apple Symbols",
+            "postScriptName": "AppleSymbols",
+            "isCustomFont": false,
+            "glyphCount": 1
+          }
+        ],
+        "computed": {
+          "family": "Arial",
+          "weight": "400",
+          "style": "normal"
+        }
+      }
+    ],
+    "fontFaces": [
+      {
+        "family": "Raleway",
+        "weight": "400",
+        "style": "normal",
+        "status": "unloaded"
+      },
+      {
+        "family": "Raleway",
+        "weight": "400",
+        "style": "normal",
+        "status": "unloaded"
+      },
+      {
+        "family": "Raleway",
+        "weight": "400",
+        "style": "normal",
+        "status": "unloaded"
+      },
+      {
+        "family": "Raleway",
+        "weight": "400",
+        "style": "normal",
+        "status": "unloaded"
+      },
+      {
+        "family": "Raleway",
+        "weight": "400",
+        "style": "normal",
+        "status": "loaded"
+      },
+      {
+        "family": "Raleway",
+        "weight": "600",
+        "style": "normal",
+        "status": "unloaded"
+      },
+      {
+        "family": "Raleway",
+        "weight": "600",
+        "style": "normal",
+        "status": "unloaded"
+      },
+      {
+        "family": "Raleway",
+        "weight": "600",
+        "style": "normal",
+        "status": "unloaded"
+      },
+      {
+        "family": "Raleway",
+        "weight": "600",
+        "style": "normal",
+        "status": "unloaded"
+      },
+      {
+        "family": "Raleway",
+        "weight": "600",
+        "style": "normal",
+        "status": "loaded"
+      },
+      {
+        "family": "Raleway",
+        "weight": "700",
+        "style": "normal",
+        "status": "unloaded"
+      },
+      {
+        "family": "Raleway",
+        "weight": "700",
+        "style": "normal",
+        "status": "unloaded"
+      },
+      {
+        "family": "Raleway",
+        "weight": "700",
+        "style": "normal",
+        "status": "unloaded"
+      },
+      {
+        "family": "Raleway",
+        "weight": "700",
+        "style": "normal",
+        "status": "unloaded"
+      },
+      {
+        "family": "Raleway",
+        "weight": "700",
+        "style": "normal",
+        "status": "loaded"
+      }
+    ]
+  }
+]
