@@ -73,8 +73,10 @@ Public QA is verified at https://qa.jaredgoldberg.org/. See the
 [QA runbook](docs/qa-runbook.md). The isolated QA DNS record, separate
 certificate and virtual host are configured. Public deployment runs HTTP and
 browser verification inside the automatic rollback boundary.
-The new workflow exports an exact clean `main` SHA, runs tests, and prepares an
-artifact before any upload. It never pushes Git or changes production.
+The workflow accepts an exact clean commit only when it is the authoritative tip
+of a named pushed branch and still descends from the explicitly recorded
+`origin/main` baseline. It runs tests and prepares an artifact before any upload.
+The deploy command never pushes Git or changes production.
 
 The original root `index.html`, `scripts/deploy.sh` and production Nginx template
 are retained as baseline files. They are **not** inputs to the new build. Do not use

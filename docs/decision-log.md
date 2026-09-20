@@ -73,3 +73,17 @@ The first bootstrap passed public maintenance verification, then the local SCP
 client rejected a trailing `/.` in the rollback-download source. No candidate was
 activated. Download the validated release directory to a new destination without
 the rejected suffix; retain the verified baseline and retry a freshly tested SHA.
+
+## 2026-09-19 — exact pushed feature commits for QA
+
+QA review must preserve `origin/main` until approval. Candidate deployment therefore
+requires a named pushed source branch, its exact authoritative remote-tip SHA, an
+explicit unchanged remote-main baseline and ancestry from that baseline. Recheck
+those facts after the clean archived build and before upload. Store the source ref,
+remote ref SHA, main baseline and manifest identity in both the local deployment
+record and private QA ledger.
+
+Keep the established manual rollback interface separate: from clean `main`, pass
+its full HEAD with `--sha`, add `--apply --rollback <verified-release-id>`, and omit
+candidate source arguments. Rollback eligibility continues to come from prior
+successful QA ledger verification rather than from branch names.

@@ -76,6 +76,20 @@ class ReleaseTests(unittest.TestCase):
         self.assertEqual((self.root/'current').resolve(),self.production)
         self.store.unlock('a'*32)
 
+    def test_feature_deployment_provenance_is_validated_and_recorded(self):
+        self.artifact(BASE);path=self.artifact(NEXT)
+        self.store.switch(BASE,None,bootstrap=True)
+        manifest_hash=hashlib.sha256((path/'artifact-manifest.json').read_bytes()).hexdigest()
+        values=[NEXT,SHA,manifest_hash,'refs/heads/ops/feature-branch-qa-deploy',SHA,'b'*40,'b'*40]
+        provenance=self.store.provenance(values)
+        self.store.switch(NEXT,BASE,provenance=provenance)
+        entry=json.loads((self.store.state/'ledger.jsonl').read_text().splitlines()[-1])
+        self.assertEqual(entry['sourceRef'],'refs/heads/ops/feature-branch-qa-deploy')
+        self.assertEqual(entry['sourceRefSha'],SHA)
+        self.assertEqual(entry['manifestSha256'],manifest_hash)
+        with self.assertRaises(ValueError):
+            self.store.provenance([*values[:-1],'c'*40])
+
 
 class RollbackGateTests(unittest.TestCase):
     def test_failed_public_gate_restores_and_verifies_previous(self):

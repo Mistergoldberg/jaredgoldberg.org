@@ -94,7 +94,7 @@ class Releases:
             file.chmod(0o555 if file.is_dir() else 0o444)
         path.chmod(0o555)
 
-    def switch(self, release, expected, bootstrap=False):
+    def switch(self, release, expected, bootstrap=False, provenance=None):
         if self.target() != expected:
             raise ValueError('QA changed since prevalidation')
         if expected is not None:
@@ -110,7 +110,7 @@ class Releases:
             os.replace(temporary, self.current)
         finally:
             temporary.unlink(missing_ok=True)
-        self.record('activate', expected, release)
+        self.record('activate', expected, release, provenance)
 
     def remove_failed_bootstrap(self, expected):
         if self.target() != expected or not expected.startswith('baseline-'):
@@ -118,10 +118,34 @@ class Releases:
         self.current.unlink()  # Return to previous absent QA root, never production.
         self.record('bootstrap-failed', expected, None)
 
-    def record(self, action, previous, current):
+    def provenance(self, values):
+        if len(values) != 7:
+            raise ValueError('Incomplete deployment provenance')
+        release, git_sha, manifest_hash, source_ref, source_ref_sha, expected_main, observed_main = values
+        if not all(re.fullmatch(r'[a-f0-9]{40}', value) for value in
+                   (git_sha, source_ref_sha, expected_main, observed_main)):
+            raise ValueError('Invalid provenance SHA')
+        if not re.fullmatch(r'[a-f0-9]{64}', manifest_hash):
+            raise ValueError('Invalid provenance manifest hash')
+        if not re.fullmatch(r'refs/heads/[A-Za-z0-9._/-]+', source_ref):
+            raise ValueError('Invalid provenance source ref')
+        manifest=self.validate(release)
+        if manifest['gitSha'] != git_sha or source_ref_sha != git_sha:
+            raise ValueError('Provenance SHA does not match release')
+        actual_hash=hashlib.sha256((self.path(release)/'artifact-manifest.json').read_bytes()).hexdigest()
+        if actual_hash != manifest_hash or expected_main != observed_main:
+            raise ValueError('Provenance does not match verified deployment state')
+        return {'releaseId':release,'gitSha':git_sha,'manifestSha256':manifest_hash,
+                'sourceRef':source_ref,'sourceRefSha':source_ref_sha,
+                'expectedMainSha':expected_main,'observedMainSha':observed_main}
+
+    def record(self, action, previous, current, provenance=None):
         self.state.mkdir(parents=True, exist_ok=True, mode=0o700)
+        entry={'at':datetime.now(timezone.utc).isoformat(), 'action':action,
+               'previous':previous, 'current':current}
+        if provenance: entry.update(provenance)
         with (self.state / 'ledger.jsonl').open('a') as stream:
-            stream.write(json.dumps({'at':datetime.now(timezone.utc).isoformat(), 'action':action, 'previous':previous, 'current':current})+'\n')
+            stream.write(json.dumps(entry)+'\n')
 
 
 def main():
@@ -145,9 +169,18 @@ def main():
         elif action == 'prepare': store.prepare(args[0])
         elif action == 'seal': store.seal(*args)
         elif action == 'validate': print(json.dumps(store.validate(args[0])))
-        elif action == 'switch': store.switch(args[0],None if args[1]=='none' else args[1],len(args)>2 and args[2]=='bootstrap')
+        elif action == 'switch':
+            bootstrap=len(args)>2 and args[2]=='bootstrap'
+            provenance=None
+            if len(args)>2 and not bootstrap:
+                if args[2]!='deploy': raise ValueError('Invalid switch mode')
+                provenance=store.provenance(args[3:])
+                if provenance['releaseId'] != args[0]: raise ValueError('Switch provenance release mismatch')
+            store.switch(args[0],None if args[1]=='none' else args[1],bootstrap,provenance)
         elif action == 'remove-bootstrap': store.remove_failed_bootstrap(args[0])
-        elif action == 'record': store.record(args[0],None if args[1]=='none' else args[1],args[2])
+        elif action == 'record':
+            provenance=store.provenance(args[3:]) if len(args)>3 else None
+            store.record(args[0],None if args[1]=='none' else args[1],args[2],provenance)
         elif action == 'unlock': store.unlock(token)
         else: raise ValueError('Unknown operation')
 

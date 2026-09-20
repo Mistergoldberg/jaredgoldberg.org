@@ -49,11 +49,17 @@ npm run preview
 On this macOS 12 workspace use `PLAYWRIGHT_CHROMIUM_EXECUTABLE` from README.
 Tests exercise the emitted artifact, not the legacy root placeholder.
 
-From clean committed `main` and the confirmed origin:
+From a clean committed branch that has already been pushed, record the unchanged
+remote-main baseline and exact candidate identity:
 
 ```sh
 QA_SHA=$(git rev-parse HEAD)
-python3 scripts/deploy-qa.py --sha "$QA_SHA"
+QA_SOURCE_BRANCH=$(git branch --show-current)
+QA_MAIN_SHA='<RECORDED_40_CHARACTER_MAIN_SHA>'
+test "$(git ls-remote --heads origin "refs/heads/$QA_SOURCE_BRANCH" | cut -f1)" = "$QA_SHA"
+test "$(git ls-remote --heads origin refs/heads/main | cut -f1)" = "$QA_MAIN_SHA"
+python3 scripts/deploy-qa.py --sha "$QA_SHA" \
+  --source-branch "$QA_SOURCE_BRANCH" --expected-main-sha "$QA_MAIN_SHA"
 ```
 
 Without `--apply`, this performs no server operations. It exports the exact Git
@@ -65,10 +71,13 @@ other emitted files. Mutable local builds report worktree.
 
 ## Deployment and rollback
 
-First deployment only, with no QA target:
+First deployment only, with no QA target, uses the same source arguments and adds
+`--bootstrap`:
 
 ```sh
-python3 scripts/deploy-qa.py --sha "$QA_SHA" --apply --bootstrap
+python3 scripts/deploy-qa.py --sha "$QA_SHA" \
+  --source-branch "$QA_SOURCE_BRANCH" --expected-main-sha "$QA_MAIN_SHA" \
+  --apply --bootstrap
 ```
 
 There was no previously accepted public QA release at the start of this task.
@@ -80,10 +89,16 @@ an earlier working site, and its verification does not claim fixture functionali
 Subsequent deployments omit `--bootstrap`:
 
 ```sh
-python3 scripts/deploy-qa.py --sha "$QA_SHA" --apply
+python3 scripts/deploy-qa.py --sha "$QA_SHA" \
+  --source-branch "$QA_SOURCE_BRANCH" --expected-main-sha "$QA_MAIN_SHA" \
+  --apply
 ```
 
-Every deployment reexports and tests the exact clean SHA. It checks TLS hostname
+Every candidate deployment requires local HEAD and the pushed source-branch tip
+to equal the full supplied SHA. It also requires authoritative remote main to
+remain at the supplied baseline and requires the candidate to descend from that
+baseline. These Git gates run before the build and again under the QA lock before
+upload. The deployment reexports and tests the exact clean SHA. It checks TLS hostname
 coverage, nginx -t and public routing, then acquires a QA-only lock. Uploaded files
 must match the local manifest checksum before sealing read-only (files 444,
 directories 555). The prior target is rehashed and verified publicly before the
@@ -99,21 +114,26 @@ Failures restore the prior QA target and verify its public bytes. Browser eviden
 is retained even on test failure. No risky live repair is attempted.
 
 `artifacts/<id>/deployment.json` records the current/previous target, full build SHA,
-manifest SHA-256 and rollback command. Server ledger entries record atomic switches
-and successful verification. The retained verified fixture release becomes the
-baseline for the next QA deployment.
+manifest SHA-256, source ref, verified remote source SHA, expected/observed main
+SHA and rollback command. Server activation and verification ledger entries carry
+the same provenance. The retained verified fixture release becomes the baseline
+for the next QA deployment.
 
 Use the recorded previous ID for manual rollback:
 
 ```sh
+git switch main
+QA_SHA=$(git rev-parse HEAD)
 python3 scripts/deploy-qa.py --sha "$QA_SHA" --apply --rollback 'ACTUAL_PREVIOUS_ID'
 ```
 
 Replace the placeholder; do not execute it literally. Manual rollback requires
-clean main and verifies the eligible target before switching. Fixture rollback
-also runs browser gates; maintenance baseline rollback verifies HTTP only.
-After a later docs-only commit, set QA_SHA to current clean HEAD for the tooling
-repository gate; release.json remains the source of deployed artifact identity.
+clean `main` and verifies the eligible target before switching. This is the existing
+verified rollback interface: do not supply `--source-branch` or
+`--expected-main-sha` in rollback mode. Set `QA_SHA` to current clean main HEAD for
+the repository gate; the target release's `release.json` remains the source of
+deployed artifact identity. Fixture rollback also runs browser gates; maintenance
+baseline rollback verifies HTTP only.
 
 Independent public recheck of a retained artifact:
 
