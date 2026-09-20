@@ -13,7 +13,7 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
   const base=publicQA?'https://qa.jaredgoldberg.org':`http://127.0.0.1:${server.address().port}`;
   const browser=await chromium.launch(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE?{executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE}:{});
   await mkdir(`${results}/screenshots`,{recursive:true});
-  const report={url:base,browser:browser.version(),fontNote:'Source-served Raleway 4.026 WOFF2 loaded locally; 400/700/900 verified as custom webfonts.',viewports:[]};
+  const report={url:base,browser:browser.version(),fontNote:'Source-served Raleway 4.026 variable WOFF2 loaded locally; authentic named 200 plus 400/700/900 are available without synthesis.',viewports:[]};
   try {
     for(const [width,height] of sizes) await t.test(`${width}x${height}`,async()=>{
       const context=await browser.newContext({viewport:{width,height},isMobile:width<768,hasTouch:width<768});
@@ -29,6 +29,7 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
       assert.equal(await page.locator('meta[name=robots]').getAttribute('content'),'noindex, nofollow');
       const computed=await page.evaluate(()=>({fontFamily:getComputedStyle(document.body).fontFamily,fonts:document.fonts.size,overflow:document.documentElement.scrollWidth>innerWidth,menuTrigger:document.querySelector('[data-menu-toggle]').getBoundingClientRect().toJSON()}));
       assert.equal(computed.overflow,false);
+      assert.ok(computed.menuTrigger.width>=44 && computed.menuTrigger.height>=44);
       assert.match(computed.fontFamily,/Raleway.*Avenir Next.*Segoe UI/);
       const fontPolicy=JSON.parse(await readFile('tests/font-policy.json','utf8'));
       for(const font of fontPolicy.requiredFiles) assert.ok(requests.includes(base+'/'+font),`Font not loaded: ${font}`);
@@ -56,10 +57,19 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
       assert.equal(await page.evaluate(()=>getComputedStyle(document.body).position),'fixed');
       await page.locator('.menu-panel__sheet').evaluate(e=>Promise.all(e.getAnimations().map(a=>a.finished)));
       const sheetWidth=await page.locator('.menu-panel__sheet').evaluate(e=>e.getBoundingClientRect().width);
-      assert.ok(Math.abs(sheetWidth-Math.min(352,.84*width))<1);
+      const expectedSheetWidth=width<768?Math.min(384,width-44):width<1024?Math.min(384,width-48):Math.min(448,width-48);
+      assert.ok(Math.abs(sheetWidth-expectedSheetWidth)<1);
       await page.screenshot({path:`${results}/screenshots/qa-${width}x${height}-menu.png`});
+      await page.screenshot({path:`${results}/screenshots/qa-${width}x${height}-active.png`});
       const openAxe=await new AxeBuilder({page}).analyze();
       assert.deepEqual(openAxe.violations,[]);
+      const primary=page.locator('.menu-panel__link[aria-current]');
+      const primaryType=await primary.evaluate(e=>({weight:getComputedStyle(e).fontWeight,synthesis:getComputedStyle(e).fontSynthesisWeight}));
+      assert.equal(primaryType.weight,'200');
+      assert.equal(primaryType.synthesis,'none');
+      const {nodeId:primaryNodeId}=await cdp.send('DOM.querySelector',{nodeId:root.nodeId,selector:'.menu-panel__link[aria-current]'});
+      const {fonts:primaryFonts}=await cdp.send('CSS.getPlatformFontsForNode',{nodeId:primaryNodeId});
+      assert.ok(primaryFonts.some(font=>font.isCustomFont && font.familyName.startsWith('Raleway')),'Raleway 200 fallback or synthesis');
       // With details closed, Tab cycles only visible controls (no hidden leaf links).
       await page.keyboard.press('Shift+Tab');
       assert.equal(await page.getByText('Specimens',{exact:true}).evaluate(e=>e.closest('summary')===document.activeElement),true);
@@ -67,7 +77,19 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
       assert.equal(await close.evaluate(e=>e===document.activeElement),true);
       await page.getByText('Specimens',{exact:true}).click();
       await page.getByText('Components',{exact:true}).click();
-      await page.getByRole('navigation',{name:'QA fixture'}).getByRole('link',{name:'Surfaces',exact:true}).focus();
+      await page.screenshot({path:`${results}/screenshots/qa-${width}x${height}-nested.png`});
+      const interactive=page.locator('.menu-panel__sheet a, .menu-panel__sheet button, .menu-panel__sheet summary');
+      for(const element of await interactive.all()) {
+        if(!await element.isVisible()) continue;
+        const rect=await element.evaluate(e=>e.getBoundingClientRect().toJSON());
+        assert.ok(rect.width>=44 && rect.height>=44,`Undersized menu target: ${rect.width}x${rect.height}`);
+      }
+      const nestedRects=await page.locator('.menu-panel__nested-link, .menu-panel__nested-summary').evaluateAll(elements=>elements.filter(e=>e.checkVisibility()).map(e=>e.getBoundingClientRect().toJSON()));
+      for(let index=1;index<nestedRects.length;index++) assert.ok(nestedRects[index].top>=nestedRects[index-1].bottom,'Overlapping nested targets');
+      await page.keyboard.press('Tab');
+      await page.keyboard.press('Tab');
+      assert.equal(await page.getByRole('navigation',{name:'QA fixture'}).getByRole('link',{name:'Surfaces',exact:true}).evaluate(e=>e===document.activeElement),true);
+      await page.screenshot({path:`${results}/screenshots/qa-${width}x${height}-focus.png`});
       await page.keyboard.press('Tab');
       assert.equal(await close.evaluate(e=>e===document.activeElement),true);
       await page.keyboard.press('Escape');
@@ -84,7 +106,7 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
       await page.locator('[data-menu-toggle]').click();
       await page.getByRole('navigation',{name:'QA fixture'}).getByRole('link',{name:'Typography',exact:true}).click();
       assert.equal(await page.locator('[data-menu-toggle]').getAttribute('aria-expanded'),'false');
-      assert.equal(await page.locator('#typography').evaluate(e=>e===document.activeElement),true);
+      await page.waitForFunction(()=>document.activeElement?.id==='typography');
       await page.emulateMedia({reducedMotion:'reduce'});
       await page.locator('[data-menu-toggle]').click();
       const duration=await page.locator('.menu-panel__sheet').evaluate(e=>parseFloat(getComputedStyle(e).transitionDuration));
@@ -109,6 +131,22 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
         assert.equal(await page.locator('[data-menu-toggle]').getAttribute('aria-expanded'),'false');
         await context.close();
       }
+    });
+    await t.test('200% equivalent reflow keeps the menu usable',async()=>{
+      const context=await browser.newContext({viewport:{width:720,height:450}});
+      const page=await context.newPage();await page.goto(base);
+      assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+      await page.getByRole('button',{name:'Menu',exact:true}).click();
+      await page.getByText('Specimens',{exact:true}).click();
+      await page.getByText('Components',{exact:true}).click();
+      assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+      const targets=page.locator('.menu-panel__sheet a, .menu-panel__sheet button, .menu-panel__sheet summary');
+      for(const element of await targets.all()) {
+        if(!await element.isVisible()) continue;
+        const rect=await element.evaluate(e=>e.getBoundingClientRect().toJSON());
+        assert.ok(rect.width>=44 && rect.height>=44);
+      }
+      await context.close();
     });
     await writeFile(`${results}/browser-report.json`,JSON.stringify(report,null,2)+'\n');
   } finally { await browser.close(); if(server) await new Promise(done=>server.close(done)); }

@@ -1,7 +1,7 @@
 /* Exact, unmodified Latin WOFF2 observed on the source site's inner pages.
    Raleway 4.026, SIL OFL 1.1; copyright/license: /fonts/OFL.txt.
    Source and checksum: docs/font-evidence/font-metadata.json.
-   The file's verified variable wght axis covers 100–900, including our 400/700/900.
+   The file's verified variable wght axis covers 100–900, including our 200/400/700/900.
    No local() source: an older installed Raleway must not override this webfont. */
 @font-face {
   font-family: "Raleway";

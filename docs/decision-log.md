@@ -87,3 +87,15 @@ Keep the established manual rollback interface separate: from clean `main`, pass
 its full HEAD with `--sha`, add `--apply --rollback <verified-release-id>`, and omit
 candidate source arguments. Rollback eligibility continues to come from prior
 successful QA ledger verification rather than from branch names.
+
+## 2026-09-20 — Design System V2 menu candidate
+
+Retain the data-driven fixture tree and established dialog, focus, inertness,
+scroll-lock and dismissal behavior. Replace the dark, symbol-led treatment with a
+near-white sheet, 14% neutral backdrop, subtle neutral edge, low-opacity shadow and
+220ms opacity/translation motion. Use the existing unmodified Raleway 4.026 variable
+WOFF2 at its named authentic ExtraLight 200 instance for large primary labels and
+400 for supporting links. CSS-drawn chevrons and close lines replace ornamental
+text glyphs. Every visible trigger, close, summary and nested link is at least
+44×44 CSS pixels; the previous nested-link heights of roughly 16–18px are rejected
+by focused browser assertions.

@@ -72,5 +72,7 @@ unmodified into `public/fonts/`, with original filename and SIL OFL 1.1 notice.
 Its verified variable range is 100–900, supporting the homepage design's 900.
 `src/styles/fonts.css` declares local normal 100–900, swap, original unicode range,
 and retains fallback tokens. No external provider or source-domain requests remain.
+The Design System V2 menu also uses the file's named authentic ExtraLight 200
+instance; no additional binary or font-face declaration is required.
 See [complete font evidence](font-evidence/README.md) for source URLs, checksum,
 metadata, licensing, browser traces and measured subpixel geometry differences.

@@ -28,6 +28,9 @@ test('artifact contains only intended public files, verified checksums and local
   const html=await readFile('dist/index.html','utf8');
   assert.match(html,/<meta name="robots" content="noindex, nofollow">/);
   assert.doesNotMatch(html,/maximum-scale|user-scalable=no/);
+  assert.doesNotMatch(html,/menu-panel__icon|>×<|>○<|>\+<|emoji/i);
+  assert.match(html,/menu-panel__close-icon/);
+  assert.match(html,/menu-panel__chevron/);
 });
 
 test('required licensed webfont is unmodified and embedded locally',async()=>{
@@ -45,6 +48,9 @@ test('required licensed webfont is unmodified and embedded locally',async()=>{
   assert.match(await readFile('dist/fonts/OFL.txt','utf8'),/SIL OPEN FONT LICENSE Version 1.1/);
   assert.match(rules,/font-weight: 100 900/);
   assert.match(rules,/font-display: swap/);
+  assert.ok(policy.weights.includes(200));
+  assert.match(rules,/--font-weight-extralight:\s*200/);
+  assert.match(rules,/font-weight:\s*var\(--font-weight-extralight\)/);
 });
 
 test('HTTP routes, QA headers, hashed cache rules and private paths',async()=>{

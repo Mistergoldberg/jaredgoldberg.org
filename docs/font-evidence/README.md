@@ -47,6 +47,11 @@ No italic specimen is used; no italic or unused language-subset files are copied
   remain. There is deliberately no `local()` source that could mask this binary.
 - `tests/font-policy.json` pins the required filename, hash and used weights.
 
+The Design System V2 menu uses the binary's named ExtraLight instance at `wght=200`.
+FontTools identifies that instance explicitly between Thin 100 and Light 300; browser
+platform-font inspection reports the custom `RalewayRoman-ExtraLight` face while
+computed styles report weight 200 and `font-synthesis-weight: none`.
+
 This is a documented switch from this Mac's old installed 2.001 to the source's
 currently network-served 4.026, not an unrelated font substitution. The user was
 informed before downloading. OFL redistribution permission resolves the licensing

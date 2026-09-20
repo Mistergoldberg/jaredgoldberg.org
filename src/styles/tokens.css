@@ -6,6 +6,7 @@
   --font-family-body: "Raleway", "Avenir Next", "Segoe UI", sans-serif;
 
   --font-weight-regular: 400;
+  --font-weight-extralight: 200;
   --font-weight-bold: 700;
   --font-weight-heavy: 900;
 
@@ -42,6 +43,19 @@
   --color-focus: #1f5fff;
   --color-interactive-default: #141412;
   --color-interactive-hover: #2f2d28;
+
+  --menu-surface-solid: #ffffff;
+  --menu-surface: rgba(255, 255, 255, 0.97);
+  --menu-backdrop: rgba(18, 18, 17, 0.14);
+  --menu-border: rgba(20, 20, 18, 0.08);
+  --menu-text-primary: #171716;
+  --menu-text-secondary: #4f4e4a;
+  --menu-text-muted: #686761;
+  --menu-control-hover: rgba(20, 20, 18, 0.055);
+  --menu-shadow: -18px 0 58px rgba(20, 20, 18, 0.11);
+  --menu-sheet-width: 28rem;
+  --menu-sheet-width-compact: 24rem;
+  --menu-mobile-reveal: 2.75rem;
 
   --space-0: 0;
   --space-1: 0.25rem;
@@ -104,7 +118,7 @@
   --easing-standard: cubic-bezier(0.24, 0.7, 0.24, 1);
   --easing-emphasized: cubic-bezier(0.2, 0.88, 0.2, 1);
 
-  --motion-menu-reveal-duration: var(--duration-3);
+  --motion-menu-reveal-duration: var(--duration-2);
   --motion-menu-reveal-easing: var(--easing-emphasized);
   --motion-slide-hover-duration: var(--duration-2);
   --motion-slide-hover-easing: var(--easing-standard);
