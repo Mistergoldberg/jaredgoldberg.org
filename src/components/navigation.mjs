@@ -11,7 +11,7 @@ function entry(item, depth = 0) {
   return `<li><a class="${className}" data-menu-depth="${depth}" href="${e(item.href)}"${item.href === '/' ? ' aria-current="page"' : ''}>${label}</a></li>`;
 }
 export function renderHeader() {
-  return `<header class="site-header site-header--overlay" data-page-background><div class="layout-shell layout-shell--stage site-header__inner site-header__inner--no-brand"><button class="menu-trigger type-nav" type="button" data-menu-toggle aria-controls="site-menu-panel" aria-expanded="false" aria-haspopup="dialog">Menu</button></div></header>`;
+  return `<header class="site-header site-header--overlay" data-page-background><div class="layout-shell layout-shell--stage site-header__inner site-header__inner--no-brand"><button class="menu-trigger type-nav" type="button" data-menu-toggle aria-label="Open menu" aria-controls="site-menu-panel" aria-expanded="false" aria-haspopup="dialog"><span class="menu-trigger__label">Menu</span><span class="menu-trigger__icon" aria-hidden="true"></span></button></div></header>`;
 }
 export function renderNavigation(items) {
   return `<div id="site-menu-panel" class="menu-panel" data-menu-panel aria-hidden="true" inert>

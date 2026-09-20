@@ -99,3 +99,17 @@ WOFF2 at its named authentic ExtraLight 200 instance for large primary labels an
 text glyphs. Every visible trigger, close, summary and nested link is at least
 44×44 CSS pixels; the previous nested-link heights of roughly 16–18px are rejected
 by focused browser assertions.
+
+## 2026-09-20 — mobile menu trigger review
+
+Keep the approved desktop trigger and menu unchanged. At the mobile breakpoint,
+use the existing header as a zero-height sticky overlay so the trigger remains in
+the document's sticky layout context without adding fixed positioning, scroll
+listeners or layout space. Replace the visible mobile label with a three-stroke
+CSS menu mark while retaining the `Open menu` accessible name and 44×44 target.
+Hide the background trigger while the dialog is open so it does not compete with
+the menu's close control.
+
+Approved for a future cycle, but deliberately not implemented here: tighten the
+leading and tracking of Raleway Black global headings, and change the global blue
+accent to dark red `#990202`.

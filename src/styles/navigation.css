@@ -81,6 +81,10 @@ body.is-scroll-locked {
   border-color: rgba(20, 20, 18, 0.16);
 }
 
+.menu-trigger__icon {
+  display: none;
+}
+
 .menu-panel {
   position: fixed;
   inset: 0;

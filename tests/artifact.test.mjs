@@ -29,6 +29,8 @@ test('artifact contains only intended public files, verified checksums and local
   assert.match(html,/<meta name="robots" content="noindex, nofollow">/);
   assert.doesNotMatch(html,/maximum-scale|user-scalable=no/);
   assert.doesNotMatch(html,/menu-panel__icon|>×<|>○<|>\+<|emoji/i);
+  assert.match(html,/data-menu-toggle aria-label="Open menu"/);
+  assert.match(html,/menu-trigger__label">Menu<\/span><span class="menu-trigger__icon" aria-hidden="true">/);
   assert.match(html,/menu-panel__close-icon/);
   assert.match(html,/menu-panel__chevron/);
 });

@@ -7,13 +7,14 @@ import { startServer } from '../scripts/serve.mjs';
 
 const publicQA=process.env.QA_PUBLIC==='1';
 const results=publicQA?'test-results/public-qa':'test-results';
-const sizes=[[1440,900],[1024,768],[390,844],[375,667]];
+const sizes=[[1440,900],[1024,768],[430,932],[393,852],[390,844],[375,667]];
+const mobileSizes=[[430,932],[393,852],[390,844],[375,667]];
 test('responsive browser, navigation, focus, assets, motion and accessibility gates', {timeout:120000},async(t)=>{
   const server=publicQA?null:await startServer({port:0});
   const base=publicQA?'https://qa.jaredgoldberg.org':`http://127.0.0.1:${server.address().port}`;
   const browser=await chromium.launch(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE?{executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE}:{});
   await mkdir(`${results}/screenshots`,{recursive:true});
-  const report={url:base,browser:browser.version(),fontNote:'Source-served Raleway 4.026 variable WOFF2 loaded locally; authentic named 200 plus 400/700/900 are available without synthesis.',viewports:[]};
+  const report={url:base,browser:browser.version(),fontNote:'Source-served Raleway 4.026 variable WOFF2 loaded locally; authentic named 200 plus 400/700/900 are available without synthesis.',viewports:[],mobileSticky:[]};
   try {
     for(const [width,height] of sizes) await t.test(`${width}x${height}`,async()=>{
       const context=await browser.newContext({viewport:{width,height},isMobile:width<768,hasTouch:width<768});
@@ -36,7 +37,7 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
       const cdp=await context.newCDPSession(page);
       await cdp.send('DOM.enable');await cdp.send('CSS.enable');
       const {root}=await cdp.send('DOM.getDocument');
-      for(const selector of ['h1','[data-menu-toggle]','.fixture-intro p:not([class])']) {
+      for(const selector of ['h1',...(width>=768?['[data-menu-toggle]']:[]),'.fixture-intro p:not([class])']) {
         const {nodeId}=await cdp.send('DOM.querySelector',{nodeId:root.nodeId,selector});
         const {fonts}=await cdp.send('CSS.getPlatformFontsForNode',{nodeId});
         assert.ok(fonts.some(font=>font.isCustomFont && font.familyName.startsWith('Raleway')),`Font fallback on ${selector}`);
@@ -123,7 +124,15 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
         const context=await browser.newContext({viewport:{width,height},isMobile:width<768,hasTouch:true});
         const page=await context.newPage(); await page.goto(base);
         assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
-        await page.getByRole('button',{name:'Menu',exact:true}).click();
+        if(width===667) {
+          const trigger=page.locator('[data-menu-toggle]');
+          const initial=await trigger.evaluate(e=>({rect:e.getBoundingClientRect().toJSON(),position:getComputedStyle(e.closest('header')).position,label:getComputedStyle(e.querySelector('.menu-trigger__label')).display,icon:getComputedStyle(e.querySelector('.menu-trigger__icon')).display}));
+          assert.equal(initial.position,'sticky'); assert.equal(initial.label,'none'); assert.equal(initial.icon,'block');
+          assert.equal(initial.rect.width,44); assert.equal(initial.rect.height,44); assert.ok(initial.rect.left>=16 && initial.rect.right<=width-16);
+          await page.evaluate(()=>{document.documentElement.style.scrollBehavior='auto';scrollTo(0,(document.documentElement.scrollHeight-innerHeight)/2);});
+          assert.ok(Math.abs((await trigger.evaluate(e=>e.getBoundingClientRect().top))-initial.rect.top)<1);
+        }
+        await page.getByRole('button',{name:'Open menu',exact:true}).click();
         assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
         await page.getByText('Specimens',{exact:true}).click();
         await page.getByText('Components',{exact:true}).click();
@@ -136,7 +145,7 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
       const context=await browser.newContext({viewport:{width:720,height:450}});
       const page=await context.newPage();await page.goto(base);
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
-      await page.getByRole('button',{name:'Menu',exact:true}).click();
+      await page.getByRole('button',{name:'Open menu',exact:true}).click();
       await page.getByText('Specimens',{exact:true}).click();
       await page.getByText('Components',{exact:true}).click();
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
@@ -147,6 +156,64 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
         assert.ok(rect.width>=44 && rect.height>=44);
       }
       await context.close();
+    });
+    await t.test('mobile trigger is iconic, sticky and operable throughout the page',async()=>{
+      for(const [width,height] of mobileSizes) {
+        const context=await browser.newContext({viewport:{width,height},isMobile:true,hasTouch:true});
+        const page=await context.newPage();
+        const errors=[],badResponses=[];
+        page.on('pageerror',error=>errors.push(error.message));
+        page.on('console',message=>{if(message.type()==='error') errors.push(message.text());});
+        page.on('response',response=>{if(response.status()>=400) badResponses.push(response.url());});
+        await page.goto(base); await page.evaluate(async()=>{await document.fonts.ready;document.documentElement.style.scrollBehavior='auto';});
+        assert.equal(await page.getByRole('button',{name:'Open menu',exact:true}).count(),1);
+        const trigger=page.locator('[data-menu-toggle]');
+        const top=await trigger.evaluate(e=>{
+          const r=e.getBoundingClientRect(),icon=e.querySelector('.menu-trigger__icon'),ir=icon.getBoundingClientRect();
+          return {rect:r.toJSON(),headerPosition:getComputedStyle(e.closest('header')).position,headerHeight:e.closest('header').getBoundingClientRect().height,labelDisplay:getComputedStyle(e.querySelector('.menu-trigger__label')).display,visibleText:e.innerText.trim(),icon:{width:ir.width,height:ir.height,shadow:getComputedStyle(icon).boxShadow}};
+        });
+        assert.equal(top.headerPosition,'sticky'); assert.equal(top.headerHeight,0);
+        assert.equal(top.rect.width,44); assert.equal(top.rect.height,44);
+        assert.ok(top.rect.left>=16 && top.rect.right<=width-16);
+        assert.ok(top.rect.top>=14 && top.rect.top<24);
+        assert.equal(top.labelDisplay,'none'); assert.equal(top.visibleText,'');
+        assert.equal(top.icon.width,18); assert.equal(top.icon.height,1); assert.match(top.icon.shadow,/5px/);
+        assert.equal(await trigger.evaluate(e=>{
+          const r=e.getBoundingClientRect();
+          return [...document.querySelectorAll('main a,main button,h1,h2,h3')].filter(x=>x.checkVisibility()).some(x=>{const c=x.getBoundingClientRect();return r.left<c.right&&r.right>c.left&&r.top<c.bottom&&r.bottom>c.top;});
+        }),false,'Mobile trigger obstructs initial page content');
+        const maxScroll=await page.evaluate(()=>document.documentElement.scrollHeight-innerHeight);
+        const positions=[];
+        for(const fraction of [0,.25,.5,1]) {
+          await page.evaluate(y=>scrollTo({top:y,behavior:'instant'}),Math.round(maxScroll*fraction));
+          await page.evaluate(()=>new Promise(requestAnimationFrame));
+          const state=await trigger.evaluate((e,topY)=>{
+            const r=e.getBoundingClientRect();
+            const candidates=[...document.querySelectorAll('main a,main button')].filter(x=>x.checkVisibility()).map(x=>x.getBoundingClientRect());
+            const obstructed=candidates.some(x=>r.left<x.right&&r.right>x.left&&r.top<x.bottom&&r.bottom>x.top);
+            return {scrollY,rect:r.toJSON(),overflow:document.documentElement.scrollWidth>innerWidth,obstructed,topDelta:Math.abs(r.top-topY)};
+          },top.rect.top);
+          assert.ok(state.topDelta<1,'Sticky trigger moved vertically');
+          assert.equal(state.overflow,false,'Mobile page has horizontal overflow');
+          assert.equal(state.obstructed,false,'Mobile trigger overlaps an interactive element');
+          const before=state.scrollY;
+          await trigger.click();
+          assert.equal(await trigger.getAttribute('aria-expanded'),'true');
+          assert.equal(await trigger.evaluate(e=>getComputedStyle(e).visibility),'hidden');
+          assert.equal(await page.evaluate(()=>getComputedStyle(document.body).position),'fixed');
+          await page.getByRole('button',{name:'Close menu',exact:true}).click();
+          assert.equal(await trigger.getAttribute('aria-expanded'),'false');
+          assert.equal(await trigger.evaluate(e=>e===document.activeElement),true);
+          assert.equal(await page.evaluate(()=>scrollY),before);
+          positions.push({fraction,scrollY:before,top:state.rect.top,left:state.rect.left,right:state.rect.right,width:state.rect.width,height:state.rect.height});
+          if(fraction===.5) await page.screenshot({path:`${results}/screenshots/qa-${width}x${height}-mid-scroll-closed.png`});
+        }
+        await trigger.click(); await page.keyboard.press('Escape');
+        assert.equal(await trigger.evaluate(e=>e===document.activeElement),true);
+        assert.deepEqual(errors,[]); assert.deepEqual(badResponses,[]);
+        report.mobileSticky.push({width,height,top,positions,consoleErrors:0,failedResponses:0});
+        await context.close();
+      }
     });
     await writeFile(`${results}/browser-report.json`,JSON.stringify(report,null,2)+'\n');
   } finally { await browser.close(); if(server) await new Promise(done=>server.close(done)); }
