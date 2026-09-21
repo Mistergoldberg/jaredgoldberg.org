@@ -31,6 +31,8 @@ test('artifact contains only intended public files, verified checksums and local
   assert.doesNotMatch(html,/menu-panel__icon|>×<|>○<|>\+<|emoji/i);
   assert.match(html,/data-menu-toggle aria-label="Open menu"/);
   assert.match(html,/menu-trigger__label">Menu<\/span><span class="menu-trigger__icon" aria-hidden="true">/);
+  assert.match(html,/<h1 class="site-wordmark" aria-label="Jared Goldberg">/);
+  assert.match(html,/site-wordmark__line" aria-hidden="true">Jared<\/span><span class="site-wordmark__line" aria-hidden="true">Goldberg<\/span>/);
   assert.match(html,/menu-panel__close-icon/);
   assert.match(html,/menu-panel__chevron/);
 });

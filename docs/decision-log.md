@@ -113,3 +113,11 @@ the menu's close control.
 Approved for a future cycle, but deliberately not implemented here: tighten the
 leading and tracking of Raleway Black global headings, and change the global blue
 accent to dark red `#990202`.
+
+## 2026-09-21 — blocked homepage wordmark
+
+Treat the homepage “Jared Goldberg” name as a semantic text wordmark rather than
+an image asset. Keep the existing Raleway Black scale, leading and tracking, but
+place each approved name line in its own content-width black block with white text.
+The `h1` retains one accessible name while its two visual lines remain independently
+sized. This treatment does not change other headings, menu typography or accents.

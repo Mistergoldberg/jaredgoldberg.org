@@ -44,6 +44,9 @@
   --color-interactive-default: #141412;
   --color-interactive-hover: #2f2d28;
 
+  --wordmark-background: #000000;
+  --wordmark-foreground: #ffffff;
+
   --menu-surface-solid: #ffffff;
   --menu-surface: rgba(255, 255, 255, 0.97);
   --menu-backdrop: rgba(18, 18, 17, 0.14);

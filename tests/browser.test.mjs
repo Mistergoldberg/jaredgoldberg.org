@@ -32,6 +32,16 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
       assert.equal(computed.overflow,false);
       assert.ok(computed.menuTrigger.width>=44 && computed.menuTrigger.height>=44);
       assert.match(computed.fontFamily,/Raleway.*Avenir Next.*Segoe UI/);
+      assert.equal(await page.getByRole('heading',{level:1,name:'Jared Goldberg',exact:true}).count(),1);
+      const wordmark=await page.locator('.site-wordmark').evaluate(e=>({
+        lines:[...e.children].map(line=>{const r=line.getBoundingClientRect(),style=getComputedStyle(line);return {text:line.textContent,rect:r.toJSON(),background:style.backgroundColor,color:style.color};}),
+        overflow:e.scrollWidth>e.clientWidth,
+      }));
+      assert.deepEqual(wordmark.lines.map(line=>line.text),['Jared','Goldberg']);
+      assert.equal(wordmark.overflow,false);
+      assert.ok(wordmark.lines[1].rect.width>wordmark.lines[0].rect.width);
+      assert.ok(Math.abs(wordmark.lines[1].rect.top-wordmark.lines[0].rect.bottom)<1);
+      for(const line of wordmark.lines) { assert.equal(line.background,'rgb(0, 0, 0)'); assert.equal(line.color,'rgb(255, 255, 255)'); }
       const fontPolicy=JSON.parse(await readFile('tests/font-policy.json','utf8'));
       for(const font of fontPolicy.requiredFiles) assert.ok(requests.includes(base+'/'+font),`Font not loaded: ${font}`);
       const cdp=await context.newCDPSession(page);
