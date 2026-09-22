@@ -7,8 +7,8 @@ import { startServer } from '../scripts/serve.mjs';
 
 const publicQA=process.env.QA_PUBLIC==='1';
 const results=publicQA?'test-results/public-qa':'test-results';
-const sizes=[[1440,900],[1024,768],[430,932],[393,852],[390,844],[375,667]];
-const mobileSizes=[[430,932],[393,852],[390,844],[375,667]];
+const sizes=[[1440,900],[1024,768],[768,1024],[720,450],[667,375],[430,932],[393,852],[390,844],[375,667],[320,568]];
+const mobileSizes=[[430,932],[393,852],[390,844],[375,667],[320,568],[667,375],[720,450]];
 test('responsive browser, navigation, focus, assets, motion and accessibility gates', {timeout:120000},async(t)=>{
   const server=publicQA?null:await startServer({port:0});
   const base=publicQA?'https://qa.jaredgoldberg.org':`http://127.0.0.1:${server.address().port}`;
@@ -188,10 +188,27 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
         assert.ok(top.rect.top>=14 && top.rect.top<24);
         assert.equal(top.labelDisplay,'none'); assert.equal(top.visibleText,'');
         assert.equal(top.icon.width,18); assert.equal(top.icon.height,1); assert.match(top.icon.shadow,/5px/);
-        assert.equal(await trigger.evaluate(e=>{
-          const r=e.getBoundingClientRect();
-          return [...document.querySelectorAll('main a,main button,h1,h2,h3')].filter(x=>x.checkVisibility()).some(x=>{const c=x.getBoundingClientRect();return r.left<c.right&&r.right>c.left&&r.top<c.bottom&&r.bottom>c.top;});
-        }),false,'Mobile trigger obstructs initial page content');
+        const contentOverlaps=await trigger.evaluate(e=>{
+          const triggerRect=e.getBoundingClientRect();
+          const intersects=rect=>triggerRect.left<rect.right&&triggerRect.right>rect.left&&triggerRect.top<rect.bottom&&triggerRect.bottom>rect.top;
+          const overlaps=[];
+          for(const root of document.querySelectorAll('main, footer')) {
+            const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+            let node;
+            while((node=walker.nextNode())) {
+              if(!node.textContent.trim()) continue;
+              const style=getComputedStyle(node.parentElement);
+              if(style.display==='none'||style.visibility==='hidden') continue;
+              const range=document.createRange();
+              range.selectNodeContents(node);
+              if([...range.getClientRects()].some(rect=>rect.width&&rect.height&&intersects(rect))) {
+                overlaps.push(node.textContent.trim().slice(0,80));
+              }
+            }
+          }
+          return [...new Set(overlaps)];
+        });
+        assert.deepEqual(contentOverlaps,[],'Mobile trigger obstructs initial visible text');
         const maxScroll=await page.evaluate(()=>document.documentElement.scrollHeight-innerHeight);
         const positions=[];
         for(const fraction of [0,.25,.5,1]) {
@@ -199,19 +216,34 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
           await page.evaluate(()=>new Promise(requestAnimationFrame));
           const state=await trigger.evaluate((e,topY)=>{
             const r=e.getBoundingClientRect();
-            const candidates=[...document.querySelectorAll('main a,main button')].filter(x=>x.checkVisibility()).map(x=>x.getBoundingClientRect());
-            const obstructed=candidates.some(x=>r.left<x.right&&r.right>x.left&&r.top<x.bottom&&r.bottom>x.top);
-            return {scrollY,rect:r.toJSON(),overflow:document.documentElement.scrollWidth>innerWidth,obstructed,topDelta:Math.abs(r.top-topY)};
+            const intersects=rect=>r.left<rect.right&&r.right>rect.left&&r.top<rect.bottom&&r.bottom>rect.top;
+            const overlaps=[];
+            for(const root of document.querySelectorAll('main, footer')) {
+              const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+              let node;
+              while((node=walker.nextNode())) {
+                if(!node.textContent.trim()) continue;
+                const style=getComputedStyle(node.parentElement);
+                if(style.display==='none'||style.visibility==='hidden') continue;
+                const range=document.createRange();
+                range.selectNodeContents(node);
+                if([...range.getClientRects()].some(rect=>rect.width&&rect.height&&intersects(rect))) {
+                  overlaps.push(node.textContent.trim().slice(0,80));
+                }
+              }
+            }
+            return {scrollY,rect:r.toJSON(),overflow:document.documentElement.scrollWidth>innerWidth,overlaps:[...new Set(overlaps)],topDelta:Math.abs(r.top-topY)};
           },top.rect.top);
           assert.ok(state.topDelta<1,'Sticky trigger moved vertically');
           assert.equal(state.overflow,false,'Mobile page has horizontal overflow');
-          assert.equal(state.obstructed,false,'Mobile trigger overlaps an interactive element');
+          assert.deepEqual(state.overlaps,[],'Mobile trigger overlaps visible page text');
           const before=state.scrollY;
           await trigger.click();
           assert.equal(await trigger.getAttribute('aria-expanded'),'true');
           assert.equal(await trigger.evaluate(e=>getComputedStyle(e).visibility),'hidden');
           assert.equal(await page.evaluate(()=>getComputedStyle(document.body).position),'fixed');
           await page.getByRole('button',{name:'Close menu',exact:true}).click();
+          await page.locator('.menu-panel__sheet').evaluate(e=>Promise.all(e.getAnimations().map(animation=>animation.finished)));
           assert.equal(await trigger.getAttribute('aria-expanded'),'false');
           assert.equal(await trigger.evaluate(e=>e===document.activeElement),true);
           assert.equal(await page.evaluate(()=>scrollY),before);

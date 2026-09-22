@@ -121,3 +121,13 @@ an image asset. Keep the existing Raleway Black scale, leading and tracking, but
 place each approved name line in its own content-width black block with white text.
 The `h1` retains one accessible name while its two visual lines remain independently
 sized. This treatment does not change other headings, menu typography or accents.
+
+## 2026-09-21 — reserved mobile menu-control rail
+
+Keep the approved zero-height sticky header and 44×44 three-line menu trigger,
+but reserve a safe-area-aware content rail beside it at mobile widths. Content
+layout shells begin after the trigger plus a 12px separation, so wordmark text,
+fixture labels, headings, paragraphs, links and buttons never occupy the
+control's functional region while the page scrolls. Full-bleed stages retain
+their full viewport width, desktop layout remains unchanged, and the solution
+does not introduce a nested scrolling container or scroll-detection script.
