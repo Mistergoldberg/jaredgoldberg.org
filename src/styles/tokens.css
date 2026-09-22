@@ -40,7 +40,9 @@
   --color-border-subtle: rgba(20, 20, 18, 0.18);
   --color-border-strong: rgba(20, 20, 18, 0.45);
   --color-overlay: rgba(13, 13, 12, 0.56);
-  --color-focus: #1f5fff;
+  --color-accent: #990202;
+  --color-focus: var(--color-accent);
+  --color-focus-contrast: #ffffff;
   --color-interactive-default: #141412;
   --color-interactive-hover: #2f2d28;
 

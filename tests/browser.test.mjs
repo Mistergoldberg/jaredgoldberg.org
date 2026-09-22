@@ -9,6 +9,14 @@ const publicQA=process.env.QA_PUBLIC==='1';
 const results=publicQA?'test-results/public-qa':'test-results';
 const sizes=[[1440,900],[1024,768],[768,1024],[720,450],[667,375],[430,932],[393,852],[390,844],[375,667],[320,568]];
 const mobileSizes=[[430,932],[393,852],[390,844],[375,667],[320,568],[667,375],[720,450]];
+const relativeLuminance=hex=>{
+  const channels=hex.match(/[\da-f]{2}/gi).map(value=>parseInt(value,16)/255).map(value=>value<=.04045?value/12.92:((value+.055)/1.055)**2.4);
+  return .2126*channels[0]+.7152*channels[1]+.0722*channels[2];
+};
+const contrastRatio=(left,right)=>{
+  const values=[relativeLuminance(left),relativeLuminance(right)].sort((a,b)=>b-a);
+  return (values[0]+.05)/(values[1]+.05);
+};
 test('responsive browser, navigation, focus, assets, motion and accessibility gates', {timeout:120000},async(t)=>{
   const server=publicQA?null:await startServer({port:0});
   const base=publicQA?'https://qa.jaredgoldberg.org':`http://127.0.0.1:${server.address().port}`;
@@ -62,6 +70,23 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
       assert.ok(Math.abs(unaffectedType.body.tracking-.002)<.001);
       assert.ok(Math.abs(unaffectedType.nav.tracking-.11)<.001);
       assert.ok(Math.abs(unaffectedType.utility.tracking-.11)<.001);
+      const accent=await page.evaluate(()=>{
+        const style=getComputedStyle(document.documentElement);
+        return {
+          value:style.getPropertyValue('--color-accent').trim(),
+          focus:style.getPropertyValue('--color-focus').trim(),
+          contrast:style.getPropertyValue('--color-focus-contrast').trim(),
+          surfaces:['--color-background','--color-surface','--color-surface-muted'].map(token=>style.getPropertyValue(token).trim()),
+          dark:style.getPropertyValue('--color-text-primary').trim(),
+        };
+      });
+      assert.equal(accent.value,'#990202');
+      assert.equal(accent.focus,'#990202');
+      assert.equal(accent.contrast,'#ffffff');
+      for(const surface of accent.surfaces) assert.ok(contrastRatio(accent.value,surface)>=4.5,`Insufficient accent contrast on ${surface}`);
+      assert.ok(contrastRatio(accent.value,accent.dark)<3);
+      assert.ok(contrastRatio(accent.contrast,accent.dark)>=3);
+      assert.ok(contrastRatio(accent.contrast,accent.value)>=3);
       const wordmark=await page.locator('.site-wordmark').evaluate(e=>({
         lines:[...e.children].map(line=>{const r=line.getBoundingClientRect(),style=getComputedStyle(line);return {text:line.textContent,rect:r.toJSON(),background:style.backgroundColor,color:style.color};}),
         overflow:e.scrollWidth>e.clientWidth,
@@ -88,6 +113,9 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
       assert.equal(await page.locator('.skip-link').evaluate(e=>e===document.activeElement),true);
       await page.keyboard.press('Tab');
       assert.equal(await page.locator('[data-menu-toggle]').evaluate(e=>e===document.activeElement),true);
+      const triggerFocus=await page.locator('[data-menu-toggle]').evaluate(e=>({outline:getComputedStyle(e).outlineColor,inner:getComputedStyle(e).boxShadow}));
+      assert.equal(triggerFocus.outline,'rgb(153, 2, 2)');
+      assert.match(triggerFocus.inner,/rgb\(255, 255, 255\)/);
       await page.keyboard.press('Enter');
       await page.locator('.menu-panel.is-open').waitFor();
       const close=page.getByRole('button',{name:'Close menu',exact:true});
@@ -129,6 +157,9 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
       await page.keyboard.press('Tab');
       await page.keyboard.press('Tab');
       assert.equal(await page.getByRole('navigation',{name:'QA fixture'}).getByRole('link',{name:'Surfaces',exact:true}).evaluate(e=>e===document.activeElement),true);
+      const nestedFocus=await page.getByRole('navigation',{name:'QA fixture'}).getByRole('link',{name:'Surfaces',exact:true}).evaluate(e=>({outline:getComputedStyle(e).outlineColor,inner:getComputedStyle(e).boxShadow}));
+      assert.equal(nestedFocus.outline,'rgb(153, 2, 2)');
+      assert.match(nestedFocus.inner,/rgb\(255, 255, 255\)/);
       await page.screenshot({path:`${results}/screenshots/qa-${width}x${height}-focus.png`});
       await page.keyboard.press('Tab');
       assert.equal(await close.evaluate(e=>e===document.activeElement),true);

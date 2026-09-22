@@ -138,3 +138,13 @@ Tighten only the Raleway Black display/H1 role from 0.95 leading and 0.04em
 tracking to 0.90 leading and -0.03em tracking. Keep the 900 weight and existing
 responsive scale. Body copy, navigation, supporting headings and utility roles
 continue using their existing independent line-height and tracking tokens.
+
+## 2026-09-21 — dark-red design-system accent
+
+Establish `#990202` as the canonical accent and route focus treatment through
+that token. The red exceeds 6.7:1 against every approved light surface but does
+not reach 3:1 against the darkest ink surface, so focusable controls also receive
+a one-pixel white inner separator. This preserves the approved red outer ring
+while keeping a visible dual treatment on dark controls and surfaces. Neutral
+menu hover and current-page treatments remain intentionally neutral rather than
+being indiscriminately recoloured.

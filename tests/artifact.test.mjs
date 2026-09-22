@@ -58,6 +58,10 @@ test('required licensed webfont is unmodified and embedded locally',async()=>{
   assert.match(rules,/--line-height-display:\s*0\.90/);
   assert.match(rules,/--tracking-display:\s*-0\.03em/);
   assert.match(rules,/h1\s*\{[^}]*font-weight:\s*var\(--font-weight-heavy\)[^}]*line-height:\s*var\(--line-height-display\)[^}]*letter-spacing:\s*var\(--tracking-display\)/s);
+  assert.match(rules,/--color-accent:\s*#990202/);
+  assert.match(rules,/--color-focus:\s*var\(--color-accent\)/);
+  assert.match(rules,/--color-focus-contrast:\s*#ffffff/);
+  assert.doesNotMatch(rules,/#1f5fff/i);
 });
 
 test('HTTP routes, QA headers, hashed cache rules and private paths',async()=>{

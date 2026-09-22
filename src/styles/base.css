@@ -59,6 +59,7 @@ ol[class] {
 :focus-visible {
   outline: var(--stroke-2) solid var(--color-focus);
   outline-offset: 2px;
+  box-shadow: 0 0 0 var(--stroke-1) var(--color-focus-contrast);
 }
 
 ::selection {
