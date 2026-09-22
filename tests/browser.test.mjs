@@ -33,6 +33,35 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
       assert.ok(computed.menuTrigger.width>=44 && computed.menuTrigger.height>=44);
       assert.match(computed.fontFamily,/Raleway.*Avenir Next.*Segoe UI/);
       assert.equal(await page.getByRole('heading',{level:1,name:'Jared Goldberg',exact:true}).count(),1);
+      const displayType=await page.locator('h1').evaluate(e=>{
+        const style=getComputedStyle(e);
+        return {
+          fontWeight:style.fontWeight,
+          lineHeightRatio:parseFloat(style.lineHeight)/parseFloat(style.fontSize),
+          trackingRatio:parseFloat(style.letterSpacing)/parseFloat(style.fontSize),
+        };
+      });
+      assert.equal(displayType.fontWeight,'900');
+      assert.ok(Math.abs(displayType.lineHeightRatio-.9)<.001);
+      assert.ok(Math.abs(displayType.trackingRatio+.03)<.001);
+      const unaffectedType=await page.evaluate(()=>{
+        const body=getComputedStyle(document.querySelector('.fixture-intro p:not([class])'));
+        const nav=getComputedStyle(document.querySelector('[data-menu-toggle]'));
+        const utility=getComputedStyle(document.querySelector('.type-meta'));
+        const ratios=style=>({
+          lineHeight:parseFloat(style.lineHeight)/parseFloat(style.fontSize),
+          tracking:parseFloat(style.letterSpacing)/parseFloat(style.fontSize),
+        });
+        return {
+          body:ratios(body),
+          nav:ratios(nav),
+          utility:ratios(utility),
+        };
+      });
+      assert.ok(Math.abs(unaffectedType.body.lineHeight-1.55)<.001);
+      assert.ok(Math.abs(unaffectedType.body.tracking-.002)<.001);
+      assert.ok(Math.abs(unaffectedType.nav.tracking-.11)<.001);
+      assert.ok(Math.abs(unaffectedType.utility.tracking-.11)<.001);
       const wordmark=await page.locator('.site-wordmark').evaluate(e=>({
         lines:[...e.children].map(line=>{const r=line.getBoundingClientRect(),style=getComputedStyle(line);return {text:line.textContent,rect:r.toJSON(),background:style.backgroundColor,color:style.color};}),
         overflow:e.scrollWidth>e.clientWidth,

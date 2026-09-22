@@ -131,3 +131,10 @@ fixture labels, headings, paragraphs, links and buttons never occupy the
 control's functional region while the page scrolls. Full-bleed stages retain
 their full viewport width, desktop layout remains unchanged, and the solution
 does not introduce a nested scrolling container or scroll-detection script.
+
+## 2026-09-21 — Raleway Black display rhythm
+
+Tighten only the Raleway Black display/H1 role from 0.95 leading and 0.04em
+tracking to 0.90 leading and -0.03em tracking. Keep the 900 weight and existing
+responsive scale. Body copy, navigation, supporting headings and utility roles
+continue using their existing independent line-height and tracking tokens.

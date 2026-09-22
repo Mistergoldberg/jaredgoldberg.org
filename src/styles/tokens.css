@@ -21,12 +21,12 @@
   --type-size-button: clamp(0.74rem, 0.71rem + 0.14vw, 0.88rem);
   --type-size-utility: clamp(0.7rem, 0.68rem + 0.12vw, 0.84rem);
 
-  --line-height-display: 0.95;
+  --line-height-display: 0.90;
   --line-height-tight: 1.06;
   --line-height-title: 1.14;
   --line-height-body: 1.55;
 
-  --tracking-display: 0.04em;
+  --tracking-display: -0.03em;
   --tracking-caps: 0.11em;
   --tracking-ui: 0.08em;
   --tracking-body: 0.002em;
