@@ -75,7 +75,7 @@ class Releases:
         if actual != set(manifest['files']) | {'artifact-manifest.json'}:
             raise ValueError('Unexpected/missing release files')
         for name, expected in manifest['files'].items():
-            if not re.fullmatch(r'(?:index\.html|robots\.txt|favicon\.svg|release\.json|assets/[\w.-]+\.(?:css|js)|fonts/OFL\.txt|fonts/[\w.-]+\.(?:woff2?|ttf|otf))', name):
+            if not re.fullmatch(r'(?:index\.html|robots\.txt|favicon\.svg|release\.json|assets/[\w.-]+\.(?:css|js)|fonts/OFL\.txt|fonts/[\w.-]+\.(?:woff2?|ttf|otf)|images/[\w.-]+\.(?:png|jpe?g|webp))', name):
                 raise ValueError('Invalid artifact filename')
             if hashlib.sha256((path / name).read_bytes()).hexdigest() != expected:
                 raise ValueError('Artifact checksum mismatch: ' + name)
