@@ -1,5 +1,5 @@
 // TEMPORARY QA FIXTURE. These labels and sections are not approved site architecture.
-export const site = { identity: 'jaredgoldberg.org', name: 'Jared Goldberg', nameLines: ['Jared', 'Goldberg'], title: 'jaredgoldberg.org — QA', status: 'QA · Design-system fixture' };
+export const site = { identity: 'jaredgoldberg.org', name: 'Jared Goldberg', nameLines: ['Jared', 'Goldberg'], title: 'jaredgoldberg.org — QA', status: 'QA · Design-system fixture', googleTagId: 'G-N6X517GEQ2' };
 export const navigation = [
   { label: 'QA home', href: '/' },
   { label: 'Specimens', children: [

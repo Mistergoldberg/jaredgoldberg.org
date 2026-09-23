@@ -166,3 +166,11 @@ safe-area positioning. The intro's top spacing keeps its initial content clear
 of the control. While scrolling, the opaque elevated control may pass over page
 content instead of shifting every section into a permanent asymmetric rail.
 Desktop/tablet layout remains unchanged.
+
+## 2026-09-23 — Google Analytics tag
+
+Install Google tag `G-N6X517GEQ2` in the shared page head using the asynchronous
+Google Tag Manager loader and standard `dataLayer` initialization. Treat that
+single loader URL and measurement ID as the only approved analytics integration;
+the artifact checks continue to reject other analytics identifiers and external
+asset URLs.

@@ -1,11 +1,21 @@
 import { escapeHTML as e } from './html.mjs';
 import { renderHeader, renderNavigation } from './navigation.mjs';
 export function renderPage({site, navigation, fixture, stylesheet, script}) {
+  if (site.googleTagId && !/^G-[A-Z0-9]+$/.test(site.googleTagId)) throw new Error('Invalid Google tag ID');
   const wordmark = (site.nameLines ?? [site.name]).map(line => `<span class="site-wordmark__line" aria-hidden="true">${e(line)}</span>`).join('');
   const introductionImage = fixture.introductionImage ? `<figure class="fixture-intro__media"><img src="${e(fixture.introductionImage.src)}" alt="${e(fixture.introductionImage.alt)}" width="${e(fixture.introductionImage.width)}" height="${e(fixture.introductionImage.height)}" decoding="async" fetchpriority="high"></figure>` : '';
+  const googleTag = site.googleTagId ? `<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=${site.googleTagId}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '${site.googleTagId}');
+</script>` : '';
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow"><title>${e(site.title)}</title>
+${googleTag}
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="${stylesheet}"><script type="module" src="${script}"></script></head>
 <body class="page"><a class="skip-link" href="#main-content" data-page-background>Skip to main content</a>
 ${renderHeader()}${renderNavigation(navigation)}

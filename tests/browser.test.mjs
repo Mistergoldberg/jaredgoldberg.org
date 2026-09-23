@@ -7,6 +7,7 @@ import { startServer } from '../scripts/serve.mjs';
 
 const publicQA=process.env.QA_PUBLIC==='1';
 const results=publicQA?'test-results/public-qa':'test-results';
+const googleTagUrl='https://www.googletagmanager.com/gtag/js?id=G-N6X517GEQ2';
 const sizes=[[1440,900],[1024,768],[768,1024],[720,450],[667,375],[430,932],[393,852],[390,844],[375,667],[320,568]];
 const mobileSizes=[[430,932],[393,852],[390,844],[375,667],[320,568],[667,375],[720,450]];
 const relativeLuminance=hex=>{
@@ -17,6 +18,11 @@ const contrastRatio=(left,right)=>{
   const values=[relativeLuminance(left),relativeLuminance(right)].sort((a,b)=>b-a);
   return (values[0]+.05)/(values[1]+.05);
 };
+const newContext=async(browser,options)=>{
+  const context=await browser.newContext(options);
+  await context.route(googleTagUrl,route=>route.fulfill({status:200,contentType:'application/javascript',body:''}));
+  return context;
+};
 test('responsive browser, navigation, focus, assets, motion and accessibility gates', {timeout:120000},async(t)=>{
   const server=publicQA?null:await startServer({port:0});
   const base=publicQA?'https://qa.jaredgoldberg.org':`http://127.0.0.1:${server.address().port}`;
@@ -25,7 +31,7 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
   const report={url:base,browser:browser.version(),fontNote:'Source-served Raleway 4.026 variable WOFF2 loaded locally; authentic named 200 plus 400/700/900 are available without synthesis.',viewports:[],mobileSticky:[]};
   try {
     for(const [width,height] of sizes) await t.test(`${width}x${height}`,async()=>{
-      const context=await browser.newContext({viewport:{width,height},isMobile:width<768,hasTouch:width<768});
+      const context=await newContext(browser,{viewport:{width,height},isMobile:width<768,hasTouch:width<768});
       const page=await context.newPage();
       const errors=[],external=[],badResponses=[],requests=[];
       page.on('pageerror',error=>errors.push(error.message));
@@ -36,6 +42,8 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
       await page.evaluate(()=>document.fonts.ready);
       assert.equal(await page.locator('link[rel=canonical]').count(),0);
       assert.equal(await page.locator('meta[name=robots]').getAttribute('content'),'noindex, nofollow');
+      const analytics=await page.evaluate(()=>window.dataLayer?.map(entry=>[entry[0],entry[1] instanceof Date?'date':entry[1]]));
+      assert.deepEqual(analytics,[['js','date'],['config','G-N6X517GEQ2']]);
       const computed=await page.evaluate(()=>({fontFamily:getComputedStyle(document.body).fontFamily,fonts:document.fonts.size,overflow:document.documentElement.scrollWidth>innerWidth,menuTrigger:document.querySelector('[data-menu-toggle]').getBoundingClientRect().toJSON()}));
       assert.equal(computed.overflow,false);
       assert.ok(computed.menuTrigger.width>=44 && computed.menuTrigger.height>=44);
@@ -202,13 +210,13 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
       assert.equal(await page.locator('.menu-panel').evaluate(e=>parseFloat(getComputedStyle(e).transitionDelay)),0);
       await page.keyboard.press('Escape');
       assert.equal(await page.locator('[data-menu-toggle]').getAttribute('aria-expanded'),'false');
-      assert.deepEqual(errors,[]); assert.deepEqual(external,[]); assert.deepEqual(badResponses,[]);
-      report.viewports.push({width,height,...computed,sheetWidth,axeViolations:0,consoleErrors:0,externalRequests:0,reducedMotionSeconds:duration});
+      assert.deepEqual(errors,[]); assert.deepEqual(external,[googleTagUrl]); assert.deepEqual(badResponses,[]);
+      report.viewports.push({width,height,...computed,sheetWidth,axeViolations:0,consoleErrors:0,externalRequests:1,reducedMotionSeconds:duration});
       await context.close();
     });
     await t.test('tablet, narrow mobile and coarse landscape remain usable',async()=>{
       for(const [width,height] of [[320,568],[768,1024],[900,768],[667,375]]) {
-        const context=await browser.newContext({viewport:{width,height},isMobile:width<768,hasTouch:true});
+        const context=await newContext(browser,{viewport:{width,height},isMobile:width<768,hasTouch:true});
         const page=await context.newPage(); await page.goto(base);
         assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
         if(width===667) {
@@ -229,7 +237,7 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
       }
     });
     await t.test('200% equivalent reflow keeps the menu usable',async()=>{
-      const context=await browser.newContext({viewport:{width:720,height:450}});
+      const context=await newContext(browser,{viewport:{width:720,height:450}});
       const page=await context.newPage();await page.goto(base);
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
       await page.getByRole('button',{name:'Open menu',exact:true}).click();
@@ -246,7 +254,7 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
     });
     await t.test('mobile trigger is iconic, sticky and operable throughout the page',async()=>{
       for(const [width,height] of mobileSizes) {
-        const context=await browser.newContext({viewport:{width,height},isMobile:true,hasTouch:true});
+        const context=await newContext(browser,{viewport:{width,height},isMobile:true,hasTouch:true});
         const page=await context.newPage();
         const errors=[],badResponses=[];
         page.on('pageerror',error=>errors.push(error.message));

@@ -6,6 +6,7 @@ import { files, digest } from '../scripts/build.mjs';
 import { startServer } from '../scripts/serve.mjs';
 
 test('artifact contains only intended public files, verified checksums and local references',async()=>{
+  const googleTagUrl='https://www.googletagmanager.com/gtag/js?id=G-N6X517GEQ2';
   const names=await files('dist');
   const manifest=JSON.parse(await readFile('dist/artifact-manifest.json','utf8'));
   assert.deepEqual(names.filter(x=>x!=='artifact-manifest.json').sort(),Object.keys(manifest.files).sort());
@@ -15,9 +16,10 @@ test('artifact contains only intended public files, verified checksums and local
     if(name!=='artifact-manifest.json') assert.equal(digest(buffer),manifest.files[name]);
     if(/\.(woff2?|ttf|otf|png|jpe?g|webp)$/.test(name)) continue;
     const content=buffer.toString();
-    assert.doesNotMatch(content,/jaredgoldberg\.ca|googletagmanager|google-analytics|gtag\(|\bG-[A-Z0-9]{6,}\b|GTM-[A-Z0-9]+|UA-\d+-\d+|cloudflareinsights|data-track|application\/ld\+json|rel=["']canonical|property=["']og:|https:\/\/jaredgoldberg\.org/i);
+    assert.doesNotMatch(content,/jaredgoldberg\.ca|GTM-[A-Z0-9]+|UA-\d+-\d+|cloudflareinsights|data-track|application\/ld\+json|rel=["']canonical|property=["']og:|https:\/\/jaredgoldberg\.org/i);
     for(const match of content.matchAll(/(?:src|href)=["']([^"']+)|url\(["']?([^\s)"']+)/g)) {
       const ref=match[1]||match[2];
+      if(ref===googleTagUrl) continue;
       assert.ok(!/^(https?:)?\/\//.test(ref),`External asset/link: ${ref}`);
       const path=ref.split(/[?#]/)[0];
       if(path) assert.ok(names.includes(path==='/'?'index.html':path.replace(/^\//,'')),`Missing ${ref}`);
@@ -26,6 +28,9 @@ test('artifact contains only intended public files, verified checksums and local
   }
   assert.match(await readFile('dist/robots.txt','utf8'),/User-agent: \*\s+Disallow: \//);
   const html=await readFile('dist/index.html','utf8');
+  assert.equal(html.match(/G-N6X517GEQ2/g)?.length,2);
+  assert.match(html,/<script async src="https:\/\/www\.googletagmanager\.com\/gtag\/js\?id=G-N6X517GEQ2"><\/script>/);
+  assert.match(html,/window\.dataLayer = window\.dataLayer \|\| \[\];\s+function gtag\(\)\{dataLayer\.push\(arguments\);\}\s+gtag\('js', new Date\(\)\);\s+gtag\('config', 'G-N6X517GEQ2'\);/);
   assert.match(html,/<meta name="robots" content="noindex, nofollow">/);
   assert.doesNotMatch(html,/maximum-scale|user-scalable=no/);
   assert.doesNotMatch(html,/menu-panel__icon|>×<|>○<|>\+<|emoji/i);
