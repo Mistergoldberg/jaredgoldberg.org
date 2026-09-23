@@ -9,7 +9,9 @@ import tempfile
 
 URL = 'https://qa.jaredgoldberg.org'
 MIME={'.html':['text/html'],'.css':['text/css'],'.js':['application/javascript','text/javascript'],
-      '.woff2':['font/woff2'],'.svg':['image/svg+xml'],'.json':['application/json'],'.txt':['text/plain']}
+      '.woff2':['font/woff2'],'.svg':['image/svg+xml'],'.png':['image/png'],
+      '.jpg':['image/jpeg'],'.jpeg':['image/jpeg'],'.webp':['image/webp'],
+      '.json':['application/json'],'.txt':['text/plain']}
 
 def request(url):
     with tempfile.TemporaryDirectory(prefix='qa-http-') as tmp:
@@ -41,7 +43,7 @@ def verify(directory, base=URL):
     html=(directory/'index.html').read_text()
     if re.search(r'rel=[\"\x27]canonical|https?://jaredgoldberg\.(ca|org)',html):raise ValueError('Unexpected production URL/canonical')
     for name in ['/.git/config','/.env','/package.json','/src/navigation.js','/scripts/deploy-qa.py',
-                 '/docs/qa-runbook.md','/assets/','/fonts/','/assets/main.js.map','/missing-qa-route']:
+                 '/docs/qa-runbook.md','/assets/','/fonts/','/images/','/assets/main.js.map','/missing-qa-route']:
         status, headers, _ = request(base+name)
         if status != 404: raise ValueError(f'{name}: expected 404, got {status}')
         if 'noindex' not in headers or 'no-store' not in headers: raise ValueError('Missing QA headers on 404')

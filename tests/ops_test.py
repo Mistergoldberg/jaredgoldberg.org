@@ -144,4 +144,12 @@ class RollbackGateTests(unittest.TestCase):
         with self.assertRaises(OSError):deploy.activate_with_rollback(remote,Verifier(),NEXT,BASE,'candidate','previous')
         self.assertEqual(state['target'],BASE)
 
+
+class NginxTemplateTests(unittest.TestCase):
+    def test_qa_vhost_allows_image_files_and_preserves_noarchive(self):
+        text=(Path(__file__).resolve().parents[1]/'ops/nginx/qa.jaredgoldberg.org.conf').read_text()
+        self.assertIn(r'location ~ ^/images/[a-zA-Z0-9_.-]+\.(png|jpe?g|webp)$ { try_files $uri =404; }',text)
+        self.assertEqual(text.count('X-Robots-Tag "noindex, nofollow, noarchive"'),3)
+
+
 if __name__=='__main__':unittest.main()
