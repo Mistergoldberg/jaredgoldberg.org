@@ -156,3 +156,13 @@ sentence as local page content. Preserve one unchanged PNG source and use
 `object-fit: cover` with a centered 16:9 frame on desktop/tablet and a 1:1 frame below the mobile
 breakpoint. Retain intrinsic dimensions, descriptive alternative text and an explicit
 high fetch priority; do not add a remote image dependency or duplicate crop files.
+
+## 2026-09-23 — symmetric mobile content gutters
+
+Supersede the reserved mobile menu-control rail for page content. Center every
+mobile layout shell with the standard 16px gutter on both sides, while retaining
+the existing zero-height sticky header, left-positioned 44×44 menu trigger and
+safe-area positioning. The intro's top spacing keeps its initial content clear
+of the control. While scrolling, the opaque elevated control may pass over page
+content instead of shifting every section into a permanent asymmetric rail.
+Desktop/tablet layout remains unchanged.

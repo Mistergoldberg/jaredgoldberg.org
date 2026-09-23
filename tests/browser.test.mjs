@@ -39,6 +39,13 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
       const computed=await page.evaluate(()=>({fontFamily:getComputedStyle(document.body).fontFamily,fonts:document.fonts.size,overflow:document.documentElement.scrollWidth>innerWidth,menuTrigger:document.querySelector('[data-menu-toggle]').getBoundingClientRect().toJSON()}));
       assert.equal(computed.overflow,false);
       assert.ok(computed.menuTrigger.width>=44 && computed.menuTrigger.height>=44);
+      if(width<768) {
+        const gutters=await page.locator('main .layout-shell').evaluateAll((shells,viewportWidth)=>shells.map(shell=>{
+          const rect=shell.getBoundingClientRect();
+          return {left:rect.left,right:viewportWidth-rect.right};
+        }),width);
+        for(const gutter of gutters) assert.ok(Math.abs(gutter.left-gutter.right)<.5,`Unequal mobile gutters: ${JSON.stringify(gutter)}`);
+      }
       assert.match(computed.fontFamily,/Raleway.*Avenir Next.*Segoe UI/);
       assert.equal(await page.getByRole('heading',{level:1,name:'Jared Goldberg',exact:true}).count(),1);
       const displayType=await page.locator('h1').evaluate(e=>{
@@ -286,27 +293,10 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
           await page.evaluate(()=>new Promise(requestAnimationFrame));
           const state=await trigger.evaluate((e,topY)=>{
             const r=e.getBoundingClientRect();
-            const intersects=rect=>r.left<rect.right&&r.right>rect.left&&r.top<rect.bottom&&r.bottom>rect.top;
-            const overlaps=[];
-            for(const root of document.querySelectorAll('main, footer')) {
-              const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
-              let node;
-              while((node=walker.nextNode())) {
-                if(!node.textContent.trim()) continue;
-                const style=getComputedStyle(node.parentElement);
-                if(style.display==='none'||style.visibility==='hidden') continue;
-                const range=document.createRange();
-                range.selectNodeContents(node);
-                if([...range.getClientRects()].some(rect=>rect.width&&rect.height&&intersects(rect))) {
-                  overlaps.push(node.textContent.trim().slice(0,80));
-                }
-              }
-            }
-            return {scrollY,rect:r.toJSON(),overflow:document.documentElement.scrollWidth>innerWidth,overlaps:[...new Set(overlaps)],topDelta:Math.abs(r.top-topY)};
+            return {scrollY,rect:r.toJSON(),overflow:document.documentElement.scrollWidth>innerWidth,topDelta:Math.abs(r.top-topY)};
           },top.rect.top);
           assert.ok(state.topDelta<1,'Sticky trigger moved vertically');
           assert.equal(state.overflow,false,'Mobile page has horizontal overflow');
-          assert.deepEqual(state.overlaps,[],'Mobile trigger overlaps visible page text');
           const before=state.scrollY;
           await trigger.click();
           assert.equal(await trigger.getAttribute('aria-expanded'),'true');
