@@ -12,6 +12,12 @@ export const navigation = [
 ];
 export const fixture = {
   introduction: 'A temporary space to review typography, navigation, spacing, and interface details.',
+  introductionImage: {
+    src: '/images/above-the-fold-prototype.png',
+    alt: 'Two people reviewing a mobile interface prototype and paper design sketches.',
+    width: 1536,
+    height: 1024,
+  },
   heading: 'Design-system foundation',
   paragraph: 'This page contains QA specimens. Future content and navigation are still to be defined.',
   sample: 'Regular text, bold emphasis, and a readable line length.',

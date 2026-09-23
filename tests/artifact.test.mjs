@@ -10,10 +10,10 @@ test('artifact contains only intended public files, verified checksums and local
   const manifest=JSON.parse(await readFile('dist/artifact-manifest.json','utf8'));
   assert.deepEqual(names.filter(x=>x!=='artifact-manifest.json').sort(),Object.keys(manifest.files).sort());
   for(const name of names) {
-    assert.match(name,/^(index\.html|robots\.txt|favicon\.svg|release\.json|artifact-manifest\.json|assets\/[\w.-]+\.(css|js)|fonts\/OFL\.txt|fonts\/[\w.-]+\.(woff2?|ttf|otf))$/);
+    assert.match(name,/^(index\.html|robots\.txt|favicon\.svg|release\.json|artifact-manifest\.json|assets\/[\w.-]+\.(css|js)|images\/[\w.-]+\.(png|jpe?g|webp)|fonts\/OFL\.txt|fonts\/[\w.-]+\.(woff2?|ttf|otf))$/);
     const buffer=await readFile(join('dist',name));
     if(name!=='artifact-manifest.json') assert.equal(digest(buffer),manifest.files[name]);
-    if(/\.(woff2?|ttf|otf)$/.test(name)) continue;
+    if(/\.(woff2?|ttf|otf|png|jpe?g|webp)$/.test(name)) continue;
     const content=buffer.toString();
     assert.doesNotMatch(content,/jaredgoldberg\.ca|googletagmanager|google-analytics|gtag\(|\bG-[A-Z0-9]{6,}\b|GTM-[A-Z0-9]+|UA-\d+-\d+|cloudflareinsights|data-track|application\/ld\+json|rel=["']canonical|property=["']og:|https:\/\/jaredgoldberg\.org/i);
     for(const match of content.matchAll(/(?:src|href)=["']([^"']+)|url\(["']?([^\s)"']+)/g)) {
@@ -33,6 +33,8 @@ test('artifact contains only intended public files, verified checksums and local
   assert.match(html,/menu-trigger__label">Menu<\/span><span class="menu-trigger__icon" aria-hidden="true">/);
   assert.match(html,/<h1 class="site-wordmark" aria-label="Jared Goldberg">/);
   assert.match(html,/site-wordmark__line" aria-hidden="true">Jared<\/span><span class="site-wordmark__line" aria-hidden="true">Goldberg<\/span>/);
+  assert.match(html,/<figure class="fixture-intro__media"><img src="\/images\/above-the-fold-prototype\.png" alt="Two people reviewing a mobile interface prototype and paper design sketches\." width="1536" height="1024" decoding="async" fetchpriority="high"><\/figure>/);
+  assert.equal(digest(await readFile('dist/images/above-the-fold-prototype.png')),'907e026d74ec626d044cdac1b88c2e9ba7d9d6c926be680f62e8a953384c7e82');
   assert.match(html,/menu-panel__close-icon/);
   assert.match(html,/menu-panel__chevron/);
 });

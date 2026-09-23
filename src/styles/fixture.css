@@ -14,6 +14,19 @@
   background: var(--wordmark-background);
   color: var(--wordmark-foreground);
 }
+.fixture-intro__media {
+  width: 100%;
+  margin-top: var(--space-4);
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--color-surface-muted);
+}
+.fixture-intro__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
 .fixture-section { scroll-margin-top: var(--space-8); }
 .fixture-section h2 { margin-bottom: var(--space-5); }
 .fixture-specimen { padding-block: var(--space-6); border-top: var(--stroke-1) solid var(--color-border-subtle); }
@@ -24,4 +37,7 @@
 .fixture-swatch--muted { background: var(--color-surface-muted); }
 .fixture-swatch--ink { background: var(--color-text-primary); }
 .fixture-swatch--focus { background: var(--color-focus); }
-@media (max-width: 47.99rem) { .fixture-intro { padding-block-start: var(--space-10); } }
+@media (max-width: 47.99rem) {
+  .fixture-intro { padding-block-start: var(--space-10); }
+  .fixture-intro__media { aspect-ratio: 1; }
+}

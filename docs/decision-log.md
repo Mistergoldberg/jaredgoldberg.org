@@ -148,3 +148,11 @@ a one-pixel white inner separator. This preserves the approved red outer ring
 while keeping a visible dual treatment on dark controls and surfaces. Neutral
 menu hover and current-page treatments remain intentionally neutral rather than
 being indiscriminately recoloured.
+
+## 2026-09-22 — above-the-fold prototype image
+
+Place the supplied 1536×1024 prototype-review image directly below the introductory
+sentence as local page content. Preserve one unchanged PNG source and use
+`object-fit: cover` with a centered 16:9 frame on desktop/tablet and a 1:1 frame below the mobile
+breakpoint. Retain intrinsic dimensions, descriptive alternative text and an explicit
+high fetch priority; do not add a remote image dependency or duplicate crop files.

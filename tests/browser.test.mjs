@@ -96,6 +96,16 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
       assert.ok(wordmark.lines[1].rect.width>wordmark.lines[0].rect.width);
       assert.ok(Math.abs(wordmark.lines[1].rect.top-wordmark.lines[0].rect.bottom)<1);
       for(const line of wordmark.lines) { assert.equal(line.background,'rgb(0, 0, 0)'); assert.equal(line.color,'rgb(255, 255, 255)'); }
+      const introImage=await page.locator('.fixture-intro__media img').evaluate(image=>{
+        const imageRect=image.getBoundingClientRect(),textRect=image.closest('.fixture-intro').querySelector('.text-block > p:not([class])').getBoundingClientRect();
+        return {complete:image.complete,naturalWidth:image.naturalWidth,naturalHeight:image.naturalHeight,rect:imageRect.toJSON(),afterText:imageRect.top>=textRect.bottom,fit:getComputedStyle(image).objectFit,position:getComputedStyle(image).objectPosition,alt:image.alt};
+      });
+      assert.equal(introImage.complete,true); assert.equal(introImage.naturalWidth,1536); assert.equal(introImage.naturalHeight,1024);
+      assert.equal(introImage.afterText,true); assert.equal(introImage.fit,'cover'); assert.equal(introImage.position,'50% 50%');
+      assert.equal(introImage.alt,'Two people reviewing a mobile interface prototype and paper design sketches.');
+      const expectedImageRatio=width<768?1:16/9;
+      assert.ok(Math.abs(introImage.rect.width/introImage.rect.height-expectedImageRatio)<.01);
+      assert.ok(requests.includes(base+'/images/above-the-fold-prototype.png'),'Intro image not loaded locally');
       const fontPolicy=JSON.parse(await readFile('tests/font-policy.json','utf8'));
       for(const font of fontPolicy.requiredFiles) assert.ok(requests.includes(base+'/'+font),`Font not loaded: ${font}`);
       const cdp=await context.newCDPSession(page);
