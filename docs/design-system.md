@@ -1,6 +1,6 @@
 # JaredGoldberg.org design system
 
-Status: **binding for implementation** as of 2026-09-23. This document governs the shared site shell and content primitives. The QA fixture demonstrates the rules but is not an approved homepage composition or information architecture.
+Status: **binding for implementation** as of 2026-09-23. This document governs the shared site shell and content primitives. The institutional-index homepage now applies these rules; its page-specific decisions are recorded separately in `docs/homepage-design.md`.
 
 ## Decision status
 
@@ -14,8 +14,8 @@ Implemented and binding:
 
 Fixture-only or still open:
 
-- The two-line black-block wordmark and the existing prototype image are review fixtures, not a universal heading or banner treatment.
-- Final homepage composition, section order, navigation labels and destinations remain editorial/design work for the later stage.
+- The earlier two-line black-block wordmark and prototype image were review fixtures and are not homepage treatments. The implemented homepage uses plain text with controlled name lines and no imagery.
+- Final detail-page architecture and unresolved index, archive, research, writing and biography destinations remain editorial/routing work.
 - Image focal points, alt text and whether a missing image is meaningful or decorative depend on the supplied asset and page context. Do not invent them.
 - Physical iOS Safari, VoiceOver and non-Chromium browser review remain outstanding.
 
@@ -120,6 +120,6 @@ This is a content-to-pattern map, not a page layout specification.
 
 ## Usage and verification
 
-The QA fixture deliberately renders three project records spanning art, civic research and employer-owned professional work plus a banner placeholder. Unit tests exercise all seven approved projects, all five inquiries, archive and writing patterns without publishing a homepage.
+The homepage renders all seven approved project records, all five inquiries, the archive excerpt and both writing records. Unit tests continue to exercise the reusable patterns independently of the page composition.
 
 Before a page is accepted, run `npm test` with the documented Chromium executable on this macOS 12 workspace. Review at least 1440×900, 1024×768, 768×1024, 390×844, 375×667 and 320×568, including the open menu, keyboard focus, long records, banner crop/placeholder and reduced motion. Record any browser or asset limits in the handoff.

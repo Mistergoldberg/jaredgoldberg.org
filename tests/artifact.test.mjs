@@ -7,6 +7,10 @@ import { startServer } from '../scripts/serve.mjs';
 
 test('artifact contains only intended public files, verified checksums and local references',async()=>{
   const googleTagUrl='https://www.googletagmanager.com/gtag/js?id=G-N6X517GEQ2';
+  const approvedExternalLinks=new Set([
+    'https://jaredgoldberg.ca/writing/the-future-of-work-is-a-design-problem/',
+    'https://jaredgoldberg.ca/writing/dignity-is-a-systems-output/',
+  ]);
   const names=await files('dist');
   const manifest=JSON.parse(await readFile('dist/artifact-manifest.json','utf8'));
   assert.deepEqual(names.filter(x=>x!=='artifact-manifest.json').sort(),Object.keys(manifest.files).sort());
@@ -16,11 +20,14 @@ test('artifact contains only intended public files, verified checksums and local
     if(name!=='artifact-manifest.json') assert.equal(digest(buffer),manifest.files[name]);
     if(/\.(woff2?|ttf|otf|png|jpe?g|webp)$/.test(name)) continue;
     const content=buffer.toString();
-    assert.doesNotMatch(content,/jaredgoldberg\.ca|GTM-[A-Z0-9]+|UA-\d+-\d+|cloudflareinsights|data-track|application\/ld\+json|rel=["']canonical|property=["']og:|https:\/\/jaredgoldberg\.org/i);
+    assert.doesNotMatch(content,/GTM-[A-Z0-9]+|UA-\d+-\d+|cloudflareinsights|data-track|application\/ld\+json|rel=["']canonical|property=["']og:|https:\/\/jaredgoldberg\.org/i);
     for(const match of content.matchAll(/(?:src|href)=["']([^"']+)|url\(["']?([^\s)"']+)/g)) {
       const ref=match[1]||match[2];
       if(ref===googleTagUrl) continue;
-      assert.ok(!/^(https?:)?\/\//.test(ref),`External asset/link: ${ref}`);
+      if(/^(https?:)?\/\//.test(ref)) {
+        assert.ok(approvedExternalLinks.has(ref),`Unapproved external destination: ${ref}`);
+        continue;
+      }
       const path=ref.split(/[?#]/)[0];
       if(path) assert.ok(names.includes(path==='/'?'index.html':path.replace(/^\//,'')),`Missing ${ref}`);
       if(ref.includes('#')) assert.ok((await readFile('dist/index.html','utf8')).includes(`id="${ref.split('#')[1]}"`),`Missing anchor ${ref}`);
@@ -36,13 +43,23 @@ test('artifact contains only intended public files, verified checksums and local
   assert.doesNotMatch(html,/menu-panel__icon|>×<|>○<|>\+<|emoji/i);
   assert.match(html,/data-menu-toggle aria-label="Open menu"/);
   assert.match(html,/menu-trigger__label">Menu<\/span><span class="menu-trigger__icon" aria-hidden="true">/);
-  assert.match(html,/<h1 class="site-wordmark" aria-label="Jared Goldberg">/);
-  assert.match(html,/site-wordmark__line" aria-hidden="true">Jared<\/span><span class="site-wordmark__line" aria-hidden="true">Goldberg<\/span>/);
-  assert.match(html,/<figure class="media-frame media-frame--banner fixture-intro__media"><img src="\/images\/above-the-fold-prototype\.png" alt="Two people reviewing a mobile interface prototype and paper design sketches\." width="1536" height="1024" decoding="async" fetchpriority="high"><\/figure>/);
-  assert.match(html,/<section id="content-patterns"/);
-  assert.equal(html.match(/class="record record--project"/g)?.length,3);
+  assert.match(html,/<meta name="description" content="Jared Goldberg works across art, software, archives, education, professional systems and public writing\.">/);
+  assert.match(html,/<h1 id="home-title" aria-label="Jared Goldberg"><span aria-hidden="true">Jared<\/span><span aria-hidden="true">Goldberg<\/span><\/h1>/);
+  for(const id of ['inquiries','projects','archive','writing','ecosystem','start']) assert.match(html,new RegExp(`<section id="${id}"`));
+  assert.equal(html.match(/class="record record--inquiry"/g)?.length,5);
+  assert.equal(html.match(/class="record record--project"/g)?.length,7);
+  assert.equal(html.match(/class="writing-record"/g)?.length,2);
+  assert.equal(html.match(/class="start-route"/g)?.length,4);
+  assert.equal(html.match(/data-destination-status="pending"/g)?.length,6);
+  assert.match(html,/Institutional project in development/);
+  assert.match(html,/Developing proposal/);
+  assert.match(html,/Employer-owned work/);
   assert.match(html,/In-store retail media systems/);
-  assert.match(html,/role="img" aria-label="Banner image pending"/);
+  assert.match(html,/The Conditions of Dignity Are a Systems Output/);
+  assert.match(html,/https:\/\/jaredgoldberg\.ca\/writing\/the-future-of-work-is-a-design-problem\//);
+  assert.match(html,/https:\/\/jaredgoldberg\.ca\/writing\/dignity-is-a-systems-output\//);
+  assert.doesNotMatch(html,/<main[\s\S]*?<img\b/);
+  assert.doesNotMatch(html,/TEMPORARY QA FIXTURE|Content-pattern stress test|Destination pending<\/a>/);
   assert.equal(digest(await readFile('dist/images/above-the-fold-prototype.png')),'907e026d74ec626d044cdac1b88c2e9ba7d9d6c926be680f62e8a953384c7e82');
   assert.match(html,/menu-panel__close-icon/);
   assert.match(html,/menu-panel__chevron/);

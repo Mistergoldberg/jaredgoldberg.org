@@ -18,6 +18,6 @@ export function renderNavigation(items) {
     <div class="menu-panel__backdrop" data-menu-close aria-hidden="true"></div>
     <div class="menu-panel__sheet" role="dialog" aria-modal="true" aria-labelledby="menu-panel-title" tabindex="-1">
       <div class="menu-panel__top"><h2 id="menu-panel-title" class="u-sr-only">Main menu</h2><button class="menu-panel__close" type="button" data-menu-close aria-label="Close menu"><span class="menu-panel__close-icon" aria-hidden="true"></span></button></div>
-      <nav class="menu-panel__nav" aria-label="QA fixture"><ul class="menu-panel__links">${items.map(item => entry(item)).join('')}</ul></nav>
+      <nav class="menu-panel__nav" aria-label="Primary"><ul class="menu-panel__links">${items.map(item => entry(item)).join('')}</ul></nav>
     </div></div>`;
 }

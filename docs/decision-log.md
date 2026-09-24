@@ -190,3 +190,25 @@ records and a placeholder. This does not approve a homepage composition,
 navigation model, section order, asset crop or final destination. External links
 receive a graphic indicator and stay in the same tab unless a specific workflow
 justifies an announced new tab.
+
+## 2026-09-23 — institutional index homepage
+
+Compose the homepage as a text-led institutional index rather than a promotional
+portfolio or product grid. Use a split identity/introduction hero followed by six
+numbered movements: inquiries, projects, archive, writing, domain ecosystem and
+entry points. Give the five inquiries a parallel research-grid treatment; keep
+the seven projects as factual, variable-height records; give the archive a dark
+editorial field; and retain writing as an externally linked publication list.
+
+The standard-page banner ratio does not apply to this homepage. Stage 1 scoped it
+to standard inner pages, marked the existing prototype image as fixture-only and
+left the homepage composition open. With no approved artwork, focal points or alt
+text, the homepage uses no image or fabricated placeholder. The shared media-frame
+primitive remains ready for later supplied assets without determining this layout.
+
+Only link destinations that exist and were verified: homepage fragments and the
+two supplied JaredGoldberg.ca essay URLs. Render approved calls to unresolved
+research, project-index, archive, writing-index, complete-index and biography/CV
+destinations as visibly pending non-interactive records on QA. Do not infer project
+detail URLs or specialist-domain URLs. Replace these records with links only after
+an exact route is supplied and verified.

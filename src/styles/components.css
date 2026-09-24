@@ -65,9 +65,7 @@
 }
 
 .text-link {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.42em;
+  display: inline;
   max-width: 100%;
   color: var(--color-link);
   font-weight: var(--font-weight-bold);
@@ -81,9 +79,11 @@
 
 .text-link__external-mark {
   position: relative;
-  flex: 0 0 auto;
+  display: inline-block;
   width: 0.62em;
   height: 0.62em;
+  margin-left: 0.42em;
+  vertical-align: 0.04em;
   border-top: 0.11em solid currentColor;
   border-right: 0.11em solid currentColor;
 }

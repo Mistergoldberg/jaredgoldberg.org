@@ -59,6 +59,10 @@ export function renderWritingRecord({ title, summary, href } = {}) {
   return `<article class="writing-record"><h3 class="writing-record__title">${renderTextLink({ href, label: title })}</h3><p>${e(requireText(summary, 'summary'))}</p></article>`;
 }
 
+export function renderPendingDestination(label) {
+  return `<p class="destination-pending" data-destination-status="pending"><span class="destination-pending__label">${e(requireText(label, 'destination label'))}</span><span class="destination-pending__status">Destination pending</span></p>`;
+}
+
 export function renderMediaPlaceholder({ label = 'Image pending', decorative = false } = {}) {
   const semantics = decorative ? ' aria-hidden="true"' : ` role="img" aria-label="${e(requireText(label, 'label'))}"`;
   return `<div class="media-frame media-frame--banner media-placeholder"${semantics}><span aria-hidden="true">${e(label)}</span></div>`;

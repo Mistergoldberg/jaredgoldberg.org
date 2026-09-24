@@ -1,8 +1,7 @@
 # jaredgoldberg.org
 
-Minimal QA foundation for the future jaredgoldberg.org site. The design primitives
-come from the existing homepage system; all page specimens and navigation labels
-are temporary. This repository does not define the final content architecture.
+Static institutional-index homepage for jaredgoldberg.org, built on the verified
+design system and deployed through an isolated QA release workflow.
 
 ## Stack and local setup
 
@@ -41,9 +40,9 @@ Other supported environments should use the normally installed Playwright browse
 ## Source organization
 
 - `src/styles/`: tokens, font policy, base, typography, layout, navigation,
-  components, responsive rules, fixture composition and reduced motion.
+  components, responsive rules, homepage composition and reduced motion.
 - `src/components/`: HTML rendering and data-driven navigation components.
-- `src/content/qa-fixture.mjs`: temporary identity, labels and specimen content.
+- `src/content/homepage.mjs`: approved homepage copy, navigation and audited destinations.
 - `src/navigation.js`: menu behavior; contains no navigation data.
 - `public/`: only public assets and QA robots policy. No source-site images are transferred. The verified source-served Raleway
   webfont and its OFL license are self-hosted under `public/fonts/`. The favicon is a neutral QA square.
@@ -53,18 +52,19 @@ Other supported environments should use the normally installed Playwright browse
 - `docs/`: inventory, decisions, validation, screenshots and QA runbook.
 - `dist/`, `test-results/`, `artifacts/`: generated and ignored.
 
-Change future labels and destinations in `src/content/qa-fixture.mjs`. Replace the
-fixture composition in `src/components/page.mjs` without changing the shared
-styles or navigation logic. General controls and headings remain semantic HTML.
+Change homepage copy, labels and destinations in `src/content/homepage.mjs`.
+`src/components/page.mjs` defines the semantic institutional-index composition;
+shared styles and navigation logic remain independent of its content. General
+controls and headings remain semantic HTML.
 Binding design rules and content-pattern APIs are documented in
-[`docs/design-system.md`](docs/design-system.md). The fixture's content-pattern
-section is a stress-test specimen, not an approved homepage layout.
+[`docs/design-system.md`](docs/design-system.md); homepage-specific composition and
+route decisions are documented in [`docs/homepage-design.md`](docs/homepage-design.md).
 
 ## Fonts
 
 The exact Raleway 4.026 Latin WOFF2 observed in the source site's network requests
 is self-hosted with its SIL OFL license. Its verified variable weight axis covers
-100–900; the fixture uses 400/700/900. No external font requests or system-installed
+100–900; the homepage uses 400/700/900 and the menu uses 200. No external font requests or system-installed
 Raleway files are required. See [font evidence](docs/font-evidence/README.md) for
 URLs, hashes, license, the older installed font discovered on this Mac, and visual
 comparison. The initial fallback policy is superseded by this correction.

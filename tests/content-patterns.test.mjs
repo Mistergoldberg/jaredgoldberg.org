@@ -6,6 +6,7 @@ import {
   renderCategoryLabel,
   renderInquiryRecord,
   renderMediaPlaceholder,
+  renderPendingDestination,
   renderProjectRecord,
   renderTextLink,
   renderStatusLabel,
@@ -80,4 +81,5 @@ test('links, actions and placeholders enforce stable accessible contracts', () =
   assert.throws(() => renderTextLink({ href: 'http:\/\/example.com', label: 'Bad' }), /must be/);
   assert.match(renderMediaPlaceholder({ label: 'Banner image pending' }), /role="img" aria-label="Banner image pending"/);
   assert.match(renderMediaPlaceholder({ decorative: true }), /aria-hidden="true"/);
+  assert.equal(renderPendingDestination('Open the complete index'), '<p class="destination-pending" data-destination-status="pending"><span class="destination-pending__label">Open the complete index</span><span class="destination-pending__status">Destination pending</span></p>');
 });
