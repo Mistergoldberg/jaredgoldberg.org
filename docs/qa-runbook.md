@@ -8,6 +8,14 @@ only to immutable `/var/www/jaredgoldberg.org/releases/<timestamp>-<sha12>`.
 The separate production `current` symlink is never written by these tools.
 Private deployment ledger: `/var/www/jaredgoldberg.org/shared/qa/ledger.jsonl`.
 
+The QA allowlist includes `/` and the four published practice routes:
+`/media-archives-and-memory/`, `/community-service/`,
+`/systems-and-institutions/` and `/art/` (plus their exact artifact files). Before
+the first deployment containing these pages, install the updated
+`ops/nginx/qa.jaredgoldberg.org.conf` with the guarded vhost installer and verify
+the live configuration checksum; the site release script deliberately does not
+mutate Nginx.
+
 On 2026-09-19 the authorized continuation established:
 
 - Cloudflare DNS-only A `qa` → `5.161.223.134`, TTL 300. Existing proxied apex A and

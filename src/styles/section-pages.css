@@ -1,0 +1,155 @@
+/* Long-form practice sections. */
+.section-page__hero {
+  padding-block: clamp(8rem, 16vw, 14rem) var(--section-space);
+}
+
+.section-page__hero > .layout-shell {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--space-4) var(--grid-gap);
+  align-items: end;
+}
+
+.section-page__identity {
+  grid-column: 1 / -1;
+  width: fit-content;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+}
+
+.section-page__kicker { grid-column: 1 / span 4; }
+
+.section-page__hero h1 {
+  grid-column: 1 / span 10;
+  max-width: 14ch;
+  font-size: clamp(3.2rem, 2rem + 5.8vw, 7.5rem);
+}
+
+.section-page__media { margin-bottom: var(--section-space-loose); }
+
+.section-page__layout {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--grid-gap-wide) var(--grid-gap);
+  padding-bottom: var(--section-space-loose);
+}
+
+.section-page__toc {
+  grid-column: 1 / span 3;
+  align-self: start;
+  position: sticky;
+  top: var(--space-6);
+}
+
+.section-page__toc h2 {
+  margin-bottom: var(--space-4);
+  font-size: var(--type-size-meta);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.section-page__toc ul,
+.section-page__destinations ul,
+.section-page__siblings ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.section-page__toc li + li { margin-top: var(--space-2); }
+
+.section-page__toc a {
+  display: inline-block;
+  min-height: 2.75rem;
+  padding-block: 0.65rem;
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-bold);
+  text-decoration-color: var(--color-border-strong);
+}
+
+.section-page__article { grid-column: 5 / span 6; }
+
+.article-section {
+  padding-block: 0 var(--section-space);
+  scroll-margin-top: var(--space-6);
+}
+
+.article-section + .article-section {
+  padding-top: var(--section-space);
+  border-top: var(--stroke-1) solid var(--color-border-subtle);
+}
+
+.article-section h2,
+.section-page__destinations h2 { margin-bottom: var(--space-6); }
+.article-section p + p { margin-top: var(--space-4); }
+
+.article-section > p:first-of-type {
+  font-size: clamp(1.12rem, 1.02rem + 0.38vw, 1.38rem);
+  line-height: 1.48;
+}
+
+.section-page__destinations {
+  padding-top: var(--section-space);
+  border-top: var(--stroke-1) solid var(--color-border-subtle);
+}
+
+.section-page__destinations li {
+  padding-block: var(--space-4);
+  border-top: var(--stroke-1) solid var(--color-border-subtle);
+}
+
+.section-page__destinations li:last-child { border-bottom: var(--stroke-1) solid var(--color-border-subtle); }
+
+.section-page__siblings {
+  padding-block: var(--section-space);
+  border-top: var(--stroke-1) solid var(--color-border-subtle);
+}
+
+.section-page__siblings h2 { margin-bottom: var(--section-space-tight); }
+
+.section-page__siblings ul {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: var(--stroke-1) solid var(--color-border-subtle);
+  border-left: var(--stroke-1) solid var(--color-border-subtle);
+}
+
+.section-page__siblings a {
+  display: flex;
+  min-height: 7rem;
+  height: 100%;
+  align-items: flex-end;
+  padding: var(--space-4);
+  border-right: var(--stroke-1) solid var(--color-border-subtle);
+  border-bottom: var(--stroke-1) solid var(--color-border-subtle);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-bold);
+}
+
+.section-page__siblings a[aria-current="page"] {
+  color: var(--color-text-inverse);
+  background: var(--color-text-primary);
+  text-decoration: none;
+}
+
+@media (max-width: 63.99rem) {
+  .section-page__article { grid-column: 5 / -1; }
+  .section-page__siblings ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 47.99rem) {
+  .section-page__hero { padding-block: clamp(6.5rem, 28vw, 8rem) var(--section-space-tight); }
+  .section-page__hero > .layout-shell,
+  .section-page__layout { grid-template-columns: minmax(0, 1fr); }
+  .section-page__identity,
+  .section-page__kicker,
+  .section-page__hero h1,
+  .section-page__toc,
+  .section-page__article { grid-column: auto; }
+  .section-page__hero h1 { font-size: clamp(2.8rem, 14vw, 4rem); }
+  .section-page__toc { position: static; }
+  .section-page__toc ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--space-3); }
+  .section-page__siblings ul { grid-template-columns: minmax(0, 1fr); }
+  .section-page__siblings a { min-height: 4.5rem; }
+}

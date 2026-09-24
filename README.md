@@ -1,7 +1,8 @@
 # jaredgoldberg.org
 
-Static institutional-index homepage for jaredgoldberg.org, built on the verified
-design system and deployed through an isolated QA release workflow.
+Static institutional index and four supporting practice pages for
+jaredgoldberg.org, built on the verified design system and deployable through an
+isolated QA release workflow.
 
 ## Stack and local setup
 
@@ -42,7 +43,9 @@ Other supported environments should use the normally installed Playwright browse
 - `src/styles/`: tokens, font policy, base, typography, layout, navigation,
   components, responsive rules, homepage composition and reduced motion.
 - `src/components/`: HTML rendering and data-driven navigation components.
-- `src/content/homepage.mjs`: approved homepage copy, navigation and audited destinations.
+- `src/content/homepage.mjs`: approved four-route index copy and shared navigation.
+- `src/content/section-pages.mjs`: approved long-form copy and audited destinations for
+  Media, Archives and Memory; Community Service; Systems and Institutions; and Art.
 - `src/navigation.js`: menu behavior; contains no navigation data.
 - `public/`: only public assets and QA robots policy. No source-site images are transferred. The verified source-served Raleway
   webfont and its OFL license are self-hosted under `public/fonts/`. The favicon is a neutral QA square.
@@ -52,10 +55,11 @@ Other supported environments should use the normally installed Playwright browse
 - `docs/`: inventory, decisions, validation, screenshots and QA runbook.
 - `dist/`, `test-results/`, `artifacts/`: generated and ignored.
 
-Change homepage copy, labels and destinations in `src/content/homepage.mjs`.
-`src/components/page.mjs` defines the semantic institutional-index composition;
-shared styles and navigation logic remain independent of its content. General
-controls and headings remain semantic HTML.
+Change index copy, route labels and shared navigation in `src/content/homepage.mjs`.
+Change supporting-page copy and onward destinations in `src/content/section-pages.mjs`.
+`src/components/page.mjs` defines the semantic index and long-form compositions;
+shared styles and navigation logic remain independent of content. General controls
+and headings remain semantic HTML.
 Binding design rules and content-pattern APIs are documented in
 [`docs/design-system.md`](docs/design-system.md); homepage-specific composition and
 route decisions are documented in [`docs/homepage-design.md`](docs/homepage-design.md).

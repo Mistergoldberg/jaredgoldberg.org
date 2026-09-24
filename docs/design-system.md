@@ -1,6 +1,6 @@
 # JaredGoldberg.org design system
 
-Status: **binding for implementation** as of 2026-09-23. This document governs the shared site shell and content primitives. The institutional-index homepage now applies these rules; its page-specific decisions are recorded separately in `docs/homepage-design.md`.
+Status: **binding for implementation** as of 2026-09-24. This document governs the shared site shell and content primitives. The institutional index and its four supporting pages apply these rules; their page-specific decisions are recorded separately in `docs/homepage-design.md`.
 
 ## Decision status
 
@@ -12,10 +12,11 @@ Implemented and binding:
 - Standard-page banners use 16:9 through desktop and tablet and 1:1 below 768px. Final banner assets are still an input; a neutral labelled placeholder is available in the meantime.
 - The page, stage, content and reading-width shells, the spacing scale, the 48rem/64rem breakpoints and reduced-motion policy below are shared rules.
 
-Fixture-only or still open:
+Page-specific status and open inputs:
 
 - The homepage uses the approved semantic two-line wordmark treatment: white Raleway Black text in independently sized black highlights. Its role line uses the same highlight language. The earlier prototype image remains fixture-only, and the homepage uses no imagery.
-- Final detail-page architecture and unresolved index, archive, research, writing and biography destinations remain editorial/routing work.
+- The supporting-page architecture is established for the four practice routes. Each page uses the standard-page banner primitive, local table of contents, long-form article, supplied onward links and four-route sibling navigation.
+- Final supporting-page artwork remains an editorial input. Until an asset, crop and alt text are supplied, the banner is an explicitly labelled decorative placeholder and can be replaced without changing the page layout.
 - Image focal points, alt text and whether a missing image is meaningful or decorative depend on the supplied asset and page context. Do not invent them.
 - Physical iOS Safari, VoiceOver and non-Chromium browser review remain outstanding.
 
@@ -54,6 +55,7 @@ Use only the `--space-0` through `--space-10` scale for component spacing. Secti
 - `.layout-shell--content`: maximum 70rem, editorial sections and records.
 - `.layout-shell--reading`: maximum 44rem, sustained prose.
 - The institutional-index homepage uses `.layout-shell--stage` for the hero, every subsequent section and the footer. Below-the-fold width must follow the above-the-fold stage width rather than narrowing to the editorial content shell.
+- Supporting pages also use `.layout-shell--stage` for their outer hero, media, article grid, sibling navigation and footer. The sustained article copy occupies a narrower grid track inside that common stage rather than switching outer shells.
 - Do not add decorative section numbers, inquiry counters or ecosystem markers to the homepage. They must not reserve a grid column or create an artificial left offset.
 - Desktop is 1024px and wider; tablet is 768–1023px; mobile is below 768px. Token comments record these values, while media queries use their literal rem equivalents because custom properties cannot drive media conditions.
 - `.grid-2`, `.grid-auto`, `.inquiry-grid`, `.record-list` and `.writing-list` are the allowed starting grids. Records must grow with content. Do not force equal heights or clip summaries.
@@ -105,23 +107,20 @@ Cards remain available for self-contained utility surfaces. Do not use `.card` a
 - Reduced motion collapses all animation and transition durations to `0.01ms` and disables smooth scrolling. No meaning may depend on motion.
 - Focus must remain visible on light and dark surfaces; browser zoom and pinch zoom remain enabled.
 
-## Homepage-copy pattern map
+## Index and supporting-page pattern map
 
-This is a content-to-pattern map, not a page layout specification.
-
-| Later homepage content | Available system pattern | Binding handling rule |
+| Published content | Pattern | Binding handling rule |
 | --- | --- | --- |
-| Identity, role line and introduction | `h1`, `.type-eyebrow`/`.record-meta`, `.prose`, `.button-group` | One page H1; introduction stays within reading width; actions wrap |
-| Five areas of inquiry | `.inquiry-grid` + `renderInquiryRecord` | Same semantic pattern, natural heights and no decorative counter; fifth item is not forced into a page-specific span |
-| Seven selected projects | `.record-list` + `renderProjectRecord` | Keep type and status distinct; full summaries; optional destinations; no availability inference |
-| From the archive | `renderArchiveExcerpt` | Prose-forward context with one continuation action, visually distinct from project records |
-| Selected writing | `.writing-list` + `renderWritingRecord` | Linked titles and summaries; external mark for `.ca`; no card treatment required |
-| Where the work lives | `.prose` with inline links or a record list if destinations need separate descriptions | Externality is indicated; destination text remains editorial |
-| Where to begin | record list or `.grid-auto`, chosen when hierarchy is designed | Each route names its theme and destination; do not assume equal text length |
-| Standard-page banner | `.media-frame--banner` / `renderMediaPlaceholder` | 16:9 desktop/tablet, 1:1 mobile; crop review waits for supplied assets |
+| Homepage identity, role and opening | semantic `h1`, independent highlights and prose | One accessible page title; approved name lines remain visual only; no homepage banner |
+| Four-route practice index | `.index-grid` + `.index-entry` | Every entry carries one supplied summary and one internal route; no decorative numbering or dedicated number column |
+| Supporting-page identity | `.section-page__hero` | One H1 and one quiet section kicker; title may wrap without clipping |
+| Standard-page banner | `.media-frame--banner` / `renderMediaPlaceholder` | 16:9 desktop/tablet, 1:1 mobile; asset, focal point and alt text remain pending |
+| Long-form section copy | `.section-page__layout`, local TOC and `.article-section` | TOC mirrors H2 headings; prose stays readable; no copy is clamped or converted into cards |
+| Supplied onward destinations | `.section-page__destinations` + `renderTextLink` | HTTPS links use the graphic external mark, stay in the same tab and are checked against the approved allowlist |
+| Related practice routes | `.section-page__siblings` | Always show all four internal routes and mark the current page semantically |
 
 ## Usage and verification
 
-The homepage renders all seven approved project records, all five inquiries, the archive excerpt and both writing records. Unit tests continue to exercise the reusable patterns independently of the page composition.
+The homepage renders the four approved practice entries. Each supporting page renders the complete approved long-form copy and supplied destinations. Unit tests continue to exercise the reusable content patterns independently of these page compositions.
 
 Before a page is accepted, run `npm test` with the documented Chromium executable on this macOS 12 workspace. Review at least 1440×900, 1024×768, 768×1024, 390×844, 375×667 and 320×568, including the open menu, keyboard focus, long records, banner crop/placeholder and reduced motion. Record any browser or asset limits in the handoff.

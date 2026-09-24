@@ -15,6 +15,19 @@ MIME={'.html':['text/html'],'.css':['text/css'],'.js':['application/javascript',
 APPROVED_EXTERNAL_URLS={
     'https://jaredgoldberg.ca/writing/the-future-of-work-is-a-design-problem/',
     'https://jaredgoldberg.ca/writing/dignity-is-a-systems-output/',
+    'https://jaredgoldberg.ca/projects/the-money-club/',
+    'https://jaredgoldberg.ca/projects/capital-works/',
+    'https://jaredgoldberg.ca/projects/',
+    'https://jaredgoldberg.ca/work/china.html',
+    'https://jaredgoldberg.ca/work/loblaw.html',
+    'https://jaredgoldberg.ca/work/walmart.html',
+    'https://jaredgoldberg.ca/work/canadian-tire.html',
+}
+PRETTY_ROUTES={
+    '/media-archives-and-memory/':'media-archives-and-memory/index.html',
+    '/community-service/':'community-service/index.html',
+    '/systems-and-institutions/':'systems-and-institutions/index.html',
+    '/art/':'art/index.html',
 }
 
 def verify_html_policy(html):
@@ -52,8 +65,14 @@ def verify(directory, base=URL):
         if not media or media[1] not in MIME[local.suffix]:raise ValueError(f'{name}: wrong MIME type')
         if body != local.read_bytes(): raise ValueError(f'{name}: public artifact byte mismatch')
     if (directory/'robots.txt').read_text().strip()!='User-agent: *\nDisallow: /':raise ValueError('Robots must disallow all')
-    html=(directory/'index.html').read_text()
-    verify_html_policy(html)
+    for html in directory.rglob('*.html'):
+        verify_html_policy(html.read_text())
+    for route,local_name in PRETTY_ROUTES.items():
+        status,headers,body=request(base+route)
+        if status != 200 or body != (directory/local_name).read_bytes():
+            raise ValueError(f'{route}: pretty route mismatch')
+        if 'noindex' not in headers or 'no-store' not in headers:
+            raise ValueError(f'{route}: missing QA headers')
     for name in ['/.git/config','/.env','/package.json','/src/navigation.js','/scripts/deploy-qa.py',
                  '/docs/qa-runbook.md','/assets/','/fonts/','/images/','/assets/main.js.map','/missing-qa-route']:
         status, headers, _ = request(base+name)

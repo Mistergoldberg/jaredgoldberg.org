@@ -151,11 +151,13 @@ class NginxTemplateTests(unittest.TestCase):
     def test_qa_vhost_allows_image_files_and_preserves_noarchive(self):
         text=(Path(__file__).resolve().parents[1]/'ops/nginx/qa.jaredgoldberg.org.conf').read_text()
         self.assertIn(r'location ~ ^/images/[a-zA-Z0-9_.-]+\.(png|jpe?g|webp)$ { try_files $uri =404; }',text)
+        for route in verify_module.PRETTY_ROUTES:
+            self.assertIn(f'location = {route}',text)
         self.assertEqual(text.count('X-Robots-Tag "noindex, nofollow, noarchive"'),3)
 
 
 class PublicHtmlPolicyTests(unittest.TestCase):
-    def test_only_approved_external_essay_urls_are_allowed(self):
+    def test_only_approved_jaredgoldberg_urls_are_allowed(self):
         verify_module.verify_html_policy(' '.join(sorted(verify_module.APPROVED_EXTERNAL_URLS)))
         with self.assertRaisesRegex(ValueError,'Unexpected production URL'):
             verify_module.verify_html_policy('https://jaredgoldberg.ca/unverified/')

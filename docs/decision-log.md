@@ -228,3 +228,17 @@ ecosystem statements, including the grid columns and offsets reserved for them.
 Use the 94rem stage shell for every homepage section and the footer so the content
 below the fold follows the same outer width and gutters as the hero. Retain semantic
 heading levels, section borders and distinct surfaces as the hierarchy system.
+
+## 2026-09-24 — four-route practice index and supporting pages
+
+Supersede the earlier six-movement homepage candidate with the approved concise
+index. Keep the identity hero, then present Media, Archives and Memory; Community
+Service; Systems and Institutions; and Art as four equally legible editorial
+routes. The menu uses the same route labels and marks the current page.
+
+Publish each route as a real supporting page with the supplied long-form copy, a
+local table of contents, audited onward destinations and sibling navigation. Apply
+the standard-page banner rule here—not to the homepage—with a 16:9 desktop/tablet
+frame and a 1:1 mobile frame. Because no final artwork, focal point or alt text was
+supplied, use the neutral decorative “Image pending” state and do not invent work.
+The editorial QA table in the source document is guidance, not publishable copy.
