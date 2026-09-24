@@ -55,6 +55,9 @@ test('institutional index, navigation, focus, motion and accessibility gates', {
       assert.equal(computed.overflow,false);
       assert.ok(computed.menuTrigger.width>=44&&computed.menuTrigger.height>=44);
       assert.match(computed.fontFamily,/Raleway.*Avenir Next.*Segoe UI/);
+      const homepageShellWidths=await page.locator('.home-hero > .layout-shell, .home-section > .layout-shell, .site-footer .layout-shell').evaluateAll(shells=>shells.map(shell=>shell.getBoundingClientRect().width));
+      assert.equal(homepageShellWidths.length,8);
+      for(const shellWidth of homepageShellWidths) assert.ok(Math.abs(shellWidth-homepageShellWidths[0])<.5,`Homepage shell does not match hero width: ${shellWidth} vs ${homepageShellWidths[0]}`);
       if(width<768) {
         const gutters=await page.locator('main .layout-shell').evaluateAll((shells,viewportWidth)=>shells.map(shell=>{const rect=shell.getBoundingClientRect();return {left:rect.left,right:viewportWidth-rect.right};}),width);
         for(const gutter of gutters) assert.ok(Math.abs(gutter.left-gutter.right)<.5,`Unequal mobile gutters: ${JSON.stringify(gutter)}`);
@@ -83,7 +86,7 @@ test('institutional index, navigation, focus, motion and accessibility gates', {
       }
       const unaffectedType=await page.evaluate(()=>{
         const ratios=style=>({lineHeight:parseFloat(style.lineHeight)/parseFloat(style.fontSize),tracking:parseFloat(style.letterSpacing)/parseFloat(style.fontSize)});
-        return {body:ratios(getComputedStyle(document.querySelector('.home-hero__introduction p'))),nav:ratios(getComputedStyle(document.querySelector('[data-menu-toggle]'))),utility:ratios(getComputedStyle(document.querySelector('.section-index')))};
+        return {body:ratios(getComputedStyle(document.querySelector('.home-hero__introduction p'))),nav:ratios(getComputedStyle(document.querySelector('[data-menu-toggle]'))),utility:ratios(getComputedStyle(document.querySelector('.home-hero__identity')))};
       });
       assert.ok(Math.abs(unaffectedType.body.lineHeight-1.55)<.001);
       assert.ok(Math.abs(unaffectedType.body.tracking-.002)<.001);
@@ -102,6 +105,9 @@ test('institutional index, navigation, focus, motion and accessibility gates', {
       assert.equal(await page.locator('#projects .record--project').count(),7);
       assert.equal(await page.locator('#writing .writing-record').count(),2);
       assert.equal(await page.locator('#start .start-route').count(),4);
+      assert.equal(await page.locator('.section-index, .ecosystem__marker').count(),0);
+      const inquiryMarkers=await page.locator('.record--inquiry').evaluateAll(records=>records.map(record=>getComputedStyle(record,'::before').content));
+      assert.ok(inquiryMarkers.every(content=>content==='none'));
       assert.equal(await page.locator('[data-destination-status=pending]').count(),6);
       assert.equal(await page.locator('[data-destination-status=pending] a, [data-destination-status=pending] button').count(),0);
       assert.equal(await page.locator('main img, main picture').count(),0);

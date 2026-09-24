@@ -8,8 +8,8 @@ import {
   renderWritingRecord,
 } from './content-patterns.mjs';
 
-function sectionHeader({ number, title, introduction, id }) {
-  return `<div class="section-heading"><p class="section-index" aria-hidden="true">${e(number)}</p><div class="section-heading__copy"><h2 id="${e(id)}">${e(title)}</h2>${introduction ? `<p class="section-introduction">${e(introduction)}</p>` : ''}</div></div>`;
+function sectionHeader({ title, introduction, id }) {
+  return `<div class="section-heading"><div class="section-heading__copy"><h2 id="${e(id)}">${e(title)}</h2>${introduction ? `<p class="section-introduction">${e(introduction)}</p>` : ''}</div></div>`;
 }
 
 function renderStartRoute(route) {
@@ -42,40 +42,40 @@ ${renderHeader()}${renderNavigation(navigation)}
     <p class="home-hero__index-note type-caption">An institutional index of one practice</p>
   </div></section>
 
-  <section id="inquiries" class="home-section home-section--surface" aria-labelledby="inquiries-title"><div class="layout-shell layout-shell--content">
-    ${sectionHeader({number: '01', title: homepage.inquiries.title, introduction: homepage.inquiries.introduction, id: 'inquiries-title'})}
+  <section id="inquiries" class="home-section home-section--surface" aria-labelledby="inquiries-title"><div class="layout-shell layout-shell--stage">
+    ${sectionHeader({title: homepage.inquiries.title, introduction: homepage.inquiries.introduction, id: 'inquiries-title'})}
     <div class="inquiry-grid">${homepage.inquiries.records.map(renderInquiryRecord).join('')}</div>
     ${renderPendingDestination(homepage.inquiries.destination)}
   </div></section>
 
-  <section id="projects" class="home-section" aria-labelledby="projects-title"><div class="layout-shell layout-shell--content">
-    ${sectionHeader({number: '02', title: homepage.projects.title, introduction: homepage.projects.introduction, id: 'projects-title'})}
+  <section id="projects" class="home-section" aria-labelledby="projects-title"><div class="layout-shell layout-shell--stage">
+    ${sectionHeader({title: homepage.projects.title, introduction: homepage.projects.introduction, id: 'projects-title'})}
     <div class="record-list">${homepage.projects.records.map(renderProjectRecord).join('')}</div>
     ${renderPendingDestination(homepage.projects.destination)}
   </div></section>
 
-  <section id="archive" class="home-section home-section--dark" aria-labelledby="archive-title"><div class="layout-shell layout-shell--content archive-layout">
-    ${sectionHeader({number: '03', title: homepage.archive.title, id: 'archive-title'})}
+  <section id="archive" class="home-section home-section--dark" aria-labelledby="archive-title"><div class="layout-shell layout-shell--stage archive-layout">
+    ${sectionHeader({title: homepage.archive.title, id: 'archive-title'})}
     <div class="archive-layout__body"><p><strong>${e(homepage.archive.firstTitle)}</strong>${e(homepage.archive.firstBody)}<strong>${e(homepage.archive.secondTitle)}</strong>${e(homepage.archive.secondBody)}</p>${renderPendingDestination(homepage.archive.destination)}</div>
   </div></section>
 
-  <section id="writing" class="home-section home-section--surface" aria-labelledby="writing-title"><div class="layout-shell layout-shell--content">
-    ${sectionHeader({number: '04', title: homepage.writing.title, introduction: homepage.writing.introduction, id: 'writing-title'})}
+  <section id="writing" class="home-section home-section--surface" aria-labelledby="writing-title"><div class="layout-shell layout-shell--stage">
+    ${sectionHeader({title: homepage.writing.title, introduction: homepage.writing.introduction, id: 'writing-title'})}
     <div class="writing-list">${homepage.writing.records.map(renderWritingRecord).join('')}</div>
     ${renderPendingDestination(homepage.writing.destination)}
   </div></section>
 
-  <section id="ecosystem" class="home-section ecosystem" aria-labelledby="ecosystem-title"><div class="layout-shell layout-shell--content">
-    ${sectionHeader({number: '05', title: homepage.ecosystem.title, id: 'ecosystem-title'})}
-    <div class="ecosystem__statements">${homepage.ecosystem.statements.map((statement, index) => `<p><span class="ecosystem__marker" aria-hidden="true">${String(index + 1).padStart(2, '0')}</span>${e(statement)}</p>`).join('')}</div>
+  <section id="ecosystem" class="home-section ecosystem" aria-labelledby="ecosystem-title"><div class="layout-shell layout-shell--stage">
+    ${sectionHeader({title: homepage.ecosystem.title, id: 'ecosystem-title'})}
+    <div class="ecosystem__statements">${homepage.ecosystem.statements.map(statement => `<p>${e(statement)}</p>`).join('')}</div>
   </div></section>
 
-  <section id="start" class="home-section home-section--closing" aria-labelledby="start-title"><div class="layout-shell layout-shell--content">
-    ${sectionHeader({number: '06', title: homepage.start.title, id: 'start-title'})}
+  <section id="start" class="home-section home-section--closing" aria-labelledby="start-title"><div class="layout-shell layout-shell--stage">
+    ${sectionHeader({title: homepage.start.title, id: 'start-title'})}
     <div class="start-grid">${homepage.start.routes.map(renderStartRoute).join('')}</div>
     <div class="pending-destination-group">${homepage.start.destinations.map(renderPendingDestination).join('')}</div>
   </div></section>
 </main>
-<footer class="site-footer" data-page-background><div class="layout-shell layout-shell--content site-footer__inner"><p class="type-utility">${e(site.name)}</p><p class="type-caption">${e(site.role)}</p></div></footer>
+<footer class="site-footer" data-page-background><div class="layout-shell layout-shell--stage site-footer__inner"><p class="type-utility">${e(site.name)}</p><p class="type-caption">${e(site.role)}</p></div></footer>
 </body></html>\n`;
 }

@@ -220,3 +220,11 @@ homepage name and extend the same highlight language to its role line. Keep each
 name line content-width, preserve the single accessible H1 name, and allow the role
 line to wrap within its own highlight at narrow widths. Other headings and body
 copy retain their existing treatments.
+
+## 2026-09-24 — unnumbered, stage-width homepage sections
+
+Remove decorative two-digit numbers from section headings, inquiry records and
+ecosystem statements, including the grid columns and offsets reserved for them.
+Use the 94rem stage shell for every homepage section and the footer so the content
+below the fold follows the same outer width and gutters as the hero. Retain semantic
+heading levels, section borders and distinct surfaces as the hierarchy system.

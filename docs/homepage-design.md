@@ -11,9 +11,9 @@ The homepage presents one practice through related but non-interchangeable edito
 3. **Selected projects and initiatives** — the shared project-record pattern keeps title, type, status and summary distinct. There are no speculative detail links, thumbnails or availability cues.
 4. **Archive** — a dark, prose-led interlude distinguishes chronology and preservation from both project and publication lists.
 5. **Selected writing** — two verified external essay links and their summaries. The external mark is graphic, and links remain in the same tab.
-6. **Domain ecosystem and entry points** — numbered statements explain where work lives; four equal entry-point records offer thematic starting positions without pretending unresolved routes exist.
+6. **Domain ecosystem and entry points** — unnumbered statements explain where work lives; four equal entry-point records offer thematic starting positions without pretending unresolved routes exist.
 
-The six numbered section markers and inquiry numbers are presentational and hidden from assistive technology. The semantic outline remains one H1, six H2 section headings and H3 record titles.
+The homepage uses no decorative section, inquiry or ecosystem numbering. Heading semantics, spacing, borders and changes in surface establish hierarchy without a dedicated number column. The semantic outline remains one H1, six H2 section headings and H3 record titles.
 
 ## Media decision
 
@@ -44,7 +44,8 @@ No URLs were supplied or present in this repository for those destinations. No p
 
 ## Responsive and interaction rules
 
-- Desktop uses a 12-column hero and two-column inquiry/ecosystem/entry-point fields. Project and writing records retain their shared multi-column forms.
+- The hero, every below-the-fold section and the footer use the same 94rem stage shell, so their outer columns share one left edge, right edge and gutter system.
+- Desktop uses a 12-column hero and two-column inquiry/ecosystem/entry-point fields. Project and writing records retain their shared multi-column forms inside the common stage width.
 - Tablet keeps the split hero while records progressively reduce columns according to shared breakpoints.
 - Below 768px every content system becomes one column with symmetric 16px gutters. The name uses explicit visual lines so “Goldberg” never breaks mid-word.
 - At 320px and 200% equivalent reflow, text and external-link marks wrap without horizontal overflow; no approved copy is clamped or truncated.

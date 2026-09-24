@@ -51,6 +51,7 @@ test('artifact contains only intended public files, verified checksums and local
   assert.equal(html.match(/class="writing-record"/g)?.length,2);
   assert.equal(html.match(/class="start-route"/g)?.length,4);
   assert.equal(html.match(/data-destination-status="pending"/g)?.length,6);
+  assert.doesNotMatch(html,/class="(?:section-index|ecosystem__marker)"|aria-hidden="true">0[1-9]</);
   assert.match(html,/Institutional project in development/);
   assert.match(html,/Developing proposal/);
   assert.match(html,/Employer-owned work/);
@@ -90,6 +91,7 @@ test('required licensed webfont is unmodified and embedded locally',async()=>{
   assert.match(rules,/--color-focus:\s*var\(--color-accent\)/);
   assert.match(rules,/--color-focus-contrast:\s*#ffffff/);
   assert.match(rules,/--color-link:\s*var\(--color-accent\)/);
+  assert.doesNotMatch(rules,/counter-(?:reset|increment):\s*inquiry|content:\s*"0"\s*counter\(inquiry\)/);
   assert.match(rules,/\.media-frame--banner\s*\{[^}]*aspect-ratio:\s*16\s*\/\s*9/s);
   assert.match(rules,/@media \(max-width: 47\.99rem\)[\s\S]*?\.media-frame--banner\s*\{\s*aspect-ratio:\s*1/s);
   assert.doesNotMatch(rules,/#1f5fff/i);

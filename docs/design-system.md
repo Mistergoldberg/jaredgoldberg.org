@@ -53,6 +53,8 @@ Use only the `--space-0` through `--space-10` scale for component spacing. Secti
 - `.layout-shell--stage`: maximum 94rem, broad media/stage content.
 - `.layout-shell--content`: maximum 70rem, editorial sections and records.
 - `.layout-shell--reading`: maximum 44rem, sustained prose.
+- The institutional-index homepage uses `.layout-shell--stage` for the hero, every subsequent section and the footer. Below-the-fold width must follow the above-the-fold stage width rather than narrowing to the editorial content shell.
+- Do not add decorative section numbers, inquiry counters or ecosystem markers to the homepage. They must not reserve a grid column or create an artificial left offset.
 - Desktop is 1024px and wider; tablet is 768–1023px; mobile is below 768px. Token comments record these values, while media queries use their literal rem equivalents because custom properties cannot drive media conditions.
 - `.grid-2`, `.grid-auto`, `.inquiry-grid`, `.record-list` and `.writing-list` are the allowed starting grids. Records must grow with content. Do not force equal heights or clip summaries.
 - Mobile uses symmetric 16px gutters and one-column records. Tablet project records use two columns with the action aligned under the summary; desktop uses title/meta, summary and action columns.
@@ -110,7 +112,7 @@ This is a content-to-pattern map, not a page layout specification.
 | Later homepage content | Available system pattern | Binding handling rule |
 | --- | --- | --- |
 | Identity, role line and introduction | `h1`, `.type-eyebrow`/`.record-meta`, `.prose`, `.button-group` | One page H1; introduction stays within reading width; actions wrap |
-| Five areas of inquiry | `.inquiry-grid` + `renderInquiryRecord` | Same semantic pattern, natural heights; fifth item is not forced into a page-specific span |
+| Five areas of inquiry | `.inquiry-grid` + `renderInquiryRecord` | Same semantic pattern, natural heights and no decorative counter; fifth item is not forced into a page-specific span |
 | Seven selected projects | `.record-list` + `renderProjectRecord` | Keep type and status distinct; full summaries; optional destinations; no availability inference |
 | From the archive | `renderArchiveExcerpt` | Prose-forward context with one continuation action, visually distinct from project records |
 | Selected writing | `.writing-list` + `renderWritingRecord` | Linked titles and summaries; external mark for `.ca`; no card treatment required |
