@@ -69,6 +69,11 @@ class ReleaseTests(unittest.TestCase):
     def test_release_accepts_static_image_assets(self):
         path=self.artifact(BASE,{'images/above-the-fold-prototype.png':b'png fixture'})
         self.assertEqual((path/'images/above-the-fold-prototype.png').stat().st_mode&0o777,0o444)
+    def test_release_accepts_only_the_published_pretty_route_pages(self):
+        path=self.artifact(BASE,{name:b'<meta name="robots" content="noindex, nofollow">' for name in module.PAGE_INDEXES})
+        self.assertEqual((path/'community-service/index.html').stat().st_mode&0o777,0o444)
+        with self.assertRaises(ValueError):
+            self.artifact(NEXT,{'unpublished/index.html':b'not allowlisted'})
     def test_symlinks_wrong_manifest_hash_and_wrong_sha_refused(self):
         path=self.artifact(BASE)
         with self.assertRaises(ValueError):self.store.seal(BASE,'0'*64)

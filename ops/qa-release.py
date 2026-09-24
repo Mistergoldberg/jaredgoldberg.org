@@ -10,6 +10,12 @@ from datetime import datetime, timezone
 
 ROOT = Path('/var/www/jaredgoldberg.org')
 ID = re.compile(r'^(?:baseline-)?\d{8}T\d{6}Z-[a-f0-9]{12}$')
+PAGE_INDEXES = {
+    'media-archives-and-memory/index.html',
+    'community-service/index.html',
+    'systems-and-institutions/index.html',
+    'art/index.html',
+}
 
 class Releases:
     def __init__(self, root=ROOT):
@@ -75,7 +81,7 @@ class Releases:
         if actual != set(manifest['files']) | {'artifact-manifest.json'}:
             raise ValueError('Unexpected/missing release files')
         for name, expected in manifest['files'].items():
-            if not re.fullmatch(r'(?:index\.html|robots\.txt|favicon\.svg|release\.json|assets/[\w.-]+\.(?:css|js)|fonts/OFL\.txt|fonts/[\w.-]+\.(?:woff2?|ttf|otf)|images/[\w.-]+\.(?:png|jpe?g|webp))', name):
+            if name not in PAGE_INDEXES and not re.fullmatch(r'(?:index\.html|robots\.txt|favicon\.svg|release\.json|assets/[\w.-]+\.(?:css|js)|fonts/OFL\.txt|fonts/[\w.-]+\.(?:woff2?|ttf|otf)|images/[\w.-]+\.(?:png|jpe?g|webp))', name):
                 raise ValueError('Invalid artifact filename')
             if hashlib.sha256((path / name).read_bytes()).hexdigest() != expected:
                 raise ValueError('Artifact checksum mismatch: ' + name)
