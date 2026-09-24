@@ -14,7 +14,7 @@ Implemented and binding:
 
 Fixture-only or still open:
 
-- The earlier two-line black-block wordmark and prototype image were review fixtures and are not homepage treatments. The implemented homepage uses plain text with controlled name lines and no imagery.
+- The homepage uses the approved semantic two-line wordmark treatment: white Raleway Black text in independently sized black highlights. Its role line uses the same highlight language. The earlier prototype image remains fixture-only, and the homepage uses no imagery.
 - Final detail-page architecture and unresolved index, archive, research, writing and biography destinations remain editorial/routing work.
 - Image focal points, alt text and whether a missing image is meaningful or decorative depend on the supplied asset and page context. Do not invent them.
 - Physical iOS Safari, VoiceOver and non-Chromium browser review remain outstanding.

@@ -6,7 +6,7 @@ Status: implemented candidate for QA review, 2026-09-23.
 
 The homepage presents one practice through related but non-interchangeable editorial forms:
 
-1. **Identity and synthesis** — a plain-text Raleway Black name, role line, two-paragraph introduction and two real on-page actions.
+1. **Identity and synthesis** — a semantic Raleway Black name with each visual line set in a content-width black highlight, a matching highlighted role line, two-paragraph introduction and two real on-page actions.
 2. **Five areas of inquiry** — parallel research lenses in a two-column field that becomes one column on mobile. Natural content height is preserved; the fifth inquiry is not forced into an artificial span.
 3. **Selected projects and initiatives** — the shared project-record pattern keeps title, type, status and summary distinct. There are no speculative detail links, thumbnails or availability cues.
 4. **Archive** — a dark, prose-led interlude distinguishes chronology and preservation from both project and publication lists.

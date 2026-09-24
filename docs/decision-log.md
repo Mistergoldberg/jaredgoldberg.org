@@ -212,3 +212,11 @@ research, project-index, archive, writing-index, complete-index and biography/CV
 destinations as visibly pending non-interactive records on QA. Do not infer project
 detail URLs or specialist-domain URLs. Replace these records with links only after
 an exact route is supplied and verified.
+
+## 2026-09-24 — highlighted homepage identity
+
+Apply the established white-on-black wordmark treatment to the institutional-index
+homepage name and extend the same highlight language to its role line. Keep each
+name line content-width, preserve the single accessible H1 name, and allow the role
+line to wrap within its own highlight at narrow widths. Other headings and body
+copy retain their existing treatments.

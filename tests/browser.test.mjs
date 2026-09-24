@@ -73,6 +73,14 @@ test('institutional index, navigation, focus, motion and accessibility gates', {
       assert.equal(displayType.overflow,false);
       assert.ok(displayType.lines.every(line=>line.width<=width));
       assert.ok(Math.abs(displayType.lines[1].top-displayType.lines[0].bottom)<1);
+      const heroHighlights=await page.evaluate(()=>({
+        name:[...document.querySelectorAll('.home-hero h1 > span')].map(element=>({color:getComputedStyle(element).color,background:getComputedStyle(element).backgroundColor})),
+        role:{color:getComputedStyle(document.querySelector('.home-hero__role')).color,background:getComputedStyle(document.querySelector('.home-hero__role')).backgroundColor},
+      }));
+      for(const highlight of [...heroHighlights.name,heroHighlights.role]) {
+        assert.equal(highlight.color,'rgb(255, 255, 255)');
+        assert.equal(highlight.background,'rgb(0, 0, 0)');
+      }
       const unaffectedType=await page.evaluate(()=>{
         const ratios=style=>({lineHeight:parseFloat(style.lineHeight)/parseFloat(style.fontSize),tracking:parseFloat(style.letterSpacing)/parseFloat(style.fontSize)});
         return {body:ratios(getComputedStyle(document.querySelector('.home-hero__introduction p'))),nav:ratios(getComputedStyle(document.querySelector('[data-menu-toggle]'))),utility:ratios(getComputedStyle(document.querySelector('.section-index')))};

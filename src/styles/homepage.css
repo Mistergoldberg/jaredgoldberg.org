@@ -23,16 +23,29 @@
   font-size: clamp(4rem, 8.7vw, 8.5rem);
 }
 
-.home-hero h1 > span { display: block; white-space: nowrap; }
+.home-hero h1 > span {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  padding: 0.04em 0.1em 0.07em;
+  color: var(--wordmark-foreground);
+  background: var(--wordmark-background);
+  white-space: nowrap;
+}
 
 .home-hero__role {
-  max-width: none;
+  width: fit-content;
+  max-width: 100%;
   margin-top: var(--space-5);
+  padding: 0.28em 0.45em 0.34em;
   font-family: var(--font-family-display);
   font-size: var(--type-size-h4);
   font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
   letter-spacing: var(--tracking-ui);
   text-transform: uppercase;
+  color: var(--wordmark-foreground);
+  background: var(--wordmark-background);
 }
 
 .home-section {
