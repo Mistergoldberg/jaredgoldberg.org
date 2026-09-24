@@ -45,6 +45,19 @@ def request(url):
             '--dump-header',str(headers),'--output',str(body),'--write-out','%{http_code}',url],check=True,capture_output=True,text=True)
         return int(result.stdout), headers.read_text().lower(), body.read_bytes()
 
+def verify_pretty_routes(directory, base=URL):
+    directory = Path(directory)
+    for route,local_name in PRETTY_ROUTES.items():
+        local=directory/local_name
+        status,headers,body=request(base+route)
+        if local.exists():
+            if status != 200 or body != local.read_bytes():
+                raise ValueError(f'{route}: pretty route mismatch')
+        elif status != 404:
+            raise ValueError(f'{route}: legacy release route must remain unavailable')
+        if 'noindex' not in headers or 'no-store' not in headers:
+            raise ValueError(f'{route}: missing QA headers')
+
 def verify(directory, base=URL):
     directory = Path(directory)
     manifest = json.loads((directory/'artifact-manifest.json').read_text())
@@ -67,12 +80,7 @@ def verify(directory, base=URL):
     if (directory/'robots.txt').read_text().strip()!='User-agent: *\nDisallow: /':raise ValueError('Robots must disallow all')
     for html in directory.rglob('*.html'):
         verify_html_policy(html.read_text())
-    for route,local_name in PRETTY_ROUTES.items():
-        status,headers,body=request(base+route)
-        if status != 200 or body != (directory/local_name).read_bytes():
-            raise ValueError(f'{route}: pretty route mismatch')
-        if 'noindex' not in headers or 'no-store' not in headers:
-            raise ValueError(f'{route}: missing QA headers')
+    verify_pretty_routes(directory,base)
     for name in ['/.git/config','/.env','/package.json','/src/navigation.js','/scripts/deploy-qa.py',
                  '/docs/qa-runbook.md','/assets/','/fonts/','/images/','/assets/main.js.map','/missing-qa-route']:
         status, headers, _ = request(base+name)

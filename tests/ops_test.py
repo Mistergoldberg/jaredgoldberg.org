@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 spec=importlib.util.spec_from_file_location('release',Path(__file__).resolve().parents[1]/'ops/qa-release.py')
 module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
@@ -167,6 +168,18 @@ class PublicHtmlPolicyTests(unittest.TestCase):
     def test_canonical_remains_forbidden(self):
         with self.assertRaisesRegex(ValueError,'Unexpected canonical URL'):
             verify_module.verify_html_policy('<link rel="canonical" href="https://example.com/">')
+
+    def test_pretty_routes_support_new_and_legacy_release_artifacts(self):
+        headers='x-robots-tag: noindex, nofollow\ncache-control: no-store\n'
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            with patch.object(verify_module,'request',return_value=(404,headers,b'')) as request:
+                verify_module.verify_pretty_routes(root,'https://qa.example')
+                self.assertEqual(request.call_count,len(verify_module.PRETTY_ROUTES))
+            for local_name in verify_module.PRETTY_ROUTES.values():
+                file=root/local_name;file.parent.mkdir(parents=True,exist_ok=True);file.write_bytes(b'page')
+            with patch.object(verify_module,'request',return_value=(200,headers,b'page')):
+                verify_module.verify_pretty_routes(root,'https://qa.example')
 
 
 if __name__=='__main__':unittest.main()
