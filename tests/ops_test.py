@@ -8,6 +8,8 @@ import unittest
 
 spec=importlib.util.spec_from_file_location('release',Path(__file__).resolve().parents[1]/'ops/qa-release.py')
 module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+verify_spec=importlib.util.spec_from_file_location('verify_qa',Path(__file__).resolve().parents[1]/'scripts/verify-qa.py')
+verify_module=importlib.util.module_from_spec(verify_spec);verify_spec.loader.exec_module(verify_module)
 SHA='a'*40
 BASE='baseline-20260919T020000Z-'+SHA[:12]
 NEXT='20260919T020001Z-'+SHA[:12]
@@ -150,6 +152,19 @@ class NginxTemplateTests(unittest.TestCase):
         text=(Path(__file__).resolve().parents[1]/'ops/nginx/qa.jaredgoldberg.org.conf').read_text()
         self.assertIn(r'location ~ ^/images/[a-zA-Z0-9_.-]+\.(png|jpe?g|webp)$ { try_files $uri =404; }',text)
         self.assertEqual(text.count('X-Robots-Tag "noindex, nofollow, noarchive"'),3)
+
+
+class PublicHtmlPolicyTests(unittest.TestCase):
+    def test_only_approved_external_essay_urls_are_allowed(self):
+        verify_module.verify_html_policy(' '.join(sorted(verify_module.APPROVED_EXTERNAL_URLS)))
+        with self.assertRaisesRegex(ValueError,'Unexpected production URL'):
+            verify_module.verify_html_policy('https://jaredgoldberg.ca/unverified/')
+        with self.assertRaisesRegex(ValueError,'Unexpected production URL'):
+            verify_module.verify_html_policy('https://jaredgoldberg.org/')
+
+    def test_canonical_remains_forbidden(self):
+        with self.assertRaisesRegex(ValueError,'Unexpected canonical URL'):
+            verify_module.verify_html_policy('<link rel="canonical" href="https://example.com/">')
 
 
 if __name__=='__main__':unittest.main()

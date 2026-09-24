@@ -12,6 +12,18 @@ MIME={'.html':['text/html'],'.css':['text/css'],'.js':['application/javascript',
       '.woff2':['font/woff2'],'.svg':['image/svg+xml'],'.png':['image/png'],
       '.jpg':['image/jpeg'],'.jpeg':['image/jpeg'],'.webp':['image/webp'],
       '.json':['application/json'],'.txt':['text/plain']}
+APPROVED_EXTERNAL_URLS={
+    'https://jaredgoldberg.ca/writing/the-future-of-work-is-a-design-problem/',
+    'https://jaredgoldberg.ca/writing/dignity-is-a-systems-output/',
+}
+
+def verify_html_policy(html):
+    if re.search(r'rel=[\"\x27]canonical',html):
+        raise ValueError('Unexpected canonical URL')
+    production_urls=set(re.findall(r'https?://jaredgoldberg\.(?:ca|org)[^\s\"\x27<>]*',html))
+    unexpected=production_urls-APPROVED_EXTERNAL_URLS
+    if unexpected:
+        raise ValueError('Unexpected production URL: '+', '.join(sorted(unexpected)))
 
 def request(url):
     with tempfile.TemporaryDirectory(prefix='qa-http-') as tmp:
@@ -41,7 +53,7 @@ def verify(directory, base=URL):
         if body != local.read_bytes(): raise ValueError(f'{name}: public artifact byte mismatch')
     if (directory/'robots.txt').read_text().strip()!='User-agent: *\nDisallow: /':raise ValueError('Robots must disallow all')
     html=(directory/'index.html').read_text()
-    if re.search(r'rel=[\"\x27]canonical|https?://jaredgoldberg\.(ca|org)',html):raise ValueError('Unexpected production URL/canonical')
+    verify_html_policy(html)
     for name in ['/.git/config','/.env','/package.json','/src/navigation.js','/scripts/deploy-qa.py',
                  '/docs/qa-runbook.md','/assets/','/fonts/','/images/','/assets/main.js.map','/missing-qa-route']:
         status, headers, _ = request(base+name)
