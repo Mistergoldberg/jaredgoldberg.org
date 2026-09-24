@@ -38,7 +38,11 @@ test('artifact contains only intended public files, verified checksums and local
   assert.match(html,/menu-trigger__label">Menu<\/span><span class="menu-trigger__icon" aria-hidden="true">/);
   assert.match(html,/<h1 class="site-wordmark" aria-label="Jared Goldberg">/);
   assert.match(html,/site-wordmark__line" aria-hidden="true">Jared<\/span><span class="site-wordmark__line" aria-hidden="true">Goldberg<\/span>/);
-  assert.match(html,/<figure class="fixture-intro__media"><img src="\/images\/above-the-fold-prototype\.png" alt="Two people reviewing a mobile interface prototype and paper design sketches\." width="1536" height="1024" decoding="async" fetchpriority="high"><\/figure>/);
+  assert.match(html,/<figure class="media-frame media-frame--banner fixture-intro__media"><img src="\/images\/above-the-fold-prototype\.png" alt="Two people reviewing a mobile interface prototype and paper design sketches\." width="1536" height="1024" decoding="async" fetchpriority="high"><\/figure>/);
+  assert.match(html,/<section id="content-patterns"/);
+  assert.equal(html.match(/class="record record--project"/g)?.length,3);
+  assert.match(html,/In-store retail media systems/);
+  assert.match(html,/role="img" aria-label="Banner image pending"/);
   assert.equal(digest(await readFile('dist/images/above-the-fold-prototype.png')),'907e026d74ec626d044cdac1b88c2e9ba7d9d6c926be680f62e8a953384c7e82');
   assert.match(html,/menu-panel__close-icon/);
   assert.match(html,/menu-panel__chevron/);
@@ -68,6 +72,9 @@ test('required licensed webfont is unmodified and embedded locally',async()=>{
   assert.match(rules,/--color-accent:\s*#990202/);
   assert.match(rules,/--color-focus:\s*var\(--color-accent\)/);
   assert.match(rules,/--color-focus-contrast:\s*#ffffff/);
+  assert.match(rules,/--color-link:\s*var\(--color-accent\)/);
+  assert.match(rules,/\.media-frame--banner\s*\{[^}]*aspect-ratio:\s*16\s*\/\s*9/s);
+  assert.match(rules,/@media \(max-width: 47\.99rem\)[\s\S]*?\.media-frame--banner\s*\{\s*aspect-ratio:\s*1/s);
   assert.doesNotMatch(rules,/#1f5fff/i);
 });
 

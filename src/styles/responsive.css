@@ -4,6 +4,8 @@
   .menu-panel__sheet { width: min(var(--menu-sheet-width-compact), calc(100vw - var(--space-7))); }
   .site-header__inner--no-brand .menu-trigger { right: calc(clamp(9rem, 25vw, 14rem) / 2); }
   .grid-2, .site-footer__inner { grid-template-columns: minmax(0, 1fr); }
+  .record { grid-template-columns: minmax(12rem, 0.8fr) minmax(0, 1.2fr); }
+  .record__actions { grid-column: 2; }
   .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 47.99rem) {
@@ -34,6 +36,11 @@
   .button-group .btn { width: 100%; }
   .card-grid { grid-template-columns: minmax(0, 1fr); }
   .card { padding: var(--space-5); }
+  .record,
+  .writing-record,
+  .inquiry-grid { grid-template-columns: minmax(0, 1fr); }
+  .record__actions { grid-column: auto; }
+  .media-frame--banner { aspect-ratio: 1; }
 }
 @media (max-width: 63.99rem) and (max-height: 31.99rem) and (orientation: landscape) and (pointer: coarse) {
   .menu-panel__sheet {

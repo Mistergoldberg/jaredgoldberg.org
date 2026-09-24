@@ -31,6 +31,35 @@ export const fixture = {
   surfaceHeading: 'Surface specimen',
   surfaceCaption: 'Background · Surface · Muted · Ink · Focus',
   swatches: ['background', 'surface', 'muted', 'ink', 'focus'],
+  contentPatterns: {
+    heading: 'Content-pattern stress test',
+    introduction: 'Representative records test long titles, mixed work types, development states, variable summaries, destinations, and unavailable image assets. This is a component specimen, not a homepage layout.',
+    records: [
+      {
+        title: 'The Pitch',
+        type: 'Conceptual art',
+        status: 'Institutional project in development',
+        summary: 'Presented through Duchamped, The Pitch brings the language and machinery of valuation into the artwork. Its associated fractional-share programme is in development.',
+        destination: { href: '#content-patterns', label: 'View record' },
+      },
+      {
+        title: 'Capability Works',
+        type: 'Civic research',
+        status: 'Developing proposal',
+        summary: 'Capability Works explores employment arrangements shaped around disabled workers’ capabilities, choices and support needs, alongside real demand for work. It remains a proposal in development.',
+        destination: { href: '#content-patterns', label: 'View proposal record' },
+      },
+      {
+        title: 'In-store retail media systems',
+        type: 'Professional practice',
+        status: 'Employer-owned work',
+        summary: 'Across roles at Loblaw, Walmart Connect and Canadian Tire, Goldberg has worked on systems connecting media, stores and measurement. The case studies document his contribution within each employer’s work.',
+        destination: { href: '#content-patterns', label: 'View case-study index' },
+      },
+    ],
+    mediaHeading: 'Standard-page banner placeholder',
+    mediaLabel: 'Banner image pending',
+  },
   actions: [
     {label: 'Typography', href: '#typography', variant: 'primary'},
     {label: 'Surfaces', href: '#surfaces', variant: 'secondary'},

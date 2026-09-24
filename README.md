@@ -56,6 +56,9 @@ Other supported environments should use the normally installed Playwright browse
 Change future labels and destinations in `src/content/qa-fixture.mjs`. Replace the
 fixture composition in `src/components/page.mjs` without changing the shared
 styles or navigation logic. General controls and headings remain semantic HTML.
+Binding design rules and content-pattern APIs are documented in
+[`docs/design-system.md`](docs/design-system.md). The fixture's content-pattern
+section is a stress-test specimen, not an approved homepage layout.
 
 ## Fonts
 

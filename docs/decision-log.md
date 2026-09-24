@@ -174,3 +174,19 @@ Google Tag Manager loader and standard `dataLayer` initialization. Treat that
 single loader URL and measurement ID as the only approved analytics integration;
 the artifact checks continue to reject other analytics identifiers and external
 asset URLs.
+
+## 2026-09-23 — design-system hardening
+
+Promote the implemented Raleway, dark-red accent, neutral drawer, sticky mobile
+icon control and responsive banner ratio from scattered decisions into one binding
+design-system contract. Add a reading width, semantic link roles, 44px action
+targets, resilient record/inquiry/archive/writing patterns and an accessible
+asset-pending banner placeholder. Records grow with content and never turn a
+development status into an availability claim.
+
+Use the approved homepage copy only as test data: all seven projects and all five
+inquiries exercise the render APIs, while the QA page shows three representative
+records and a placeholder. This does not approve a homepage composition,
+navigation model, section order, asset crop or final destination. External links
+receive a graphic indicator and stay in the same tab unless a specific workflow
+justifies an announced new tab.

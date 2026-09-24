@@ -36,6 +36,7 @@
   --color-surface-muted: #e3e0d9;
   --color-text-primary: #141412;
   --color-text-secondary: #57544f;
+  --color-text-subtle: #68655f;
   --color-text-inverse: #f8f7f3;
   --color-border-subtle: rgba(20, 20, 18, 0.18);
   --color-border-strong: rgba(20, 20, 18, 0.45);
@@ -45,6 +46,8 @@
   --color-focus-contrast: #ffffff;
   --color-interactive-default: #141412;
   --color-interactive-hover: #2f2d28;
+  --color-link: var(--color-accent);
+  --color-link-hover: #650101;
 
   --wordmark-background: #000000;
   --wordmark-foreground: #ffffff;
@@ -81,6 +84,7 @@
   --container-page-max: 82rem;
   --container-stage-max: 94rem;
   --container-content-max: 70rem;
+  --container-reading-max: 44rem;
 
   --gutter-desktop: clamp(1.4rem, 2.8vw, 2.8rem);
   --gutter-tablet: clamp(1rem, 3vw, 1.6rem);
@@ -90,6 +94,7 @@
   --grid-columns-tablet: 8;
   --grid-columns-mobile: 4;
   --grid-gap: clamp(0.9rem, 1.6vw, 1.8rem);
+  --grid-gap-wide: clamp(1.5rem, 3vw, 3rem);
 
   --stage-safe-top: clamp(0.9rem, 2vw, 1.4rem);
   --stage-safe-right: clamp(1rem, 2.2vw, 2rem);

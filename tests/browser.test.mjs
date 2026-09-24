@@ -121,6 +121,24 @@ test('responsive browser, navigation, focus, assets, motion and accessibility ga
       const expectedImageRatio=width<768?1:16/9;
       assert.ok(Math.abs(introImage.rect.width/introImage.rect.height-expectedImageRatio)<.01);
       assert.ok(requests.includes(base+'/images/above-the-fold-prototype.png'),'Intro image not loaded locally');
+      const patterns=await page.locator('#content-patterns').evaluate(section=>{
+        const records=[...section.querySelectorAll('.record')].map(record=>({
+          overflow:record.scrollWidth>record.clientWidth,
+          title:record.querySelector('.record__title').textContent,
+          columns:getComputedStyle(record).gridTemplateColumns,
+        }));
+        const placeholder=section.querySelector('.media-placeholder').getBoundingClientRect();
+        return {records,placeholder:placeholder.toJSON()};
+      });
+      assert.equal(patterns.records.length,3);
+      assert.deepEqual(patterns.records.map(record=>record.title),['The Pitch','Capability Works','In-store retail media systems']);
+      assert.ok(patterns.records.every(record=>!record.overflow));
+      if(width<768) assert.ok(patterns.records.every(record=>record.columns.split(' ').length===1));
+      assert.ok(Math.abs(patterns.placeholder.width/patterns.placeholder.height-expectedImageRatio)<.01);
+      for(const button of await page.locator('.button-group .btn').all()) {
+        const rect=await button.evaluate(element=>element.getBoundingClientRect().toJSON());
+        assert.ok(rect.width>=44 && rect.height>=44);
+      }
       const fontPolicy=JSON.parse(await readFile('tests/font-policy.json','utf8'));
       for(const font of fontPolicy.requiredFiles) assert.ok(requests.includes(base+'/'+font),`Font not loaded: ${font}`);
       const cdp=await context.newCDPSession(page);
