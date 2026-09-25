@@ -90,6 +90,9 @@ The workflow accepts an exact clean commit only when it is the authoritative tip
 of a named pushed branch and still descends from the explicitly recorded
 `origin/main` baseline. It runs tests and prepares an artifact before any upload.
 The deploy command never pushes Git or changes production.
+The one established local exception is the pre-existing untracked `assets/`
+directory: release gates tolerate that exact status entry, never read it, and
+reject every other tracked or untracked worktree change.
 
 The original root `index.html` and `scripts/deploy.sh` are retained as baseline
 files. They are **not** inputs to the new build. The production Nginx template is

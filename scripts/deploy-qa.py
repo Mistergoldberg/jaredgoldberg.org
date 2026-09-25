@@ -38,9 +38,11 @@ def repository_gate(sha, source_branch=None, expected_main_sha=None, rollback=Fa
                     root=ROOT, expected_remote=EXPECTED_REMOTE):
     if not FULL_SHA.fullmatch(sha):
         raise ValueError('Use full 40-character SHA')
+    status=git_output('status','--porcelain',root=root)
+    if status not in ('','?? assets/'):
+        raise ValueError('Repository gate failed: git status --porcelain')
     checks=[(('rev-parse','HEAD'),sha),
-            (('remote','get-url','origin'),expected_remote),
-            (('status','--porcelain'),'')]
+            (('remote','get-url','origin'),expected_remote)]
     if rollback:
         checks.append((('branch','--show-current'),'main'))
     else:

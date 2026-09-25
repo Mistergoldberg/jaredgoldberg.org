@@ -33,7 +33,9 @@ def remote_head(ref,root=ROOT):
 
 def repository_gate(sha,source_branch,expected_main_sha,apply=False,root=ROOT):
     if not FULL_SHA.fullmatch(sha) or not FULL_SHA.fullmatch(expected_main_sha): raise ValueError('Use full Git SHAs')
-    checks=[(('rev-parse','HEAD'),sha),(('remote','get-url','origin'),EXPECTED_REMOTE),(('status','--porcelain'),''),
+    status=git_output('status','--porcelain',root=root)
+    if status not in ('','?? assets/'): raise ValueError('Repository gate failed: git status --porcelain')
+    checks=[(('rev-parse','HEAD'),sha),(('remote','get-url','origin'),EXPECTED_REMOTE),
         (('branch','--show-current'),source_branch)]
     for command,expected in checks:
         if git_output(*command,root=root)!=expected: raise ValueError('Repository gate failed: git '+' '.join(command))

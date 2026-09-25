@@ -60,6 +60,10 @@ Tests exercise the emitted artifact, not the legacy root placeholder.
 From a clean committed branch that has already been pushed, record the unchanged
 remote-main baseline and exact candidate identity:
 
+The pre-existing untracked `assets/` directory is the only permitted worktree
+exception. Exact-SHA builds use `git archive`, never read that directory, and
+reject any other tracked modification or untracked path.
+
 ```sh
 QA_SHA=$(git rev-parse HEAD)
 QA_SOURCE_BRANCH=$(git branch --show-current)

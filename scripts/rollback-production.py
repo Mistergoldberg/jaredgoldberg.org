@@ -32,8 +32,10 @@ def main():
         parser.error('Use full SHA values')
     for release in (args.expected_current_release,args.target):
         if not re.fullmatch(r'(?:\d{14}|\d{8}T\d{6}Z-[a-f0-9]{12})',release): parser.error('Invalid release ID')
+    status=git('status','--porcelain')
+    if status not in ('','?? assets/'): raise ValueError('Rollback requires an exact clean main checkout')
     checks=[(git('rev-parse','HEAD'),args.sha),(git('branch','--show-current'),'main'),
-        (git('status','--porcelain'),''),(git('remote','get-url','origin'),EXPECTED_REMOTE)]
+        (git('remote','get-url','origin'),EXPECTED_REMOTE)]
     if any(actual!=expected for actual,expected in checks): raise ValueError('Rollback requires an exact clean main checkout')
     remote_main=git('ls-remote','--heads','origin','refs/heads/main').split('\t',1)[0]
     if remote_main!=args.sha: raise ValueError('Remote main moved')
