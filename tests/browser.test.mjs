@@ -65,7 +65,10 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
         for(const gutter of gutters) assert.ok(Math.abs(gutter.left-gutter.right)<.5);
       }
       assert.equal(await page.getByRole('heading',{level:1,name:'Jared Goldberg',exact:true}).count(),1);
-      assert.equal(await page.getByRole('heading',{level:2,name:'Explore the practice',exact:true}).count(),1);
+      assert.equal(await page.getByRole('heading',{level:2,name:"Explore Jared's practice",exact:true}).count(),1);
+      assert.equal(await page.getByText("An institutional index of Jared's practice",{exact:true}).count(),1);
+      assert.equal(await page.locator('.site-footer p').filter({hasText:'jaredgoldberg.org'}).count(),1);
+      assert.equal(await page.locator('.site-footer__identity').evaluate(element=>getComputedStyle(element).textTransform),'none');
       assert.equal(await page.getByRole('heading',{level:3}).count(),4);
       assert.equal(await page.locator('.index-entry').count(),4);
       assert.equal(await page.locator('.index-entry a').count(),4);
@@ -93,7 +96,7 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
       const sheetWidth=await page.locator('.menu-panel__sheet').evaluate(element=>element.getBoundingClientRect().width);const expectedSheetWidth=width<768?Math.min(384,width-44):width<1024?Math.min(384,width-48):Math.min(448,width-48);assert.ok(Math.abs(sheetWidth-expectedSheetWidth)<1);
       assert.equal(await page.locator('.menu-panel a[aria-current=page]').getAttribute('href'),'/');
       await page.screenshot({path:`${results}/screenshots/home-${width}x${height}-menu.png`});assert.deepEqual((await new AxeBuilder({page}).analyze()).violations,[]);
-      const explore=page.locator('.menu-panel summary').filter({hasText:'Explore the practice'});
+      const explore=page.locator('.menu-panel summary').filter({hasText:"Explore Jared's practice"});
       await page.keyboard.press('Shift+Tab');assert.equal(await explore.evaluate(element=>element===document.activeElement),true);
       await page.keyboard.press('Tab');assert.equal(await close.evaluate(element=>element===document.activeElement),true);
       await explore.click();
@@ -118,11 +121,15 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
       assert.equal(await page.locator('.section-page__destinations a.text-link--external').count(),item.links);
       assert.equal(await page.locator('.section-page__toc a').count(),item.sections);
       assert.equal(await page.locator('.section-page__siblings a').count(),4);
+      assert.equal(await page.getByRole('heading',{level:2,name:"Explore Jared's practice",exact:true}).count(),1);
+      assert.equal(await page.locator('.site-footer p').filter({hasText:'jaredgoldberg.org'}).count(),1);
+      assert.equal(await page.locator('.site-footer__identity').evaluate(element=>getComputedStyle(element).textTransform),'none');
       assert.equal(await page.locator('.section-page__siblings a[aria-current=page]').getAttribute('href'),`/${item.slug}/`);
       assert.equal(await page.locator('main img, main picture').count(),0);assert.equal(await page.locator('.media-placeholder[aria-hidden=true]').count(),1);
       const media=await page.locator('.media-frame--banner').evaluate(element=>{const rect=element.getBoundingClientRect();return {ratio:rect.width/rect.height,overflow:document.documentElement.scrollWidth>innerWidth};});
       assert.equal(media.overflow,false);assert.ok(Math.abs(media.ratio-(width<768?1:16/9))<.02);
-      const rhythm=await page.evaluate(()=>{const title=document.querySelector('.section-page__hero h1').getBoundingClientRect(),trigger=document.querySelector('[data-menu-toggle]').getBoundingClientRect(),media=document.querySelector('.media-frame--banner').getBoundingClientRect(),layout=document.querySelector('.section-page__layout').getBoundingClientRect(),toc=document.querySelector('.section-page__toc').getBoundingClientRect(),article=document.querySelector('.section-page__article').getBoundingClientRect(),firstParagraph=document.querySelector('.article-section p').getBoundingClientRect(),sections=[...document.querySelectorAll('.article-section')];return {titleTop:title.top,triggerBottom:trigger.bottom,mediaToLayout:layout.top-media.bottom,columnGap:article.left-toc.right,articleRightDelta:media.right-article.right,paragraphRightDelta:article.right-firstParagraph.right,sectionGaps:sections.slice(1).map((section,index)=>section.querySelector('h2').getBoundingClientRect().top-sections[index].querySelector('p:last-child').getBoundingClientRect().bottom)};});
+      const rhythm=await page.evaluate(()=>{const title=document.querySelector('.section-page__hero h1').getBoundingClientRect(),trigger=document.querySelector('[data-menu-toggle]').getBoundingClientRect(),media=document.querySelector('.media-frame--banner').getBoundingClientRect(),layout=document.querySelector('.section-page__layout').getBoundingClientRect(),toc=document.querySelector('.section-page__toc').getBoundingClientRect(),article=document.querySelector('.section-page__article').getBoundingClientRect(),firstParagraph=document.querySelector('.article-section p').getBoundingClientRect(),sections=[...document.querySelectorAll('.article-section')];return {titleTop:title.top,triggerBottom:trigger.bottom,titleRightDelta:media.right-title.right,mediaToLayout:layout.top-media.bottom,columnGap:article.left-toc.right,articleRightDelta:media.right-article.right,paragraphRightDelta:article.right-firstParagraph.right,sectionGaps:sections.slice(1).map((section,index)=>section.querySelector('h2').getBoundingClientRect().top-sections[index].querySelector('p:last-child').getBoundingClientRect().bottom)};});
+      assert.ok(Math.abs(rhythm.titleRightDelta)<1);
       if(width>=768) assert.ok(Math.abs(rhythm.titleTop-rhythm.triggerBottom)<1);
       if(width>=768){assert.ok(Math.abs(rhythm.columnGap-25.888)<1);assert.ok(Math.abs(rhythm.articleRightDelta)<1);assert.ok(Math.abs(rhythm.paragraphRightDelta)<1);}
       assert.ok(rhythm.mediaToLayout<=(width<768?33:49));

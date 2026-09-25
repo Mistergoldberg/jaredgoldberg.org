@@ -10,8 +10,8 @@
 }
 
 .section-page__hero h1 {
-  grid-column: 1 / span 10;
-  max-width: 14ch;
+  grid-column: 1 / -1;
+  max-width: none;
   font-size: clamp(3.2rem, 2rem + 5.8vw, 7.5rem);
 }
 

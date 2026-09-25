@@ -25,7 +25,7 @@ ${renderHeader()}${renderNavigation(navigation, path)}`;
 }
 
 function footer(site) {
-  return `<footer class="site-footer" data-page-background><div class="layout-shell layout-shell--stage site-footer__inner"><p class="type-utility">${e(site.name)}</p><p class="type-caption">${e(site.role)}</p></div></footer></body></html>\n`;
+  return `<footer class="site-footer" data-page-background><div class="layout-shell layout-shell--stage site-footer__inner"><p class="site-footer__identity type-utility">${e(site.identity)}</p><p class="type-caption">${e(site.role)}</p></div></footer></body></html>\n`;
 }
 
 function renderIndexEntry(section) {
@@ -41,10 +41,10 @@ export function renderHomePage({ site, navigation, homepage, stylesheet, script 
     <p class="home-hero__identity type-eyebrow">${e(site.identity)}</p>
     <div class="home-hero__heading"><h1 id="home-title" aria-label="${e(site.name)}">${nameLines}</h1><p class="home-hero__role">${e(site.role)}</p></div>
     <div class="home-hero__introduction">${homepage.introduction.slice(0,1).map(paragraph => `<p>${e(paragraph)}</p>`).join('')}</div>
-    <p class="home-hero__index-note type-caption">An institutional index of one practice</p>
+    <p class="home-hero__index-note type-caption">An institutional index of Jared's practice</p>
   </div></section>
   <section id="practice-index" class="home-index" aria-labelledby="practice-index-title"><div class="layout-shell layout-shell--stage">
-    <header class="home-index__header"><h2 id="practice-index-title">Explore the practice</h2><p>${e(homepage.introduction[1])}</p></header>
+    <header class="home-index__header"><h2 id="practice-index-title">Explore Jared's practice</h2><p>${e(homepage.introduction[1])}</p></header>
     <div class="index-grid">${homepage.sections.map(renderIndexEntry).join('')}</div>
   </div></section>
 </main>
@@ -69,7 +69,7 @@ function renderArticleSection(section) {
 
 function renderSiblingNavigation(sectionRoutes, currentPath) {
   const items = sectionRoutes.map(route => `<li><a href="${e(route.href)}"${route.href === currentPath ? ' aria-current="page"' : ''}>${e(route.label)}</a></li>`).join('');
-  return `<nav class="section-page__siblings" aria-labelledby="explore-practice-title"><h2 id="explore-practice-title">Explore the practice</h2><ul>${items}</ul></nav>`;
+  return `<nav class="section-page__siblings" aria-labelledby="explore-practice-title"><h2 id="explore-practice-title">Explore Jared's practice</h2><ul>${items}</ul></nav>`;
 }
 
 export function renderSectionPage({ site, navigation, sectionRoutes, page, stylesheet, script }) {

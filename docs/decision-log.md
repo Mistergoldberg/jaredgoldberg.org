@@ -267,3 +267,11 @@ tablet. Align the opening paragraph with the top of the `GOLDBERG` highlight,
 while retaining the natural-height mobile flow. Give the index heading and its
 explanatory sentence the same wider eight-track column, with the sentence below
 the heading, so they read as one introduction rather than two opposing labels.
+
+## 2026-09-25 — domain footer, attributed practice labels and full-width titles
+
+Use `jaredgoldberg.org` as the identity in every shared footer. Attribute the
+homepage caption and all “Explore” headings to Jared's practice, including the
+drawer group and supporting-page sibling navigation. Let every supporting-page
+H1 span the full stage width so its column shares both edges with the media frame;
+retain natural wrapping, responsive type and the established top alignment.

@@ -16,7 +16,7 @@ export const sectionRoutes = [
 
 export const navigation = [
   { label: 'Home', href: '/' },
-  { label: 'Explore the practice', children: sectionRoutes.map(({ label, href }) => ({ label, href })) },
+  { label: "Explore Jared's practice", children: sectionRoutes.map(({ label, href }) => ({ label, href })) },
 ];
 
 export const homepage = {

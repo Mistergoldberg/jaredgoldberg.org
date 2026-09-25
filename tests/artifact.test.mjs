@@ -57,6 +57,10 @@ test('artifact contains only intended public files, verified checksums and local
   assert.match(html,/menu-trigger__label">Menu<\/span><span class="menu-trigger__icon" aria-hidden="true">/);
   assert.match(html,/<meta name="description" content="Jared Goldberg makes art, software, public projects and large work systems\./);
   assert.match(html,/<h1 id="home-title" aria-label="Jared Goldberg"><span aria-hidden="true">Jared<\/span><span aria-hidden="true">Goldberg<\/span><\/h1>/);
+  assert.match(html,/An institutional index of Jared's practice/);
+  assert.match(html,/Explore Jared's practice/);
+  assert.doesNotMatch(html,/Explore the practice|An institutional index of one practice/);
+  assert.match(html,/<footer class="site-footer"[\s\S]*?<p class="site-footer__identity type-utility">jaredgoldberg\.org<\/p>/);
   assert.match(html,/<section id="practice-index"/);
   assert.equal(html.match(/class="index-entry"/g)?.length,4);
   for(const route of ['media-archives-and-memory','community-service','systems-and-institutions','art']) assert.match(html,new RegExp(`href="/${route}/"`));
@@ -69,6 +73,9 @@ test('artifact contains only intended public files, verified checksums and local
     assert.match(pageHtml,/class="media-frame media-frame--banner media-placeholder" aria-hidden="true"/);
     assert.doesNotMatch(pageHtml,/section-page__identity|section-page__kicker/);
     assert.match(pageHtml,/<h2 id="table-of-contents-title">Table of contents<\/h2>/);
+    assert.match(pageHtml,/Explore Jared's practice/);
+    assert.match(pageHtml,/<footer class="site-footer"[\s\S]*?<p class="site-footer__identity type-utility">jaredgoldberg\.org<\/p>/);
+    assert.doesNotMatch(pageHtml,/Explore the practice/);
     assert.doesNotMatch(pageHtml,/>On this page</);
     assert.doesNotMatch(pageHtml,/<main[\s\S]*?<img\b|Editorial QA not for publication/);
   }

@@ -235,3 +235,5 @@
   gap: var(--space-5);
   align-items: end;
 }
+
+.site-footer__identity { text-transform: none; }
