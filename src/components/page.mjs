@@ -89,8 +89,8 @@ export function renderSectionPage({ site, navigation, sectionRoutes, page, style
     <article class="section-page__article">${page.sections.map(renderArticleSection).join('')}
       <section class="section-page__destinations" aria-labelledby="continue-title"><h2 id="continue-title">Continue</h2><ul>${links}</ul></section>
     </article>
+    ${renderSiblingNavigation(sectionRoutes, path)}
   </div>
-  <div class="layout-shell layout-shell--stage">${renderSiblingNavigation(sectionRoutes, path)}</div>
 </main>
 ${footer(site)}`;
 }

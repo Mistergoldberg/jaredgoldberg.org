@@ -282,3 +282,14 @@ Place the desktop/tablet menu control inside a 4.75rem sticky header with a subt
 lower rule. Offset sticky contents navigation and article anchors below that band.
 On mobile, retain the zero-height icon header but render every table-of-contents
 subject in one stacked column. Use the exact footer identity `JAREDGOLDBERG.ORG`.
+
+## 2026-09-25 — supporting-page title rhythm and contents handoff
+
+On desktop and tablet, place the supporting-page title 2rem below the sticky
+header and reduce its following gap to the media frame to 1.5rem. Keep the
+table-of-contents navigation fixed 1rem below the header through the full article
+and “Continue” section. Give its sticky scope a second row that ends after the
+related-practice navigation, with that opaque navigation providing a clean visual
+handoff instead of allowing the contents list to slide behind the header. Constrain
+the sticky navigation to the available viewport height so every subject remains
+reachable in short landscape viewports.

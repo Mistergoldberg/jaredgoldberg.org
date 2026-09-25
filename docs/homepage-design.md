@@ -85,11 +85,13 @@ destination is rendered as a link.
 - Supporting pages use a sticky two-track contents navigation beside an article
   that begins in track three and reaches the image’s right edge. A 1.618rem gap
   provides the desktop/tablet separation. The contents block clears the 4.75rem
-  sticky header. Below 768px both regions become one flow and every contents
-  subject stacks in one column.
-- On desktop and tablet, the page title begins at the lower edge of the sticky
-  header. The media-to-content gap is 48px; adjacent article sections use 32px on
-  either side of their divider. Mobile reduces those values to 32px and 24px.
+  sticky header by 1rem, remains fixed through the article and “Continue,” and
+  hands off behind the related-practice block. Below 768px both regions become
+  one flow and every contents subject stacks in one column.
+- On desktop and tablet, the page title begins 32px below the sticky header and
+  ends 24px above the media frame. The media-to-content gap is 48px; adjacent
+  article sections use 32px on either side of their divider. Mobile retains its
+  menu-safe title offset and reduces those latter values to 32px and 24px.
 - At 320px the name highlights, role line, long headings, destination labels and
   article copy wrap without horizontal overflow. A 720px viewport exercises the
   same CSS-pixel layout as 200% zoom on a 1440px viewport.
