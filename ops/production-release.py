@@ -20,7 +20,7 @@ PAGE_INDEXES = {
 
 class Releases:
     def __init__(self, root=ROOT):
-        self.root = Path(root)
+        self.root = Path(root).resolve()
         self.releases = self.root / 'releases'
         self.current = self.root / 'current'
         self.state = self.root / 'shared' / 'production'
