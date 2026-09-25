@@ -20,12 +20,12 @@
 .section-page__layout {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: var(--grid-gap-wide) var(--grid-gap);
+  gap: var(--grid-gap-wide) 1.618rem;
   padding-bottom: var(--space-8);
 }
 
 .section-page__toc {
-  grid-column: 1 / span 3;
+  grid-column: 1 / span 2;
   align-self: start;
   position: sticky;
   top: var(--space-6);
@@ -58,7 +58,9 @@
   text-decoration-color: var(--color-border-strong);
 }
 
-.section-page__article { grid-column: 5 / span 6; }
+.section-page__article { grid-column: 3 / -1; }
+
+.section-page__article p { max-width: none; }
 
 .article-section {
   padding-block: 0 var(--space-6);
@@ -124,7 +126,6 @@
 }
 
 @media (max-width: 63.99rem) {
-  .section-page__article { grid-column: 5 / -1; }
   .section-page__siblings ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 

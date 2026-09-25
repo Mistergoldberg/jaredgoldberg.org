@@ -85,7 +85,7 @@ export function renderSectionPage({ site, navigation, sectionRoutes, page, style
   </div></header>
   <div class="layout-shell layout-shell--stage section-page__media">${renderMediaPlaceholder({label:'Image pending',decorative:true})}</div>
   <div class="layout-shell layout-shell--stage section-page__layout">
-    <aside class="section-page__toc"><nav aria-labelledby="on-this-page"><h2 id="on-this-page">On this page</h2><ul>${toc}</ul></nav></aside>
+    <aside class="section-page__toc"><nav aria-labelledby="table-of-contents-title"><h2 id="table-of-contents-title">Table of contents</h2><ul>${toc}</ul></nav></aside>
     <article class="section-page__article">${page.sections.map(renderArticleSection).join('')}
       <section class="section-page__destinations" aria-labelledby="continue-title"><h2 id="continue-title">Continue</h2><ul>${links}</ul></section>
     </article>

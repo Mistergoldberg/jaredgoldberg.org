@@ -18,7 +18,7 @@ and URLs. There are no decorative numbers or dedicated number columns. The
 homepage retains one H1, one H2 for the index and four H3 entry titles.
 
 Each supporting page uses one H1 without a repeated site name or generic section
-kicker, a standard-page media slot, an “On this page”
+kicker, a standard-page media slot, a “Table of contents”
 navigation generated from its H2 sections, the complete supplied article copy,
 an onward-destinations list and all four sibling routes. The active internal route
 uses `aria-current="page"` in both navigation systems.
@@ -70,8 +70,9 @@ destination is rendered as a link.
   footer share the 94rem stage shell and its outer gutters.
 - The homepage index uses two columns at desktop and one below 768px. Content sets
   each entry’s height; descriptions and links are never clamped.
-- Supporting pages use a sticky three-column local navigation beside a six-column
-  article on desktop. They become one flow below 768px, where the local navigation
+- Supporting pages use a sticky two-track contents navigation beside an article
+  that begins in track three and reaches the image’s right edge. A 1.618rem gap
+  provides the desktop/tablet separation. They become one flow below 768px, where the navigation
   wraps into a compact two-column list.
 - On desktop and tablet, the page title begins at the lower edge of the fixed menu
   trigger. The media-to-content gap is 48px; adjacent article sections use 32px on

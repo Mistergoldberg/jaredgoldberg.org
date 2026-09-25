@@ -41,7 +41,7 @@ Dark red has a 7.38:1 ratio on the page background, 8.15:1 on the raised surface
 
 - Use `h1` only for the page title. Its Black display treatment is reserved for the most prominent page title, not every oversized phrase.
 - Use `h2` for section names, `h3` for record/inquiry/writing titles and `h4` only for a nested subdivision.
-- Paragraphs cap at 66ch. Long-form introductions and prose may use `--container-reading-max` (44rem) through `.section-introduction`, `.prose` or `.layout-shell--reading`.
+- Paragraphs cap at 66ch by default. Long-form introductions and prose may use `--container-reading-max` (44rem) through `.section-introduction`, `.prose` or `.layout-shell--reading`. The supporting-page article is the documented exception: its block width reaches the right edge of the stage media to complete the contents/article composition.
 - Headings balance lines and break long words only when necessary. Record titles and metadata may break anywhere as an overflow safeguard; content must not be truncated or line-clamped.
 - `.type-eyebrow`, `.type-meta`, `.type-caption`, `.type-nav`, `.type-button` and `.type-utility` are uppercase UI/editorial roles. They are not substitutes for heading semantics.
 - `.record-meta` holds factual type and status as separate, wrapping spans. Spacing—not punctuation that can strand at a line start—distinguishes the items. Preserve source wording such as “in development”, “Developing proposal” and “Employer-owned work”; styling must not imply availability.
@@ -55,7 +55,7 @@ Use only the `--space-0` through `--space-10` scale for component spacing. Secti
 - `.layout-shell--content`: maximum 70rem, editorial sections and records.
 - `.layout-shell--reading`: maximum 44rem, sustained prose.
 - The institutional-index homepage uses `.layout-shell--stage` for the hero, every subsequent section and the footer. Below-the-fold width must follow the above-the-fold stage width rather than narrowing to the editorial content shell.
-- Supporting pages also use `.layout-shell--stage` for their outer hero, media, article grid, sibling navigation and footer. The sustained article copy occupies a narrower grid track inside that common stage rather than switching outer shells.
+- Supporting pages also use `.layout-shell--stage` for their outer hero, media, article grid, sibling navigation and footer. The contents column occupies the first two tracks; the article starts in track three and reaches the stage’s right edge. A fixed `1.618rem` gap separates the two columns on desktop/tablet.
 - Do not add decorative section numbers, inquiry counters or ecosystem markers to the homepage. They must not reserve a grid column or create an artificial left offset.
 - Desktop is 1024px and wider; tablet is 768–1023px; mobile is below 768px. Token comments record these values, while media queries use their literal rem equivalents because custom properties cannot drive media conditions.
 - `.grid-2`, `.grid-auto`, `.inquiry-grid`, `.record-list` and `.writing-list` are the allowed starting grids. Records must grow with content. Do not force equal heights or clip summaries.
@@ -115,7 +115,7 @@ Cards remain available for self-contained utility surfaces. Do not use `.card` a
 | Four-route practice index | `.index-grid` + `.index-entry` | Every entry carries one supplied summary and one internal route; no decorative numbering or dedicated number column |
 | Supporting-page title | `.section-page__hero` | One H1 with no site-name or generic section kicker; on desktop/tablet its top edge begins at the menu trigger’s lower edge; title may wrap without clipping |
 | Standard-page banner | `.media-frame--banner` / `renderMediaPlaceholder` | 16:9 desktop/tablet, 1:1 mobile; asset, focal point and alt text remain pending |
-| Long-form section copy | `.section-page__layout`, local TOC and `.article-section` | TOC mirrors H2 headings; prose stays readable; adjacent article sections use the compact spacing scale and no copy is clamped or converted into cards |
+| Long-form section copy | `.section-page__layout`, “Table of contents” navigation and `.article-section` | Contents mirror H2 headings; article reaches the media’s right edge; adjacent article sections use the compact spacing scale and no copy is clamped or converted into cards |
 | Supplied onward destinations | `.section-page__destinations` + `renderTextLink` | HTTPS links use the graphic external mark, stay in the same tab and are checked against the approved allowlist |
 | Related practice routes | `.section-page__siblings` | Always show all four internal routes and mark the current page semantically |
 

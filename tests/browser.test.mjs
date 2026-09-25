@@ -109,6 +109,8 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
       assert.equal(await page.getByRole('heading',{level:1,name:item.title,exact:true}).count(),1);
       assert.equal(await page.getByText('JAREDGOLDBERG.ORG',{exact:true}).count(),0);
       assert.equal(await page.getByText('PRACTICE SECTION',{exact:true}).count(),0);
+      assert.equal(await page.getByRole('heading',{level:2,name:'Table of contents',exact:true}).count(),1);
+      assert.equal(await page.getByText('On this page',{exact:true}).count(),0);
       assert.equal(await page.locator('.article-section').count(),item.sections);
       assert.equal(await page.locator('.section-page__destinations a.text-link--external').count(),item.links);
       assert.equal(await page.locator('.section-page__toc a').count(),item.sections);
@@ -117,8 +119,9 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
       assert.equal(await page.locator('main img, main picture').count(),0);assert.equal(await page.locator('.media-placeholder[aria-hidden=true]').count(),1);
       const media=await page.locator('.media-frame--banner').evaluate(element=>{const rect=element.getBoundingClientRect();return {ratio:rect.width/rect.height,overflow:document.documentElement.scrollWidth>innerWidth};});
       assert.equal(media.overflow,false);assert.ok(Math.abs(media.ratio-(width<768?1:16/9))<.02);
-      const rhythm=await page.evaluate(()=>{const title=document.querySelector('.section-page__hero h1').getBoundingClientRect(),trigger=document.querySelector('[data-menu-toggle]').getBoundingClientRect(),media=document.querySelector('.media-frame--banner').getBoundingClientRect(),layout=document.querySelector('.section-page__layout').getBoundingClientRect(),sections=[...document.querySelectorAll('.article-section')];return {titleTop:title.top,triggerBottom:trigger.bottom,mediaToLayout:layout.top-media.bottom,sectionGaps:sections.slice(1).map((section,index)=>section.querySelector('h2').getBoundingClientRect().top-sections[index].querySelector('p:last-child').getBoundingClientRect().bottom)};});
+      const rhythm=await page.evaluate(()=>{const title=document.querySelector('.section-page__hero h1').getBoundingClientRect(),trigger=document.querySelector('[data-menu-toggle]').getBoundingClientRect(),media=document.querySelector('.media-frame--banner').getBoundingClientRect(),layout=document.querySelector('.section-page__layout').getBoundingClientRect(),toc=document.querySelector('.section-page__toc').getBoundingClientRect(),article=document.querySelector('.section-page__article').getBoundingClientRect(),firstParagraph=document.querySelector('.article-section p').getBoundingClientRect(),sections=[...document.querySelectorAll('.article-section')];return {titleTop:title.top,triggerBottom:trigger.bottom,mediaToLayout:layout.top-media.bottom,columnGap:article.left-toc.right,articleRightDelta:media.right-article.right,paragraphRightDelta:article.right-firstParagraph.right,sectionGaps:sections.slice(1).map((section,index)=>section.querySelector('h2').getBoundingClientRect().top-sections[index].querySelector('p:last-child').getBoundingClientRect().bottom)};});
       if(width>=768) assert.ok(Math.abs(rhythm.titleTop-rhythm.triggerBottom)<1);
+      if(width>=768){assert.ok(Math.abs(rhythm.columnGap-25.888)<1);assert.ok(Math.abs(rhythm.articleRightDelta)<1);assert.ok(Math.abs(rhythm.paragraphRightDelta)<1);}
       assert.ok(rhythm.mediaToLayout<=(width<768?33:49));
       assert.ok(rhythm.sectionGaps.every(gap=>gap<=(width<768?49:65)));
       for(const link of await page.locator('.section-page__destinations a').all()){assert.equal(await link.getAttribute('target'),null);assert.equal(await link.locator('.text-link__external-mark').count(),1);}

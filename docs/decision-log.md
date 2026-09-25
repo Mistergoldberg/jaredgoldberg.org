@@ -251,3 +251,11 @@ menu trigger’s lower edge so the title and global control share one top band.
 Reduce the banner-to-content gap to 48px and each side of an article divider to
 32px; use 32px and 24px respectively on mobile. Keep the local contents navigation,
 banner ratios, article width and mobile menu-safe title offset unchanged.
+
+## 2026-09-25 — balanced contents and article columns
+
+Rename the supporting-page navigation label from “On this page” to “Table of
+contents.” Remove the empty grid track between navigation and article, retain a
+1.618rem column gap, and let the article run from track three to the right edge of
+the stage media. Supporting-page paragraphs follow that article width rather than
+the global 66ch cap. Below 768px, retain the established single-column flow.
