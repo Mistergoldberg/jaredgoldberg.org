@@ -18,7 +18,7 @@ test('production artifact is indexable, identified and strictly allowlisted',asy
   assert.equal(manifest.site,'jaredgoldberg.org');
   assert.equal(manifest.environment,'production');
   assert.match(manifest.gitSha,/^(?:worktree|[a-f0-9]{40})$/);
-  assert.match(manifest.buildId,/^production-/);
+  assert.match(manifest.buildId,/^(?:production-[A-Za-z0-9._-]+|\d{8}T\d{6}Z-[a-f0-9]{12})$/);
   assert.deepEqual(names.filter(name=>name!=='artifact-manifest.json').sort(),Object.keys(manifest.files).sort());
   for(const [name,expected] of Object.entries(manifest.files)) assert.equal(digest(await readFile(`dist/${name}`)),expected,name);
   const generated=['artifact-manifest.json','release.json','robots.txt',...routes];
