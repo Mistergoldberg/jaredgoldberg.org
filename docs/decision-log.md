@@ -242,3 +242,12 @@ the standard-page banner rule here—not to the homepage—with a 16:9 desktop/t
 frame and a 1:1 mobile frame. Because no final artwork, focal point or alt text was
 supplied, use the neutral decorative “Image pending” state and do not invent work.
 The editorial QA table in the source document is guidance, not publishable copy.
+
+## 2026-09-24 — compact supporting-page rhythm
+
+Remove the repeated `jaredgoldberg.org` link and generic “Practice section” label
+from all four supporting-page heroes. On desktop and tablet, begin the H1 at the
+menu trigger’s lower edge so the title and global control share one top band.
+Reduce the banner-to-content gap to 48px and each side of an article divider to
+32px; use 32px and 24px respectively on mobile. Keep the local contents navigation,
+banner ratios, article width and mobile menu-safe title offset unchanged.

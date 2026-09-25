@@ -113,9 +113,9 @@ Cards remain available for self-contained utility surfaces. Do not use `.card` a
 | --- | --- | --- |
 | Homepage identity, role and opening | semantic `h1`, independent highlights and prose | One accessible page title; approved name lines remain visual only; no homepage banner |
 | Four-route practice index | `.index-grid` + `.index-entry` | Every entry carries one supplied summary and one internal route; no decorative numbering or dedicated number column |
-| Supporting-page identity | `.section-page__hero` | One H1 and one quiet section kicker; title may wrap without clipping |
+| Supporting-page title | `.section-page__hero` | One H1 with no site-name or generic section kicker; on desktop/tablet its top edge begins at the menu trigger’s lower edge; title may wrap without clipping |
 | Standard-page banner | `.media-frame--banner` / `renderMediaPlaceholder` | 16:9 desktop/tablet, 1:1 mobile; asset, focal point and alt text remain pending |
-| Long-form section copy | `.section-page__layout`, local TOC and `.article-section` | TOC mirrors H2 headings; prose stays readable; no copy is clamped or converted into cards |
+| Long-form section copy | `.section-page__layout`, local TOC and `.article-section` | TOC mirrors H2 headings; prose stays readable; adjacent article sections use the compact spacing scale and no copy is clamped or converted into cards |
 | Supplied onward destinations | `.section-page__destinations` + `renderTextLink` | HTTPS links use the graphic external mark, stay in the same tab and are checked against the approved allowlist |
 | Related practice routes | `.section-page__siblings` | Always show all four internal routes and mark the current page semantically |
 

@@ -17,7 +17,8 @@ The index, drawer menu and supporting-page sibling navigation use the same label
 and URLs. There are no decorative numbers or dedicated number columns. The
 homepage retains one H1, one H2 for the index and four H3 entry titles.
 
-Each supporting page uses one H1, a standard-page media slot, an “On this page”
+Each supporting page uses one H1 without a repeated site name or generic section
+kicker, a standard-page media slot, an “On this page”
 navigation generated from its H2 sections, the complete supplied article copy,
 an onward-destinations list and all four sibling routes. The active internal route
 uses `aria-current="page"` in both navigation systems.
@@ -72,6 +73,9 @@ destination is rendered as a link.
 - Supporting pages use a sticky three-column local navigation beside a six-column
   article on desktop. They become one flow below 768px, where the local navigation
   wraps into a compact two-column list.
+- On desktop and tablet, the page title begins at the lower edge of the fixed menu
+  trigger. The media-to-content gap is 48px; adjacent article sections use 32px on
+  either side of their divider. Mobile reduces those values to 32px and 24px.
 - At 320px the name highlights, role line, long headings, destination labels and
   article copy wrap without horizontal overflow. A 720px viewport exercises the
   same CSS-pixel layout as 200% zoom on a 1440px viewport.

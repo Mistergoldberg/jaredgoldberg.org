@@ -81,8 +81,6 @@ export function renderSectionPage({ site, navigation, sectionRoutes, page, style
   return `${start}
 <main id="main-content" tabindex="-1" data-page-background>
   <header class="section-page__hero"><div class="layout-shell layout-shell--stage">
-    <a class="section-page__identity type-eyebrow" href="/">${e(site.identity)}</a>
-    <p class="section-page__kicker type-caption">Practice section</p>
     <h1>${e(page.title)}</h1>
   </div></header>
   <div class="layout-shell layout-shell--stage section-page__media">${renderMediaPlaceholder({label:'Image pending',decorative:true})}</div>

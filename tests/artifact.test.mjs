@@ -67,6 +67,7 @@ test('artifact contains only intended public files, verified checksums and local
     assert.equal(pageHtml.match(/G-N6X517GEQ2/g)?.length,2);
     assert.match(pageHtml,new RegExp(`<h1>${['Media, Archives and Memory','Community Service','Systems and Institutions','Art'][index]}<\\/h1>`));
     assert.match(pageHtml,/class="media-frame media-frame--banner media-placeholder" aria-hidden="true"/);
+    assert.doesNotMatch(pageHtml,/section-page__identity|section-page__kicker/);
     assert.doesNotMatch(pageHtml,/<main[\s\S]*?<img\b|Editorial QA not for publication/);
   }
   assert.match(sectionHtml[1],/This is not yet a proven employment platform\./);

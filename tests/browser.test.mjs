@@ -102,11 +102,13 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
       await context.close();
     });
 
-    for(const item of sectionPages) for(const [width,height] of [[1440,900],[390,844]]) await t.test(`${item.slug} ${width}x${height}`,async()=>{
+    for(const item of sectionPages) for(const [width,height] of [[1440,900],[768,1024],[390,844]]) await t.test(`${item.slug} ${width}x${height}`,async()=>{
       const context=await newContext(browser,{viewport:{width,height},isMobile:width<768,hasTouch:width<768});
       const page=await context.newPage(),network=observe(page,base),url=`${base}/${item.slug}/`;
       assert.equal((await page.goto(url)).status(),200);await page.evaluate(()=>document.fonts.ready);
       assert.equal(await page.getByRole('heading',{level:1,name:item.title,exact:true}).count(),1);
+      assert.equal(await page.getByText('JAREDGOLDBERG.ORG',{exact:true}).count(),0);
+      assert.equal(await page.getByText('PRACTICE SECTION',{exact:true}).count(),0);
       assert.equal(await page.locator('.article-section').count(),item.sections);
       assert.equal(await page.locator('.section-page__destinations a.text-link--external').count(),item.links);
       assert.equal(await page.locator('.section-page__toc a').count(),item.sections);
@@ -115,6 +117,10 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
       assert.equal(await page.locator('main img, main picture').count(),0);assert.equal(await page.locator('.media-placeholder[aria-hidden=true]').count(),1);
       const media=await page.locator('.media-frame--banner').evaluate(element=>{const rect=element.getBoundingClientRect();return {ratio:rect.width/rect.height,overflow:document.documentElement.scrollWidth>innerWidth};});
       assert.equal(media.overflow,false);assert.ok(Math.abs(media.ratio-(width<768?1:16/9))<.02);
+      const rhythm=await page.evaluate(()=>{const title=document.querySelector('.section-page__hero h1').getBoundingClientRect(),trigger=document.querySelector('[data-menu-toggle]').getBoundingClientRect(),media=document.querySelector('.media-frame--banner').getBoundingClientRect(),layout=document.querySelector('.section-page__layout').getBoundingClientRect(),sections=[...document.querySelectorAll('.article-section')];return {titleTop:title.top,triggerBottom:trigger.bottom,mediaToLayout:layout.top-media.bottom,sectionGaps:sections.slice(1).map((section,index)=>section.querySelector('h2').getBoundingClientRect().top-sections[index].querySelector('p:last-child').getBoundingClientRect().bottom)};});
+      if(width>=768) assert.ok(Math.abs(rhythm.titleTop-rhythm.triggerBottom)<1);
+      assert.ok(rhythm.mediaToLayout<=(width<768?33:49));
+      assert.ok(rhythm.sectionGaps.every(gap=>gap<=(width<768?49:65)));
       for(const link of await page.locator('.section-page__destinations a').all()){assert.equal(await link.getAttribute('target'),null);assert.equal(await link.locator('.text-link__external-mark').count(),1);}
       for(const element of await page.locator('main h1, main h2, main p, main a').all()) assert.equal(await element.evaluate(node=>node.scrollWidth>node.clientWidth),false);
       assert.deepEqual((await new AxeBuilder({page}).analyze()).violations,[]);
@@ -123,7 +129,7 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
       const current=page.locator('.menu-panel a[aria-current=page]');assert.equal(await current.getAttribute('href'),`/${item.slug}/`);assert.equal(await current.isVisible(),true);
       await page.keyboard.press('Escape');assert.equal(await trigger.evaluate(element=>element===document.activeElement),true);
       assert.deepEqual(network.errors,[]);assert.deepEqual(network.external,[googleTagUrl]);assert.deepEqual(network.badResponses,[]);
-      report.sections.push({slug:item.slug,width,height,articleSections:item.sections,externalLinks:item.links,mediaRatio:media.ratio,axeViolations:0,consoleErrors:0});
+      report.sections.push({slug:item.slug,width,height,articleSections:item.sections,externalLinks:item.links,mediaRatio:media.ratio,rhythm,axeViolations:0,consoleErrors:0});
       await context.close();
     });
 
