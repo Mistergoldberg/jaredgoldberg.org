@@ -6,8 +6,10 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { startServer } from '../scripts/serve.mjs';
 import { buildNewPageFixture } from '../scripts/build-new-page-fixture.mjs';
 
-const publicQA=process.env.QA_PUBLIC==='1';
-const results=publicQA?'test-results/public-qa':'test-results';
+const publicUrl=process.env.SITE_PUBLIC_URL || (process.env.QA_PUBLIC==='1'?'https://qa.jaredgoldberg.org':'');
+const publicEnvironment=process.env.PUBLIC_BUILD_ENV || (publicUrl?'qa':'');
+const publicSite=Boolean(publicUrl);
+const results=publicSite?`test-results/public-${publicEnvironment}`:'test-results';
 const googleTagUrl='https://www.googletagmanager.com/gtag/js?id=G-N6X517GEQ2';
 const sizes=[[1440,900],[1024,768],[768,1024],[720,450],[667,375],[430,932],[393,852],[390,844],[375,667],[320,568]];
 const screenshotSizes=new Set(['1440x900','1024x768','390x844','320x568']);
@@ -41,8 +43,8 @@ const observe=(page,base)=>{
 };
 
 test('four-route index, navigation, focus, motion and accessibility gates', {timeout:180000},async(t)=>{
-  const server=publicQA?null:await startServer({port:0});
-  const base=publicQA?'https://qa.jaredgoldberg.org':`http://127.0.0.1:${server.address().port}`;
+  const server=publicSite?null:await startServer({port:0});
+  const base=publicSite?publicUrl:`http://127.0.0.1:${server.address().port}`;
   let browser;
   try {
     browser=await chromium.launch(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE?{executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE}:{});
@@ -54,7 +56,8 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
       assert.equal((await page.goto(base)).status(),200);
       await page.evaluate(()=>document.fonts.ready);
       assert.equal(await page.locator('link[rel=canonical]').count(),0);
-      assert.equal(await page.locator('meta[name=robots]').getAttribute('content'),'noindex, nofollow');
+      if(publicEnvironment==='production') assert.equal(await page.locator('meta[name=robots]').count(),0);
+      else assert.equal(await page.locator('meta[name=robots]').getAttribute('content'),'noindex, nofollow');
       assert.match(await page.locator('meta[name=description]').getAttribute('content'),/^Jared Goldberg makes art, software/);
       const analytics=await page.evaluate(()=>window.dataLayer?.map(entry=>[entry[0],entry[1] instanceof Date?'date':entry[1]]));
       assert.deepEqual(analytics,[['js','date'],['config','G-N6X517GEQ2']]);
@@ -185,7 +188,7 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
       }
     });
 
-    if(!publicQA) await t.test('development-only new-page fixture uses public APIs without page CSS',async()=>{
+    if(!publicSite) await t.test('development-only new-page fixture uses public APIs without page CSS',async()=>{
       const fixtureRoot=await buildNewPageFixture();
       const fixtureServer=await startServer({port:0,root:fixtureRoot});
       const fixtureBase=`http://127.0.0.1:${fixtureServer.address().port}`;

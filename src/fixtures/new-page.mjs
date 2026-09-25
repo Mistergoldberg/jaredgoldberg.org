@@ -30,6 +30,7 @@ export function renderNewPageFixture({ stylesheet = '/assets/site.css', script =
     stylesheet,
     script,
     path:'/',
+    environment:'qa',
     bodyClass:'design-system-fixture',
   });
   return `${start}

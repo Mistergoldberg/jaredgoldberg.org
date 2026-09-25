@@ -70,8 +70,15 @@ class Releases:
         if not re.fullmatch(r'[a-f0-9]{40}', sha) or not release.endswith(sha[:12]):
             raise ValueError('Release SHA mismatch')
         release_info = json.loads((path / 'release.json').read_text())
-        if release_info != {'site': 'jaredgoldberg.org', 'environment': 'qa', 'gitSha': sha}:
-            raise ValueError('Not a QA artifact')
+        legacy_info = {'site': 'jaredgoldberg.org', 'environment': 'qa', 'gitSha': sha}
+        if manifest.get('schema') == 1 and release_info != legacy_info:
+            raise ValueError('Invalid legacy QA artifact')
+        if manifest.get('schema') == 2:
+            expected = {**legacy_info,'buildId':manifest.get('buildId'),'artifactManifest':'artifact-manifest.json'}
+            if (manifest.get('site'),manifest.get('environment')) != ('jaredgoldberg.org','qa') or manifest.get('buildId') != release or release_info != expected:
+                raise ValueError('Not a QA artifact')
+        elif manifest.get('schema') != 1:
+            raise ValueError('Unsupported QA artifact schema')
         actual = set()
         for file in path.rglob('*'):
             if file.is_symlink():
@@ -81,11 +88,13 @@ class Releases:
         if actual != set(manifest['files']) | {'artifact-manifest.json'}:
             raise ValueError('Unexpected/missing release files')
         for name, expected in manifest['files'].items():
+            if manifest.get('schema') == 2 and name.startswith('images/'):
+                raise ValueError('Images are not in the current QA artifact allowlist')
             if name not in PAGE_INDEXES and not re.fullmatch(r'(?:index\.html|robots\.txt|favicon\.svg|release\.json|assets/[\w.-]+\.(?:css|js)|fonts/OFL\.txt|fonts/[\w.-]+\.(?:woff2?|ttf|otf)|images/[\w.-]+\.(?:png|jpe?g|webp))', name):
                 raise ValueError('Invalid artifact filename')
             if hashlib.sha256((path / name).read_bytes()).hexdigest() != expected:
                 raise ValueError('Artifact checksum mismatch: ' + name)
-        if 'Disallow: /' not in (path / 'robots.txt').read_text():
+        if (path / 'robots.txt').read_text() != 'User-agent: *\nDisallow: /\n':
             raise ValueError('QA robots policy missing')
         if 'noindex, nofollow' not in (path / 'index.html').read_text():
             raise ValueError('QA HTML robots policy missing')

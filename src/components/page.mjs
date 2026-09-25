@@ -14,10 +14,12 @@ function analytics(site) {
 </script>` : '';
 }
 
-export function renderPageStart({ site, navigation, title, description, stylesheet, script, path, bodyClass = '' }) {
+export function renderPageStart({ site, navigation, title, description, stylesheet, script, path, environment, bodyClass = '' }) {
+  if (!['qa','production'].includes(environment)) throw new Error('Invalid publication environment');
+  const robots = environment === 'qa' ? '\n<meta name="robots" content="noindex, nofollow">' : '';
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="robots" content="noindex, nofollow"><meta name="description" content="${e(description)}"><title>${e(title)}</title>
+${robots}<meta name="description" content="${e(description)}"><title>${e(title)}</title>
 ${analytics(site)}
 <link rel="preload" href="/fonts/1Ptug8zYS_SKggPNyC0IT4ttDfA.woff2" as="font" type="font/woff2" crossorigin><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="${e(stylesheet)}"><script type="module" src="${e(script)}"></script></head>
 <body class="page ${e(bodyClass)}"><a class="skip-link" href="#main-content" data-page-background>Skip to main content</a>
@@ -32,9 +34,9 @@ function renderIndexEntry(section) {
   return `<article class="index-entry">${renderHeading({level:3,text:section.title})}<p>${e(section.summary)}</p><div class="index-entry__action">${renderTextLink({ href: section.href, label: section.action })}</div></article>`;
 }
 
-export function renderHomePage({ site, navigation, homepage, stylesheet, script }) {
+export function renderHomePage({ site, navigation, homepage, stylesheet, script, environment }) {
   const nameLines = (site.nameLines ?? [site.name]).map(line => `<span class="heading-highlight" aria-hidden="true">${e(line)}</span>`).join('');
-  const start = renderPageStart({site,navigation,title:site.title,description:homepage.introduction[0],stylesheet,script,path:'/',bodyClass:'home-page'});
+  const start = renderPageStart({site,navigation,title:site.title,description:homepage.introduction[0],stylesheet,script,path:'/',environment,bodyClass:'home-page'});
   return `${start}
 <main id="main-content" tabindex="-1" data-page-background>
   <section class="home-hero" aria-labelledby="home-title"><div class="layout-shell layout-shell--stage home-hero__inner">
@@ -72,12 +74,12 @@ function renderSiblingNavigation(sectionRoutes, currentPath) {
   return `<nav class="section-page__siblings" aria-labelledby="explore-practice-title">${renderHeading({level:2,id:'explore-practice-title',text:"Explore Jared's practice"})}<ul>${items}</ul></nav>`;
 }
 
-export function renderSectionPage({ site, navigation, sectionRoutes, page, stylesheet, script }) {
+export function renderSectionPage({ site, navigation, sectionRoutes, page, stylesheet, script, environment }) {
   const path = `/${page.slug}/`;
   const description = page.sections[0].paragraphs.find(paragraph => typeof paragraph === 'string');
   const toc = page.sections.map(section => `<li><a href="#${slugify(section.title)}">${e(section.title)}</a></li>`).join('');
   const links = page.links.map(link => `<li>${renderTextLink(link)}</li>`).join('');
-  const start = renderPageStart({site,navigation,title:`${page.title} — ${site.name}`,description,stylesheet,script,path,bodyClass:'section-page'});
+  const start = renderPageStart({site,navigation,title:`${page.title} — ${site.name}`,description,stylesheet,script,path,environment,bodyClass:'section-page'});
   return `${start}
 <main id="main-content" tabindex="-1" data-page-background>
   <header class="section-page__hero"><div class="layout-shell layout-shell--stage">

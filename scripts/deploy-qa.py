@@ -76,10 +76,12 @@ def load_verifier():
     module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
     return module
 
-def artifact_manifest(directory,sha):
-    (directory/'release.json').write_text(json.dumps({'site':'jaredgoldberg.org','environment':'qa','gitSha':sha},indent=2)+'\n')
+def artifact_manifest(directory,sha,build_id):
+    (directory/'release.json').write_text(json.dumps({'site':'jaredgoldberg.org','environment':'qa','gitSha':sha,
+        'buildId':build_id,'artifactManifest':'artifact-manifest.json'},indent=2)+'\n')
     files={str(path.relative_to(directory)):hashlib.sha256(path.read_bytes()).hexdigest() for path in sorted(directory.rglob('*')) if path.is_file()}
-    (directory/'artifact-manifest.json').write_text(json.dumps({'schema':1,'gitSha':sha,'files':files},indent=2)+'\n')
+    (directory/'artifact-manifest.json').write_text(json.dumps({'schema':2,'site':'jaredgoldberg.org','environment':'qa',
+        'gitSha':sha,'buildId':build_id,'files':files},indent=2)+'\n')
 
 def activate_with_rollback(remote, verifier, candidate, previous, candidate_dir, previous_dir,
                            public_gate=None, provenance=()):
@@ -143,7 +145,7 @@ def main():
         # scp reads only a prevalidated QA artifact; no production secrets/source tree.
         run(['scp','-q','-r',f'{HOST}:{REMOTE}/releases/{identifier}',str(directory)])
         return directory
-    env={**os.environ,'QA_BUILD_SHA':args.sha}
+    env={**os.environ,'BUILD_ENV':'qa','BUILD_SHA':args.sha,'BUILD_ID':release}
     env.pop('QA_PUBLIC',None)
     checkout=ROOT
     if not args.rollback:
@@ -157,7 +159,7 @@ def main():
         shutil.copytree(checkout/'dist',out/'site')
         shutil.copytree(checkout/'test-results',out/'test-results')
         shutil.copytree(checkout/'ops/qa-baseline',out/'baseline')
-        artifact_manifest(out/'baseline',args.sha)
+        artifact_manifest(out/'baseline',args.sha,'baseline-'+release)
         (out/'deployment.json').write_text(json.dumps({'id':release,'gitSha':args.sha,'status':'prepared','url':verifier.URL},indent=2)+'\n')
         print('Prepared exact-SHA artifact: '+str(out),flush=True)
     if not args.apply: return

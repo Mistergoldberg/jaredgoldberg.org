@@ -1,8 +1,8 @@
 # jaredgoldberg.org
 
 Static institutional index and four supporting practice pages for
-jaredgoldberg.org, built on the verified design system and deployable through an
-isolated QA release workflow.
+jaredgoldberg.org, built on the verified design system and deployable through
+separate, exact-SHA QA and production release workflows.
 
 ## Stack and local setup
 
@@ -23,6 +23,7 @@ reload the browser after a change. Override the port with `PORT=4175` if needed.
 ```sh
 npm test                 # build + artifact/HTTP/browser/accessibility/release checks
 npm run build            # dist/ only; no deployment
+npm run test:production  # production robots/identity/allowlist checks
 npm run fixture:new-page # ignored design-system assembly exercise
 npm run preview          # serve the existing dist/ at 127.0.0.1:4173
 npm run test:browser     # browser checks against the existing local build
@@ -49,10 +50,13 @@ Other supported environments should use the normally installed Playwright browse
 - `src/content/section-pages.mjs`: approved long-form copy and audited destinations for
   Media, Archives and Memory; Community Service; Systems and Institutions; and Art.
 - `src/navigation.js`: menu behavior; contains no navigation data.
-- `public/`: only public assets and QA robots policy. No source-site images are transferred. The verified source-served Raleway
+- `public/`: only allowlisted source assets. Robots policy is generated for the
+  selected build mode; unlisted files are never copied. No source-site images are transferred. The verified source-served Raleway
   webfont and its OFL license are self-hosted under `public/fonts/`. The favicon is a neutral QA square.
-- `scripts/`: build, local server, source captures and isolated QA deployment.
-- `ops/`: QA Nginx template, immutable release operations and first-deploy baseline.
+- `scripts/`: build, local server, source captures, isolated QA deployment and
+  guarded production deployment/rollback.
+- `ops/`: QA and production Nginx templates, immutable release operations and
+  the first-QA-deploy baseline.
 - `tests/`: artifact, browser/accessibility, font policy and release safety checks.
 - `docs/`: inventory, decisions, validation, screenshots and QA runbook.
 - `dist/`, `test-results/`, `artifacts/`: generated and ignored.
@@ -87,10 +91,23 @@ of a named pushed branch and still descends from the explicitly recorded
 `origin/main` baseline. It runs tests and prepares an artifact before any upload.
 The deploy command never pushes Git or changes production.
 
-The original root `index.html`, `scripts/deploy.sh` and production Nginx template
-are retained as baseline files. They are **not** inputs to the new build. Do not use
+The original root `index.html` and `scripts/deploy.sh` are retained as baseline
+files. They are **not** inputs to the new build. The production Nginx template is
+now the reviewed allowlisted configuration for the guarded workflow. Do not use
 the legacy deploy script for QA: it targets production and copies the repository.
 Serve `dist/` through the provided commands, not the repository root.
+
+## Production release
+
+Production builds are explicitly indexable and carry their exact Git SHA,
+environment, build ID and artifact-manifest identity. The production workflow
+accepts only the exact clean remote `main` tip for `--apply`, uploads only
+manifest-listed files to a new immutable release, verifies public bytes/routes,
+and automatically restores the prevalidated prior target on failure. The legacy
+production release remains a fingerprinted rollback target; its Git SHA is
+unknown and is never inferred. See the production section of the
+[operations runbook](docs/qa-runbook.md). Never use `scripts/deploy.sh` for this
+artifact.
 
 Current production (inspection only): `root@5.161.223.134`,
 `/var/www/jaredgoldberg.org/current`. QA uses the distinct `qa-current` symlink.

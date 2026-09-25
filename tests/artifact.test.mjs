@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { files, digest } from '../scripts/build.mjs';
+import { files, digest, publicFiles } from '../scripts/build.mjs';
 import { startServer } from '../scripts/serve.mjs';
 
 test('artifact contains only intended public files, verified checksums and local references',async()=>{
@@ -21,6 +21,13 @@ test('artifact contains only intended public files, verified checksums and local
   ]);
   const names=await files('dist');
   const manifest=JSON.parse(await readFile('dist/artifact-manifest.json','utf8'));
+  const release=JSON.parse(await readFile('dist/release.json','utf8'));
+  assert.equal(manifest.schema,2);
+  assert.equal(manifest.environment,'qa');
+  assert.equal(manifest.site,'jaredgoldberg.org');
+  assert.equal(manifest.gitSha,release.gitSha);
+  assert.equal(manifest.buildId,release.buildId);
+  assert.equal(release.artifactManifest,'artifact-manifest.json');
   assert.deepEqual(names.filter(x=>x!=='artifact-manifest.json').sort(),Object.keys(manifest.files).sort());
   for(const name of names) {
     assert.match(name,/^(?:[a-z-]+\/)?index\.html$|^(?:robots\.txt|favicon\.svg|release\.json|artifact-manifest\.json|assets\/[\w.-]+\.(css|js)|images\/[\w.-]+\.(png|jpe?g|webp)|fonts\/OFL\.txt|fonts\/[\w.-]+\.(woff2?|ttf|otf))$/);
@@ -85,8 +92,8 @@ test('artifact contains only intended public files, verified checksums and local
   assert.match(sectionHtml[2],/https:\/\/jaredgoldberg\.ca\/work\/canadian-tire\.html/);
   assert.match(sectionHtml[3],/<em>Sperme d’artiste<\/em>/);
   assert.match(sectionHtml[3],/https:\/\/duchamped\.com\//);
-  assert.equal(digest(await readFile('dist/images/above-the-fold-prototype.png')),'907e026d74ec626d044cdac1b88c2e9ba7d9d6c926be680f62e8a953384c7e82');
-  assert.doesNotMatch(names.join('\n'),/fixture|test-results/);
+  assert.deepEqual(publicFiles.slice().sort(),['favicon.svg','fonts/1Ptug8zYS_SKggPNyC0IT4ttDfA.woff2','fonts/OFL.txt']);
+  assert.doesNotMatch(names.join('\n'),/above-the-fold-prototype|fixture|test-results/);
   assert.match(html,/menu-panel__close-icon/);
   assert.match(html,/menu-panel__chevron/);
 });

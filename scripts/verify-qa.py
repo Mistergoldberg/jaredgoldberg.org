@@ -61,6 +61,14 @@ def verify_pretty_routes(directory, base=URL):
 def verify(directory, base=URL):
     directory = Path(directory)
     manifest = json.loads((directory/'artifact-manifest.json').read_text())
+    release = json.loads((directory/'release.json').read_text())
+    if manifest.get('schema') == 2:
+        expected={'site':'jaredgoldberg.org','environment':'qa','gitSha':manifest.get('gitSha'),
+                  'buildId':manifest.get('buildId'),'artifactManifest':'artifact-manifest.json'}
+        if release != expected or any(name.startswith('images/') for name in manifest['files']):
+            raise ValueError('Invalid current QA release identity or allowlist')
+    elif manifest.get('schema') != 1:
+        raise ValueError('Unsupported QA artifact schema')
     for path in ['/','/index.html?qa=redirect']:
         status,headers,_=request(base.replace('https://','http://')+path)
         if status not in (301,308) or f'location: {base+path}\n' not in headers:
@@ -78,6 +86,8 @@ def verify(directory, base=URL):
         if not media or media[1] not in MIME[local.suffix]:raise ValueError(f'{name}: wrong MIME type')
         if body != local.read_bytes(): raise ValueError(f'{name}: public artifact byte mismatch')
     if (directory/'robots.txt').read_text().strip()!='User-agent: *\nDisallow: /':raise ValueError('Robots must disallow all')
+    if manifest.get('schema') == 2 and any('above-the-fold-prototype' in name or 'fixture' in name for name in manifest['files']):
+        raise ValueError('Prototype or development fixture leaked into QA')
     for html in directory.rglob('*.html'):
         verify_html_policy(html.read_text())
     verify_pretty_routes(directory,base)

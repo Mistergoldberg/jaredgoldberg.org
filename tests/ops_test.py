@@ -32,10 +32,13 @@ class ReleaseTests(unittest.TestCase):
         path=self.store.path(identifier)
         (path/'index.html').write_text('<meta name="robots" content="noindex, nofollow">QA')
         (path/'robots.txt').write_text('User-agent: *\nDisallow: /\n')
-        (path/'release.json').write_text(json.dumps({'site':'jaredgoldberg.org','environment':'qa','gitSha':SHA}))
+        build_id=identifier
+        (path/'release.json').write_text(json.dumps({'site':'jaredgoldberg.org','environment':'qa','gitSha':SHA,
+            'buildId':build_id,'artifactManifest':'artifact-manifest.json'}))
         for name, content in (extra_files or {}).items():
             file=path/name;file.parent.mkdir(parents=True,exist_ok=True);file.write_bytes(content)
-        manifest={'gitSha':SHA,'files':{str(file.relative_to(path)):hashlib.sha256(file.read_bytes()).hexdigest() for file in path.rglob('*') if file.is_file()}}
+        manifest={'schema':2,'site':'jaredgoldberg.org','environment':'qa','gitSha':SHA,'buildId':build_id,
+            'files':{str(file.relative_to(path)):hashlib.sha256(file.read_bytes()).hexdigest() for file in path.rglob('*') if file.is_file()}}
         (path/'artifact-manifest.json').write_text(json.dumps(manifest))
         self.store.seal(identifier,hashlib.sha256((path/'artifact-manifest.json').read_bytes()).hexdigest())
         return path
@@ -66,9 +69,9 @@ class ReleaseTests(unittest.TestCase):
         self.assertEqual(path.stat().st_mode&0o777,0o555)
         self.assertEqual((path/'index.html').stat().st_mode&0o777,0o444)
         with self.assertRaises(FileExistsError):self.store.prepare(BASE)
-    def test_release_accepts_static_image_assets(self):
-        path=self.artifact(BASE,{'images/above-the-fold-prototype.png':b'png fixture'})
-        self.assertEqual((path/'images/above-the-fold-prototype.png').stat().st_mode&0o777,0o444)
+    def test_release_rejects_unallowlisted_static_assets(self):
+        with self.assertRaises(ValueError):
+            self.artifact(BASE,{'downloads/prototype.bin':b'not public'})
     def test_release_accepts_only_the_published_pretty_route_pages(self):
         path=self.artifact(BASE,{name:b'<meta name="robots" content="noindex, nofollow">' for name in module.PAGE_INDEXES})
         self.assertEqual((path/'community-service/index.html').stat().st_mode&0o777,0o444)

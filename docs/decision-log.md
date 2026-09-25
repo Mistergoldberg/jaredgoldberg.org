@@ -157,6 +157,27 @@ sentence as local page content. Preserve one unchanged PNG source and use
 breakpoint. Retain intrinsic dimensions, descriptive alternative text and an explicit
 high fetch priority; do not add a remote image dependency or duplicate crop files.
 
+## 2026-09-25 — retire the superseded prototype asset
+
+Supersede the 2026-09-22 fixture decision after the institutional-index homepage
+removed the image composition. The unchanged 1,942,972-byte PNG was no longer
+referenced by source or rendered pages but continued to ship only because the
+build copied all of `public/`. Remove it rather than preserve an unused binary.
+Public assets now use an explicit allowlist, and both QA and production manifests
+must prove that the prototype and development-only fixture are absent.
+
+## 2026-09-25 — isolated production artifact and release path
+
+Generate robots policy and page metadata from an explicit `qa` or `production`
+build mode. QA remains noindex and disallow-all; production omits QA robots
+directives and allows crawling. Both artifacts carry exact release identity and
+are constrained to the same reviewed route/asset allowlist. Production releases
+must originate from the exact clean remote `main` tip, use immutable releases and
+an atomic symlink, verify hashes/configuration/public routes, and restore the
+prior verified target automatically on failure. Preserve legacy release
+`20260918213922` only by its active path and known homepage SHA-256; do not assign
+it an unprovable Git revision.
+
 ## 2026-09-23 — symmetric mobile content gutters
 
 Supersede the reserved mobile menu-control rail for page content. Center every
