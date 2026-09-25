@@ -1,9 +1,10 @@
 /* Institutional index composition. */
 .home-hero {
-  min-height: min(58rem, 100svh);
+  --home-wordmark-size: clamp(4rem, 8.7vw, 8.5rem);
+  min-height: min(44rem, 100svh);
   display: grid;
   align-items: end;
-  padding-block: clamp(7rem, 13vw, 11rem) var(--section-space-loose);
+  padding-block: clamp(5rem, 8vw, 7rem) var(--section-space-loose);
 }
 
 .home-hero__inner {
@@ -13,14 +14,21 @@
   align-items: end;
 }
 
-.home-hero__identity { grid-column: 1 / -1; }
-.home-hero__heading { grid-column: 1 / span 7; }
-.home-hero__introduction { grid-column: 8 / -1; display: grid; gap: var(--space-5); }
-.home-hero__index-note { grid-column: 1 / span 6; margin-top: var(--space-8); }
+.home-hero__identity { grid-column: 1 / -1; grid-row: 1; }
+.home-hero__heading { grid-column: 1 / span 7; grid-row: 2; }
+.home-hero__introduction {
+  grid-column: 8 / -1;
+  grid-row: 2;
+  align-self: start;
+  display: grid;
+  gap: var(--space-5);
+  margin-top: calc(var(--home-wordmark-size) + 0.075rem);
+}
+.home-hero__index-note { grid-column: 1 / span 6; grid-row: 3; margin-top: var(--space-8); }
 
 .home-hero h1 {
   max-width: none;
-  font-size: clamp(4rem, 8.7vw, 8.5rem);
+  font-size: var(--home-wordmark-size);
 }
 
 .home-hero h1 > span {
@@ -62,8 +70,11 @@
   margin-bottom: var(--section-space-tight);
 }
 
-.home-index__header h2 { grid-column: 1 / span 7; max-width: 12ch; }
-.home-index__header p { grid-column: 8 / -1; align-self: end; }
+.home-index__header h2,
+.home-index__header p { grid-column: 1 / span 8; }
+
+.home-index__header h2 { max-width: none; }
+.home-index__header p { max-width: 58ch; }
 
 .index-grid {
   display: grid;
@@ -103,6 +114,11 @@
   .home-hero__index-note,
   .home-index__header h2,
   .home-index__header p { grid-column: auto; }
+  .home-hero__identity,
+  .home-hero__heading,
+  .home-hero__introduction,
+  .home-hero__index-note { grid-row: auto; }
+  .home-hero__introduction { margin-top: 0; }
   .home-hero h1 { font-size: clamp(3.3rem, 15vw, 4.5rem); }
   .home-hero__index-note { margin-top: var(--space-6); }
   .index-grid { grid-template-columns: minmax(0, 1fr); }

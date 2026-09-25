@@ -259,3 +259,11 @@ contents.” Remove the empty grid track between navigation and article, retain 
 1.618rem column gap, and let the article run from track three to the right edge of
 the stage media. Supporting-page paragraphs follow that article width rather than
 the global 66ch cap. Below 768px, retain the established single-column flow.
+
+## 2026-09-25 — compact homepage opening and stacked index introduction
+
+Reduce the institutional-index hero cap from 58rem to 44rem on desktop and
+tablet. Align the opening paragraph with the top of the `GOLDBERG` highlight,
+while retaining the natural-height mobile flow. Give the index heading and its
+explanatory sentence the same wider eight-track column, with the sentence below
+the heading, so they read as one introduction rather than two opposing labels.

@@ -68,6 +68,12 @@ destination is rendered as a link.
 
 - The hero, index, standard-page hero, media, article grid, sibling navigation and
   footer share the 94rem stage shell and its outer gutters.
+- The homepage hero is capped at 44rem on desktop and tablet. Its introduction
+  aligns with the top of the `GOLDBERG` highlight rather than the bottom of the
+  complete wordmark. Mobile retains a natural-height single-column flow.
+- The index introduction occupies the first eight tracks: “Explore the practice”
+  uses the full width of that column and its explanatory sentence sits directly
+  beneath it.
 - The homepage index uses two columns at desktop and one below 768px. Content sets
   each entry’s height; descriptions and links are never clamped.
 - Supporting pages use a sticky two-track contents navigation beside an article

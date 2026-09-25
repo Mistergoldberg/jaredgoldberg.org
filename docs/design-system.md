@@ -55,6 +55,7 @@ Use only the `--space-0` through `--space-10` scale for component spacing. Secti
 - `.layout-shell--content`: maximum 70rem, editorial sections and records.
 - `.layout-shell--reading`: maximum 44rem, sustained prose.
 - The institutional-index homepage uses `.layout-shell--stage` for the hero, every subsequent section and the footer. Below-the-fold width must follow the above-the-fold stage width rather than narrowing to the editorial content shell.
+- The institutional-index hero is capped at 44rem on desktop/tablet; its opening copy aligns with the top of the second highlighted name line. The practice-index heading and explanatory sentence share a stacked eight-track column. Mobile returns both regions to natural-height single-column flow.
 - Supporting pages also use `.layout-shell--stage` for their outer hero, media, article grid, sibling navigation and footer. The contents column occupies the first two tracks; the article starts in track three and reaches the stage’s right edge. A fixed `1.618rem` gap separates the two columns on desktop/tablet.
 - Do not add decorative section numbers, inquiry counters or ecosystem markers to the homepage. They must not reserve a grid column or create an artificial left offset.
 - Desktop is 1024px and wider; tablet is 768–1023px; mobile is below 768px. Token comments record these values, while media queries use their literal rem equivalents because custom properties cannot drive media conditions.
