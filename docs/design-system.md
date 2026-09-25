@@ -9,6 +9,7 @@ Implemented and binding:
 - Self-hosted Raleway 4.026 is the only typeface. Body text is 400, supporting headings and UI are 700, prominent display/H1 text is Black 900 with `0.90` leading and `-0.03em` tracking, and large primary menu labels use the authentic ExtraLight 200 instance.
 - `#990202` is the accent for links and the outer focus ring. The menu remains predominantly white and neutral; its control icons are CSS-drawn, not emoji.
 - The mobile menu control is a 44×44 icon button in a zero-height sticky header. It remains available while scrolling without imposing an asymmetric content gutter.
+- Desktop and tablet use a 4.75rem sticky header with the menu control inside it and a subtle lower rule. Sticky tables of contents and anchored article headings clear that header rather than sitting behind it.
 - Standard-page banners use 16:9 through desktop and tablet and 1:1 below 768px. Final banner assets are still an input; a neutral labelled placeholder is available in the meantime.
 - The page, stage, content and reading-width shells, the spacing scale, the 48rem/64rem breakpoints and reduced-motion policy below are shared rules.
 
@@ -55,7 +56,7 @@ Use only the `--space-0` through `--space-10` scale for component spacing. Secti
 - `.layout-shell--content`: maximum 70rem, editorial sections and records.
 - `.layout-shell--reading`: maximum 44rem, sustained prose.
 - The institutional-index homepage uses `.layout-shell--stage` for the hero, every subsequent section and the footer. Below-the-fold width must follow the above-the-fold stage width rather than narrowing to the editorial content shell.
-- Shared footers use the literal lowercase domain `jaredgoldberg.org` as their identity; do not transform it to the personal name or uppercase it.
+- Shared footers use the literal uppercase domain `JAREDGOLDBERG.ORG` as their identity; do not substitute the personal name.
 - The institutional-index hero is capped at 44rem on desktop/tablet; its opening copy aligns with the top of the second highlighted name line. The practice-index heading and explanatory sentence share a stacked eight-track column. Mobile returns both regions to natural-height single-column flow.
 - Supporting pages also use `.layout-shell--stage` for their outer hero, media, article grid, sibling navigation and footer. The contents column occupies the first two tracks; the article starts in track three and reaches the stage’s right edge. A fixed `1.618rem` gap separates the two columns on desktop/tablet.
 - Do not add decorative section numbers, inquiry counters or ecosystem markers to the homepage. They must not reserve a grid column or create an artificial left offset.
@@ -115,9 +116,9 @@ Cards remain available for self-contained utility surfaces. Do not use `.card` a
 | --- | --- | --- |
 | Homepage identity, role and opening | semantic `h1`, independent highlights and prose | One accessible page title; approved name lines remain visual only; no homepage banner |
 | Four-route practice index | `.index-grid` + `.index-entry` | Every entry carries one supplied summary and one internal route; no decorative numbering or dedicated number column |
-| Supporting-page title | `.section-page__hero` | One full-stage-width H1 with no site-name or generic section kicker; its column shares both edges with the media frame, and on desktop/tablet its top edge begins at the menu trigger’s lower edge; title may wrap without clipping |
+| Supporting-page title | `.section-page__hero` | One full-stage-width H1 with no site-name or generic section kicker; its column shares both edges with the media frame, and on desktop/tablet its top edge begins at the sticky header’s lower edge; title may wrap without clipping |
 | Standard-page banner | `.media-frame--banner` / `renderMediaPlaceholder` | 16:9 desktop/tablet, 1:1 mobile; asset, focal point and alt text remain pending |
-| Long-form section copy | `.section-page__layout`, “Table of contents” navigation and `.article-section` | Contents mirror H2 headings; article reaches the media’s right edge; adjacent article sections use the compact spacing scale and no copy is clamped or converted into cards |
+| Long-form section copy | `.section-page__layout`, “Table of contents” navigation and `.article-section` | Contents mirror H2 headings; mobile subjects form one stacked column; desktop/tablet contents stick below the shared header; article reaches the media’s right edge; adjacent article sections use the compact spacing scale and no copy is clamped or converted into cards |
 | Supplied onward destinations | `.section-page__destinations` + `renderTextLink` | HTTPS links use the graphic external mark, stay in the same tab and are checked against the approved allowlist |
 | Related practice routes | `.section-page__siblings` | Label the group “Explore Jared's practice,” always show all four internal routes and mark the current page semantically |
 

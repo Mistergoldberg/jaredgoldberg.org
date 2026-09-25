@@ -1,6 +1,6 @@
 /* Long-form practice sections. */
 .section-page__hero {
-  padding-block: calc(var(--stage-safe-top) + 2.75rem) var(--space-7);
+  padding-block: var(--space-0) var(--space-7);
 }
 
 .section-page__hero > .layout-shell {
@@ -28,7 +28,7 @@
   grid-column: 1 / span 2;
   align-self: start;
   position: sticky;
-  top: var(--space-6);
+  top: calc(var(--site-header-height) + var(--space-4));
 }
 
 .section-page__toc h2 {
@@ -64,7 +64,7 @@
 
 .article-section {
   padding-block: 0 var(--space-6);
-  scroll-margin-top: var(--space-6);
+  scroll-margin-top: calc(var(--site-header-height) + var(--space-4));
 }
 
 .article-section + .article-section {
@@ -144,7 +144,8 @@
   .section-page__destinations { padding-top: var(--space-5); }
   .section-page__siblings { padding-block: var(--space-7); }
   .section-page__toc { position: static; }
-  .section-page__toc ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--space-3); }
+  .section-page__toc ul { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .article-section { scroll-margin-top: var(--space-6); }
   .section-page__siblings ul { grid-template-columns: minmax(0, 1fr); }
   .section-page__siblings a { min-height: 4.5rem; }
 }

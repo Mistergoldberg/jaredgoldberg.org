@@ -275,3 +275,10 @@ homepage caption and all “Explore” headings to Jared's practice, including t
 drawer group and supporting-page sibling navigation. Let every supporting-page
 H1 span the full stage width so its column shares both edges with the media frame;
 retain natural wrapping, responsive type and the established top alignment.
+
+## 2026-09-25 — sticky desktop header and stacked mobile contents
+
+Place the desktop/tablet menu control inside a 4.75rem sticky header with a subtle
+lower rule. Offset sticky contents navigation and article anchors below that band.
+On mobile, retain the zero-height icon header but render every table-of-contents
+subject in one stacked column. Use the exact footer identity `JAREDGOLDBERG.ORG`.

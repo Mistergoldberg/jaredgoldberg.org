@@ -11,10 +11,11 @@
 @media (max-width: 47.99rem) {
   :root {
     --gutter: var(--gutter-mobile);
+    --site-header-height: 0rem;
   }
   .section { padding-block: var(--section-space-tight); }
   .section--flush { padding-block: clamp(4.2rem, 15vw, 5.4rem) var(--section-space-tight); }
-  .site-header--overlay { position: sticky; inset: auto; top: 0; height: 0; }
+  .site-header--overlay { position: sticky; top: 0; height: 0; border-bottom: 0; background: transparent; }
   .site-header__inner {
     padding-top: max(var(--stage-safe-top), env(safe-area-inset-top));
     padding-inline: max(var(--stage-safe-left), env(safe-area-inset-left)) max(var(--stage-safe-right), env(safe-area-inset-right));

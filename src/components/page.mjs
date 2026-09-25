@@ -25,7 +25,7 @@ ${renderHeader()}${renderNavigation(navigation, path)}`;
 }
 
 function footer(site) {
-  return `<footer class="site-footer" data-page-background><div class="layout-shell layout-shell--stage site-footer__inner"><p class="site-footer__identity type-utility">${e(site.identity)}</p><p class="type-caption">${e(site.role)}</p></div></footer></body></html>\n`;
+  return `<footer class="site-footer" data-page-background><div class="layout-shell layout-shell--stage site-footer__inner"><p class="site-footer__identity type-utility">${e(site.footerIdentity)}</p><p class="type-caption">${e(site.role)}</p></div></footer></body></html>\n`;
 }
 
 function renderIndexEntry(section) {

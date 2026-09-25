@@ -74,7 +74,7 @@ destination is rendered as a link.
 - The index introduction occupies the first eight tracks: “Explore Jared's practice”
   uses the full width of that column and its explanatory sentence sits directly
   beneath it.
-- Every shared footer identifies the domain as `jaredgoldberg.org`. The homepage
+- Every shared footer identifies the domain as `JAREDGOLDBERG.ORG`. The homepage
   caption reads “An institutional index of Jared's practice,” and the index,
   drawer group and supporting-page sibling navigation use “Explore Jared's
   practice.”
@@ -84,10 +84,11 @@ destination is rendered as a link.
   each entry’s height; descriptions and links are never clamped.
 - Supporting pages use a sticky two-track contents navigation beside an article
   that begins in track three and reaches the image’s right edge. A 1.618rem gap
-  provides the desktop/tablet separation. They become one flow below 768px, where the navigation
-  wraps into a compact two-column list.
-- On desktop and tablet, the page title begins at the lower edge of the fixed menu
-  trigger. The media-to-content gap is 48px; adjacent article sections use 32px on
+  provides the desktop/tablet separation. The contents block clears the 4.75rem
+  sticky header. Below 768px both regions become one flow and every contents
+  subject stacks in one column.
+- On desktop and tablet, the page title begins at the lower edge of the sticky
+  header. The media-to-content gap is 48px; adjacent article sections use 32px on
   either side of their divider. Mobile reduces those values to 32px and 24px.
 - At 320px the name highlights, role line, long headings, destination labels and
   article copy wrap without horizontal overflow. A 720px viewport exercises the

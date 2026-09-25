@@ -1,5 +1,6 @@
 export const site = {
   identity: 'jaredgoldberg.org',
+  footerIdentity: 'JAREDGOLDBERG.ORG',
   name: 'Jared Goldberg',
   nameLines: ['Jared', 'Goldberg'],
   title: 'Jared Goldberg — Artist, systems designer and writer',

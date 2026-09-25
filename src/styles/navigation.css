@@ -16,13 +16,17 @@ body.is-scroll-locked {
 }
 
 .site-header--overlay {
-  position: fixed;
-  inset: 0 0 auto;
+  position: sticky;
+  top: 0;
   z-index: var(--z-header);
+  height: var(--site-header-height);
+  border-bottom: var(--stroke-1) solid var(--color-border-subtle);
+  background: var(--color-background);
   pointer-events: none;
 }
 
 .site-header__inner {
+  height: 100%;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;

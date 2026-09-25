@@ -1,7 +1,7 @@
 /* Institutional index composition. */
 .home-hero {
   --home-wordmark-size: clamp(4rem, 8.7vw, 8.5rem);
-  min-height: min(44rem, 100svh);
+  min-height: min(calc(44rem - var(--site-header-height)), calc(100svh - var(--site-header-height)));
   display: grid;
   align-items: end;
   padding-block: clamp(5rem, 8vw, 7rem) var(--section-space-loose);
