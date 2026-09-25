@@ -79,7 +79,7 @@ body.is-scroll-locked {
   border-radius: var(--radius-pill);
   background: var(--menu-surface-solid);
   color: var(--menu-text-primary);
-  box-shadow: 0 5px 18px rgba(20, 20, 18, 0.08);
+  box-shadow: var(--shadow-control);
   cursor: pointer;
   transition:
     background-color var(--motion-micro-duration) var(--easing-standard),
@@ -88,8 +88,8 @@ body.is-scroll-locked {
 
 .menu-trigger:hover,
 .menu-trigger:focus-visible {
-  background: #fafafa;
-  border-color: rgba(20, 20, 18, 0.16);
+  background: var(--menu-trigger-hover);
+  border-color: var(--menu-trigger-border-hover);
 }
 
 .menu-trigger__icon {
@@ -255,7 +255,7 @@ body.is-scroll-locked {
 
 .menu-panel__link:hover,
 .menu-panel__summary:hover {
-  color: #000000;
+  color: var(--color-ink);
 }
 
 .menu-panel__group,
@@ -343,9 +343,9 @@ details[open] > summary > .menu-panel__chevron {
 .menu-panel__summary:focus-visible,
 .menu-panel__nested-link:focus-visible,
 .menu-panel__nested-summary:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 3px;
-  box-shadow: 0 0 0 1px var(--color-focus-contrast);
+  outline: var(--focus-outline-width) solid var(--color-focus);
+  outline-offset: var(--focus-outline-offset);
+  box-shadow: 0 0 0 var(--focus-separator-width) var(--color-focus-contrast);
 }
 
 .menu-panel__utility {

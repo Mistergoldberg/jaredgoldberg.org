@@ -20,7 +20,7 @@
 .section-page__layout {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  column-gap: 1.618rem;
+  column-gap: var(--grid-gap-editorial);
   row-gap: 0;
 }
 

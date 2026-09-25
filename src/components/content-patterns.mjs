@@ -5,6 +5,14 @@ function requireText(value, field) {
   return value;
 }
 
+function requireClassName(value, field = 'class name') {
+  if (value === '') return value;
+  if (typeof value !== 'string' || !/^[a-z][a-z0-9_-]*(?: [a-z][a-z0-9_-]*)*$/.test(value)) {
+    throw new Error(`${field} must contain space-separated CSS class names`);
+  }
+  return value;
+}
+
 function linkTarget(href) {
   requireText(href, 'href');
   if (/^(?:\/|#)/.test(href)) return { external: false };
@@ -14,9 +22,19 @@ function linkTarget(href) {
 }
 
 export function renderMetadata(items, className = '') {
-  const values = items.filter(Boolean).map(item => requireText(item, 'metadata item'));
+  if (!Array.isArray(items)) throw new Error('Metadata items must be an array');
+  const variants = new Set(['default', 'category', 'status']);
+  const values = items.filter(Boolean).map(item => {
+    const entry = typeof item === 'string' ? {label:item,variant:'default'} : item;
+    const label = requireText(entry?.label, 'metadata item');
+    const variant = entry.variant ?? 'default';
+    if (!variants.has(variant)) throw new Error(`Unsupported metadata variant: ${variant}`);
+    const variantClass = variant === 'default' ? '' : ` class="${variant}-label"`;
+    return `<span${variantClass}>${e(label)}</span>`;
+  });
   if (!values.length) throw new Error('At least one metadata item is required');
-  return `<p class="record-meta${className ? ` ${e(className)}` : ''}">${values.map(item => `<span>${e(item)}</span>`).join('')}</p>`;
+  const extraClass = requireClassName(className);
+  return `<p class="record-meta${extraClass ? ` ${e(extraClass)}` : ''}">${values.join('')}</p>`;
 }
 
 export function renderCategoryLabel(label) {
@@ -25,6 +43,13 @@ export function renderCategoryLabel(label) {
 
 export function renderStatusLabel(label) {
   return `<span class="status-label">${e(requireText(label, 'status label'))}</span>`;
+}
+
+export function renderHeading({ level, text, id = '', className = '' } = {}) {
+  if (!Number.isInteger(level) || level < 1 || level > 6) throw new Error('Heading level must be an integer from 1 to 6');
+  const headingId = id ? ` id="${e(requireText(id, 'heading id'))}"` : '';
+  const headingClass = className ? ` class="${e(requireClassName(className))}"` : '';
+  return `<h${level}${headingId}${headingClass}><span class="heading-highlight">${e(requireText(text, 'heading text'))}</span></h${level}>`;
 }
 
 export function renderTextLink({ href, label, external, newTab = false } = {}) {
@@ -42,7 +67,10 @@ export function renderActionLink({ href, label, variant = 'secondary' } = {}) {
 }
 
 export function renderProjectRecord({ title, type, status, summary, destination } = {}) {
-  const meta = `<p class="record-meta">${renderCategoryLabel(type)}${renderStatusLabel(status)}</p>`;
+  const meta = renderMetadata([
+    {label:type,variant:'category'},
+    {label:status,variant:'status'},
+  ]);
   const action = destination ? `<div class="record__actions">${renderTextLink(destination)}</div>` : '';
   return `<article class="record record--project"><div class="record__header"><h3 class="record__title">${e(requireText(title, 'title'))}</h3>${meta}</div><p class="record__summary">${e(requireText(summary, 'summary'))}</p>${action}</article>`;
 }
@@ -63,7 +91,33 @@ export function renderPendingDestination(label) {
   return `<p class="destination-pending" data-destination-status="pending"><span class="destination-pending__label">${e(requireText(label, 'destination label'))}</span><span class="destination-pending__status">Destination pending</span></p>`;
 }
 
-export function renderMediaPlaceholder({ label = 'Image pending', decorative = false } = {}) {
+const mediaVariants = new Set(['banner', 'square']);
+const mediaPositions = new Set(['center', 'top', 'bottom', 'left', 'right']);
+
+function mediaClass(variant, position = 'center') {
+  if (!mediaVariants.has(variant)) throw new Error(`Unsupported media variant: ${variant}`);
+  if (!mediaPositions.has(position)) throw new Error(`Unsupported media position: ${position}`);
+  return `media-frame media-frame--${variant} media-frame--position-${position}`;
+}
+
+export function renderMediaPlaceholder({ label = 'Image pending', decorative = false, variant = 'banner' } = {}) {
   const semantics = decorative ? ' aria-hidden="true"' : ` role="img" aria-label="${e(requireText(label, 'label'))}"`;
-  return `<div class="media-frame media-frame--banner media-placeholder"${semantics}><span aria-hidden="true">${e(label)}</span></div>`;
+  return `<div class="${mediaClass(variant)} media-placeholder"${semantics}><span aria-hidden="true">${e(label)}</span></div>`;
+}
+
+export function renderMediaSlot({ media, placeholder = {}, variant = 'banner' } = {}) {
+  if (!media) return renderMediaPlaceholder({...placeholder, variant});
+  if (typeof media.src !== 'string' || !media.src.startsWith('/') || media.src.startsWith('//')) {
+    throw new Error('Media src must be a root-relative local path');
+  }
+  if (typeof media.alt !== 'string') throw new Error('Media alt is required; use an empty string only for decorative images');
+  if (!Number.isInteger(media.width) || media.width < 1 || !Number.isInteger(media.height) || media.height < 1) {
+    throw new Error('Media width and height must be positive integers');
+  }
+  const loading = media.loading ?? 'lazy';
+  const fetchPriority = media.fetchPriority ?? 'auto';
+  if (!['eager', 'lazy'].includes(loading)) throw new Error(`Unsupported media loading mode: ${loading}`);
+  if (!['auto', 'high', 'low'].includes(fetchPriority)) throw new Error(`Unsupported media fetch priority: ${fetchPriority}`);
+  const position = media.position ?? 'center';
+  return `<div class="${mediaClass(variant, position)}"><img src="${e(media.src)}" alt="${e(media.alt)}" width="${media.width}" height="${media.height}" loading="${loading}" decoding="async" fetchpriority="${fetchPriority}"></div>`;
 }

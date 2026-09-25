@@ -4,6 +4,7 @@ import { chromium } from 'playwright';
 import AxeBuilder from '@axe-core/playwright';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { startServer } from '../scripts/serve.mjs';
+import { buildNewPageFixture } from '../scripts/build-new-page-fixture.mjs';
 
 const publicQA=process.env.QA_PUBLIC==='1';
 const results=publicQA?'test-results/public-qa':'test-results';
@@ -42,10 +43,11 @@ const observe=(page,base)=>{
 test('four-route index, navigation, focus, motion and accessibility gates', {timeout:180000},async(t)=>{
   const server=publicQA?null:await startServer({port:0});
   const base=publicQA?'https://qa.jaredgoldberg.org':`http://127.0.0.1:${server.address().port}`;
-  const browser=await chromium.launch(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE?{executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE}:{});
-  await mkdir(`${results}/screenshots`,{recursive:true});
-  const report={url:base,browser:browser.version(),page:'four-route institutional index',viewports:[],sections:[],mobileSticky:[]};
+  let browser;
   try {
+    browser=await chromium.launch(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE?{executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE}:{});
+    await mkdir(`${results}/screenshots`,{recursive:true});
+    const report={url:base,browser:browser.version(),page:'four-route institutional index',viewports:[],sections:[],mobileSticky:[],fixture:[]};
     for(const [width,height] of sizes) await t.test(`home ${width}x${height}`,async()=>{
       const context=await newContext(browser,{viewport:{width,height},isMobile:width<768,hasTouch:width<768});
       const page=await context.newPage(),network=observe(page,base);
@@ -182,6 +184,31 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
         assert.deepEqual(network.errors,[]);assert.deepEqual(network.badResponses,[]);report.mobileSticky.push({width,height,top,positions,consoleErrors:0,failedResponses:0});await context.close();
       }
     });
+
+    if(!publicQA) await t.test('development-only new-page fixture uses public APIs without page CSS',async()=>{
+      const fixtureRoot=await buildNewPageFixture();
+      const fixtureServer=await startServer({port:0,root:fixtureRoot});
+      const fixtureBase=`http://127.0.0.1:${fixtureServer.address().port}`;
+      try {
+        for(const [width,height] of [[1440,900],[768,1024],[720,450],[320,568]]) {
+          const context=await newContext(browser,{viewport:{width,height},isMobile:width<768,hasTouch:width<768});
+          const page=await context.newPage();
+          assert.equal((await page.goto(fixtureBase)).status(),200);
+          await page.evaluate(()=>document.fonts.ready);
+          assert.equal(await page.getByRole('heading',{level:1,name:'An unfamiliar title long enough to test a future page without borrowing an existing composition',exact:true}).count(),1);
+          assert.equal(await page.locator('.record-meta > *').count(),5);
+          assert.equal(await page.locator('.media-placeholder[role=img]').getAttribute('aria-label'),'Optional media has not been supplied');
+          assert.equal(await page.locator('.record--project').count(),1);
+          assert.equal(await page.locator('.writing-record').count(),1);
+          assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+          for(const element of await page.locator('main h1, main h2, main h3, main p, main a').all()) assert.equal(await element.evaluate(item=>item.scrollWidth>item.clientWidth),false);
+          assert.deepEqual((await new AxeBuilder({page}).analyze()).violations,[]);
+          if(width!==720) await page.screenshot({path:`${results}/screenshots/new-page-fixture-${width}x${height}-full.png`,fullPage:true});
+          report.fixture.push({width,height,overflow:false,axeViolations:0});
+          await context.close();
+        }
+      } finally { await new Promise(done=>fixtureServer.close(done)); }
+    });
     await writeFile(`${results}/browser-report.json`,JSON.stringify(report,null,2)+'\n');
-  } finally {await browser.close();if(server)await new Promise(done=>server.close(done));}
+  } finally {if(browser)await browser.close();if(server)await new Promise(done=>server.close(done));}
 });

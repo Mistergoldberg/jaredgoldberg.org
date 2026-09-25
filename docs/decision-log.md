@@ -305,3 +305,24 @@ supporting-page menu-to-title inset to 88–96px and title-to-media spacing to 2
 Return the mobile table of contents to unbounded document flow, remove inter-item
 margins while retaining 44px targets, and separate it from the article with the
 same 24px/divider/24px rhythm used between article sections.
+
+## 2026-09-25 — modular design-system hardening
+
+Preserve the approved institutional homepage and four practice-page compositions
+while promoting their reusable contracts. Ordinary highlighted headings now come
+from `renderHeading`; shared metadata has explicit default/category/status items;
+and `renderMediaSlot` provides one validated boundary for either a placeholder or
+a supplied local image with intrinsic dimensions, intentional alt text, loading
+priority and a bounded crop position. The split homepage name remains a deliberate
+page-specific exception.
+
+Treat the exported shell and content renderers, semantic tokens and general layout
+utilities as the public authoring surface. Page styles may arrange those pieces for
+their own editorial relationships, but must remain namespaced and must not require
+callers to recreate component internals. Add a generated, ignored new-page fixture
+to exercise this boundary with no production route or artifact entry.
+
+Centralize repeated palette, shadow, focus and editorial-grid values without
+changing the accepted appearance. Preload the one self-hosted variable font from
+the shared head. A browser-launch failure must close the local server, so test
+teardown now begins before Chromium creation.

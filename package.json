@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "node scripts/serve.mjs --watch",
     "build": "node scripts/build.mjs",
+    "fixture:new-page": "node scripts/build-new-page-fixture.mjs",
     "preview": "node scripts/serve.mjs",
     "test": "npm run build && node --test tests/*.test.mjs && npm run test:ops",
     "test:browser": "node --test tests/browser.test.mjs",

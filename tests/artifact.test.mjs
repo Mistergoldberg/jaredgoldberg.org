@@ -51,6 +51,7 @@ test('artifact contains only intended public files, verified checksums and local
   assert.match(html,/<script async src="https:\/\/www\.googletagmanager\.com\/gtag\/js\?id=G-N6X517GEQ2"><\/script>/);
   assert.match(html,/window\.dataLayer = window\.dataLayer \|\| \[\];\s+function gtag\(\)\{dataLayer\.push\(arguments\);\}\s+gtag\('js', new Date\(\)\);\s+gtag\('config', 'G-N6X517GEQ2'\);/);
   assert.match(html,/<meta name="robots" content="noindex, nofollow">/);
+  assert.match(html,/<link rel="preload" href="\/fonts\/1Ptug8zYS_SKggPNyC0IT4ttDfA\.woff2" as="font" type="font\/woff2" crossorigin>/);
   assert.doesNotMatch(html,/maximum-scale|user-scalable=no/);
   assert.doesNotMatch(html,/menu-panel__icon|>×<|>○<|>\+<|emoji/i);
   assert.match(html,/data-menu-toggle aria-label="Open menu"/);
@@ -70,7 +71,7 @@ test('artifact contains only intended public files, verified checksums and local
   for(const [index,pageHtml] of sectionHtml.entries()) {
     assert.equal(pageHtml.match(/G-N6X517GEQ2/g)?.length,2);
     assert.match(pageHtml,new RegExp(`<h1><span class="heading-highlight">${['Media, Archives and Memory','Community Service','Systems and Institutions','Art'][index]}<\\/span><\\/h1>`));
-    assert.match(pageHtml,/class="media-frame media-frame--banner media-placeholder" aria-hidden="true"/);
+    assert.match(pageHtml,/class="media-frame media-frame--banner media-frame--position-center media-placeholder" aria-hidden="true"/);
     assert.doesNotMatch(pageHtml,/section-page__identity|section-page__kicker/);
     assert.match(pageHtml,/<h2 id="table-of-contents-title"><span class="heading-highlight">Table of contents<\/span><\/h2>/);
     assert.match(pageHtml,/Explore Jared(?:'|&#39;)s practice/);
@@ -85,6 +86,7 @@ test('artifact contains only intended public files, verified checksums and local
   assert.match(sectionHtml[3],/<em>Sperme d’artiste<\/em>/);
   assert.match(sectionHtml[3],/https:\/\/duchamped\.com\//);
   assert.equal(digest(await readFile('dist/images/above-the-fold-prototype.png')),'907e026d74ec626d044cdac1b88c2e9ba7d9d6c926be680f62e8a953384c7e82');
+  assert.doesNotMatch(names.join('\n'),/fixture|test-results/);
   assert.match(html,/menu-panel__close-icon/);
   assert.match(html,/menu-panel__chevron/);
 });

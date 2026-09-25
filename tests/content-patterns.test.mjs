@@ -4,8 +4,11 @@ import {
   renderActionLink,
   renderArchiveExcerpt,
   renderCategoryLabel,
+  renderHeading,
   renderInquiryRecord,
   renderMediaPlaceholder,
+  renderMediaSlot,
+  renderMetadata,
   renderPendingDestination,
   renderProjectRecord,
   renderTextLink,
@@ -79,7 +82,14 @@ test('links, actions and placeholders enforce stable accessible contracts', () =
   assert.equal(renderStatusLabel('Developing proposal'), '<span class="status-label">Developing proposal</span>');
   assert.throws(() => renderActionLink({ href: '/bad', label: 'Bad', variant: 'invented' }), /Unsupported/);
   assert.throws(() => renderTextLink({ href: 'http:\/\/example.com', label: 'Bad' }), /must be/);
+  assert.match(renderHeading({level:2,id:'future-title',text:'A future page'}), /^<h2 id="future-title"><span class="heading-highlight">A future page<\/span><\/h2>$/);
+  assert.throws(() => renderHeading({level:7,text:'Bad'}), /Heading level/);
   assert.match(renderMediaPlaceholder({ label: 'Banner image pending' }), /role="img" aria-label="Banner image pending"/);
   assert.match(renderMediaPlaceholder({ decorative: true }), /aria-hidden="true"/);
+  assert.match(renderMediaSlot({media:{src:'/images/future.jpg',alt:'Supplied description',width:1600,height:900,loading:'eager',fetchPriority:'high',position:'top'}}), /media-frame--position-top"><img[^>]+width="1600"[^>]+loading="eager"[^>]+fetchpriority="high"/);
+  assert.throws(() => renderMediaSlot({media:{src:'https:\/\/example.com/image.jpg',alt:'Remote',width:10,height:10}}), /root-relative/);
+  assert.throws(() => renderMediaSlot({media:{src:'/image.jpg',width:10,height:10}}), /alt is required/);
+  assert.match(renderMetadata([{label:'Type',variant:'category'},{label:'Pending',variant:'status'},'Year']), /category-label[\s\S]*status-label[\s\S]*<span>Year<\/span>/);
+  assert.throws(() => renderMetadata([{label:'Bad',variant:'invented'}]), /Unsupported metadata variant/);
   assert.equal(renderPendingDestination('Open the complete index'), '<p class="destination-pending" data-destination-status="pending"><span class="destination-pending__label">Open the complete index</span><span class="destination-pending__status">Destination pending</span></p>');
 });

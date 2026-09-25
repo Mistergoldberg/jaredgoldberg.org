@@ -1,6 +1,6 @@
 # JaredGoldberg.org design system
 
-Status: **binding for implementation** as of 2026-09-24. This document governs the shared site shell and content primitives. The institutional index and its four supporting pages apply these rules; their page-specific decisions are recorded separately in `docs/homepage-design.md`.
+Status: **binding for implementation** as of 2026-09-25. This document governs the shared site shell and content primitives. The institutional index and its four supporting pages apply these rules; their page-specific decisions are recorded separately in `docs/homepage-design.md`. The route inventory and findings from the hardening pass are in `docs/design-system-review.md`.
 
 ## Decision status
 
@@ -17,7 +17,7 @@ Page-specific status and open inputs:
 
 - The homepage uses the approved semantic two-line wordmark treatment: white Raleway Black text in independently sized black highlights. Its role line uses the same highlight language. The earlier prototype image remains fixture-only, and the homepage uses no imagery.
 - The supporting-page architecture is established for the four practice routes. Each page uses the standard-page banner primitive, local table of contents, long-form article, supplied onward links and four-route sibling navigation.
-- Final supporting-page artwork remains an editorial input. Until an asset, crop and alt text are supplied, the banner is an explicitly labelled decorative placeholder and can be replaced without changing the page layout.
+- Final supporting-page artwork remains an editorial input. Until an asset, crop and alt text are supplied, the banner is an explicitly labelled decorative placeholder and can be replaced through `renderMediaSlot` without changing the page layout.
 - Image focal points, alt text and whether a missing image is meaningful or decorative depend on the supplied asset and page context. Do not invent them.
 - Physical iOS Safari, VoiceOver and non-Chromium browser review remain outstanding.
 
@@ -44,7 +44,7 @@ Dark red has a 7.38:1 ratio on the page background, 8.15:1 on the raised surface
 - Use `h2` for section names, `h3` for record/inquiry/writing titles and `h4` only for a nested subdivision.
 - Paragraphs cap at 66ch by default. Long-form introductions and prose may use `--container-reading-max` (44rem) through `.section-introduction`, `.prose` or `.layout-shell--reading`. The supporting-page article is the documented exception: its block width reaches the right edge of the stage media to complete the contents/article composition.
 - Headings balance lines and break long words only when necessary. Record titles and metadata may break anywhere as an overflow safeguard; content must not be truncated or line-clamped.
-- Every visible content heading uses `.heading-highlight`: white text on the black wordmark surface with content-width padding. The element retains its semantic heading level; the highlight is a nested presentation span and may wrap naturally.
+- Every visible page or section heading uses `.heading-highlight`: white text on the black wordmark surface with content-width padding. Record titles retain their own documented project, inquiry or writing treatment. The element retains its semantic heading level; the highlight is a nested presentation span and may wrap naturally.
 - `.type-eyebrow`, `.type-meta`, `.type-caption`, `.type-nav`, `.type-button` and `.type-utility` are uppercase UI/editorial roles. They are not substitutes for heading semantics.
 - `.record-meta` holds factual type and status as separate, wrapping spans. Spacing—not punctuation that can strand at a line start—distinguishes the items. Preserve source wording such as “in development”, “Developing proposal” and “Employer-owned work”; styling must not imply availability.
 
@@ -87,13 +87,16 @@ Use only the `--space-0` through `--space-10` scale for component spacing. Secti
 
 ### Content records
 
-The reusable renderers live in `src/components/content-patterns.mjs`.
+The reusable renderers live in `src/components/content-patterns.mjs`. The shared page shell lives in `src/components/page.mjs`. These exported renderers are the public authoring API; callers should not reproduce their child class structures.
+
+- `renderPageStart` and `renderFooter`: document head, font preload, skip link, shared menu, body boundary and footer. Every new page starts and ends here.
+- `renderHeading`: semantic level 1–6, text and optional ID/class. It owns the nested highlight span; callers choose heading level from document structure rather than visual size.
 
 - `renderProjectRecord`: title, type, status, full summary and optional destination. It supports mixed project types without iconography or status colours.
 - `renderInquiryRecord`: title and description in a parallel, content-height record. Use `.inquiry-grid`; an odd fifth item remains naturally sized rather than artificially spanning or stretching.
 - `renderArchiveExcerpt`: prose-forward block with a red rule and one continuation link. It signals contextual editorial material, not a project card.
 - `renderWritingRecord`: linked essay title plus summary. It is list-like and text-forward; external destination marking is automatic.
-- `renderMetadata`, `renderCategoryLabel`, `renderStatusLabel`, `renderTextLink` and `renderActionLink`: shared lower-level contracts. Category and status remain separately addressable without colour-coding. All renderers escape content and reject unsupported URLs/variants.
+- `renderMetadata`, `renderCategoryLabel`, `renderStatusLabel`, `renderTextLink` and `renderActionLink`: shared lower-level contracts. Metadata accepts strings or `{label, variant}` items, where the supported variants are `default`, `category` and `status`. Category and status remain separately addressable without colour-coding. All renderers escape content and reject unsupported URLs/variants.
 
 Cards remain available for self-contained utility surfaces. Do not use `.card` as the default project pattern: the bordered record list is more tolerant of long titles and unequal summaries and does not imply that every item has equivalent status or destination.
 
@@ -102,7 +105,8 @@ Cards remain available for self-contained utility surfaces. Do not use `.card` a
 - Wrap editorial imagery in `.media-frame`; use `.media-frame--banner` for standard-page banners. Images fill the frame with `object-fit: cover` and default to centered cropping.
 - Supply intrinsic `width` and `height` on real images. Use descriptive alt text for meaningful images and `alt=""` for decorative images. Never reuse a filename or project title as invented alt text.
 - Set an asset-specific `object-position` only after inspecting the supplied image at desktop, tablet and mobile crops.
-- `renderMediaPlaceholder` produces a neutral cross-line field and label. Give it a real label when the missing image carries meaning; use `decorative: true` when it does not. A placeholder is a review state, not fabricated artwork.
+- `renderMediaSlot` is the stable replacement boundary. Without `media`, it delegates to the neutral placeholder. With `media`, provide a root-relative local `src`, intentional `alt` (empty only when decorative), positive intrinsic `width`/`height`, and optional `loading`, `fetchPriority` and `position` (`center`, `top`, `bottom`, `left` or `right`). `banner` and `square` are the supported frame variants. Above-the-fold imagery uses `loading: 'eager'` and `fetchPriority: 'high'`; otherwise retain lazy/auto defaults.
+- `renderMediaPlaceholder` produces the neutral cross-line field and label. Give it a real label when the missing image carries meaning; use `decorative: true` when it does not. A placeholder is a review state, not fabricated artwork.
 
 ## Resilience requirements
 
@@ -127,5 +131,21 @@ Cards remain available for self-contained utility surfaces. Do not use `.card` a
 ## Usage and verification
 
 The homepage renders the four approved practice entries. Each supporting page renders the complete approved long-form copy and supplied destinations. Unit tests continue to exercise the reusable content patterns independently of these page compositions.
+
+### Building a new page
+
+1. Define supplied content as data; do not place editorial copy inside a shared renderer.
+2. Open and close the document with `renderPageStart` and `renderFooter`. Use `renderHeading` for ordinary page and section headings; the split homepage wordmark is a page-specific exception.
+3. Choose the narrowest shared shell that fits the content: reading for sustained prose, content for records, page for general layouts or stage for broad media. Compose with `.section`, `.u-flow`, the documented grids and content renderers before adding a page stylesheet.
+4. Use record renderers according to meaning: project, inquiry, archive and writing are not interchangeable visual cards. Use `renderTextLink` for editorial destinations and `renderActionLink` only for an action that needs button emphasis.
+5. Add optional artwork only through `renderMediaSlot`. Record the supplied asset, alt decision, intrinsic size, loading priority and inspected crop.
+6. Add namespaced page CSS only for relationships unique to that composition. It may arrange shared components but must not restyle their internals or redefine navigation, focus, typography, colour or media contracts.
+7. Run the complete suite and inspect the page at desktop, tablet, 320px mobile and 200% equivalent reflow, with the menu closed/open and keyboard focus visible.
+
+The concrete exercise is `src/fixtures/new-page.mjs`. It combines a deliberately long unfamiliar title, mixed metadata, prose, internal/external links, project and writing records, actions and an optional media slot using only the public APIs and general layout utilities. `npm run fixture:new-page` writes it to ignored `test-results/new-page-fixture/`; it is absent from production navigation and the artifact allowlist. The browser suite renders it at 1440×900, 768×1024, 320×568 and 720×450 (200% equivalent reflow).
+
+### Shared-system and page-composition boundary
+
+The shared system owns tokens, font loading, resets, shells, type roles, highlighted ordinary headings, focus, links/actions, media frames, records, navigation behavior and the footer. `homepage.css` owns only the institutional-index hero and practice-index arrangement. `section-pages.css` owns only the practice-page title/media/contents/article/sibling relationship. A future artwork, essay, archive, civic initiative or employer-owned case study may establish a different namespaced composition while reusing the shared primitives; it must not be forced into either existing page layout.
 
 Before a page is accepted, run `npm test` with the documented Chromium executable on this macOS 12 workspace. Review at least 1440×900, 1024×768, 768×1024, 390×844, 375×667 and 320×568, including the open menu, keyboard focus, long records, banner crop/placeholder and reduced motion. Record any browser or asset limits in the handoff.

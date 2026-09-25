@@ -23,6 +23,7 @@ reload the browser after a change. Override the port with `PORT=4175` if needed.
 ```sh
 npm test                 # build + artifact/HTTP/browser/accessibility/release checks
 npm run build            # dist/ only; no deployment
+npm run fixture:new-page # ignored design-system assembly exercise
 npm run preview          # serve the existing dist/ at 127.0.0.1:4173
 npm run test:browser     # browser checks against the existing local build
 npm run test:public      # direct HTTPS browser checks of the public QA site
@@ -43,6 +44,7 @@ Other supported environments should use the normally installed Playwright browse
 - `src/styles/`: tokens, font policy, base, typography, layout, navigation,
   components, responsive rules, homepage composition and reduced motion.
 - `src/components/`: HTML rendering and data-driven navigation components.
+- `src/fixtures/`: development-only integration exercises; never emitted to `dist/`.
 - `src/content/homepage.mjs`: approved four-route index copy and shared navigation.
 - `src/content/section-pages.mjs`: approved long-form copy and audited destinations for
   Media, Archives and Memory; Community Service; Systems and Institutions; and Art.

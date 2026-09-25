@@ -6,6 +6,7 @@ import { renderHomePage, renderSectionPage } from '../src/components/page.mjs';
 import { site, navigation, homepage, sectionRoutes } from '../src/content/homepage.mjs';
 import { sectionPages } from '../src/content/section-pages.mjs';
 export const digest = data => createHash('sha256').update(data).digest('hex');
+export const styleLayers = ['tokens','fonts','base','typography','layout','navigation','components','responsive','homepage','section-pages','motion'];
 export async function files(root) {
   const result = [];
   async function walk(dir, prefix = '') {
@@ -23,8 +24,7 @@ export async function build() {
   const root = resolve('dist');
   await rm(root, {recursive: true, force: true});
   await mkdir(join(root, 'assets'), {recursive: true});
-  const layers = ['tokens','fonts','base','typography','layout','navigation','components','responsive','homepage','section-pages','motion'];
-  const css = (await Promise.all(layers.map(name => readFile(`src/styles/${name}.css`, 'utf8')))).join('\n');
+  const css = (await Promise.all(styleLayers.map(name => readFile(`src/styles/${name}.css`, 'utf8')))).join('\n');
   const js = await readFile('src/navigation.js');
   const stylesheet = `/assets/site.${digest(css).slice(0,16)}.css`;
   const script = `/assets/navigation.${digest(js).slice(0,16)}.js`;
