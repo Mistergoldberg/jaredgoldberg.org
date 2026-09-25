@@ -293,3 +293,15 @@ related-practice navigation, with that opaque navigation providing a clean visua
 handoff instead of allowing the contents list to slide behind the header. Constrain
 the sticky navigation to the available viewport height so every subject remains
 reachable in short landscape viewports.
+
+## 2026-09-25 — shared heading highlights and mobile edge alignment
+
+Apply the wordmark's white-on-black treatment to every visible content heading by
+nesting a reusable presentation span inside the existing semantic heading. Align
+the desktop/tablet Menu control with the right edge of the shared stage, media and
+article column. Below 768px, let bordered practice indexes reach both browser edges
+while retaining the 1rem text-column inset; media remains guttered. Reduce the
+supporting-page menu-to-title inset to 88–96px and title-to-media spacing to 24px.
+Return the mobile table of contents to unbounded document flow, remove inter-item
+margins while retaining 44px targets, and separate it from the article with the
+same 24px/divider/24px rhythm used between article sections.

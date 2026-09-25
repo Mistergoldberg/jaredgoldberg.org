@@ -121,7 +121,11 @@
   .home-hero__introduction { margin-top: 0; }
   .home-hero h1 { font-size: clamp(3.3rem, 15vw, 4.5rem); }
   .home-hero__index-note { margin-top: var(--space-6); }
-  .index-grid { grid-template-columns: minmax(0, 1fr); }
-  .index-entry { min-height: 0; padding: var(--space-5); }
+  .index-grid {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .index-entry { min-height: 0; padding: var(--space-5) calc(var(--gutter-mobile) - var(--stroke-1)); }
   .index-entry h3 { font-size: var(--type-size-h3); }
 }

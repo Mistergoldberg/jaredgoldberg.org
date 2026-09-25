@@ -56,9 +56,9 @@ test('artifact contains only intended public files, verified checksums and local
   assert.match(html,/data-menu-toggle aria-label="Open menu"/);
   assert.match(html,/menu-trigger__label">Menu<\/span><span class="menu-trigger__icon" aria-hidden="true">/);
   assert.match(html,/<meta name="description" content="Jared Goldberg makes art, software, public projects and large work systems\./);
-  assert.match(html,/<h1 id="home-title" aria-label="Jared Goldberg"><span aria-hidden="true">Jared<\/span><span aria-hidden="true">Goldberg<\/span><\/h1>/);
+  assert.match(html,/<h1 id="home-title" aria-label="Jared Goldberg"><span class="heading-highlight" aria-hidden="true">Jared<\/span><span class="heading-highlight" aria-hidden="true">Goldberg<\/span><\/h1>/);
   assert.match(html,/An institutional index of Jared's practice/);
-  assert.match(html,/Explore Jared's practice/);
+  assert.match(html,/Explore Jared(?:'|&#39;)s practice/);
   assert.doesNotMatch(html,/Explore the practice|An institutional index of one practice/);
   assert.match(html,/<footer class="site-footer"[\s\S]*?<p class="site-footer__identity type-utility">JAREDGOLDBERG\.ORG<\/p>/);
   assert.match(html,/<section id="practice-index"/);
@@ -69,11 +69,11 @@ test('artifact contains only intended public files, verified checksums and local
   const sectionHtml=await Promise.all(sectionFiles.map(slug=>readFile(`dist/${slug}/index.html`,'utf8')));
   for(const [index,pageHtml] of sectionHtml.entries()) {
     assert.equal(pageHtml.match(/G-N6X517GEQ2/g)?.length,2);
-    assert.match(pageHtml,new RegExp(`<h1>${['Media, Archives and Memory','Community Service','Systems and Institutions','Art'][index]}<\\/h1>`));
+    assert.match(pageHtml,new RegExp(`<h1><span class="heading-highlight">${['Media, Archives and Memory','Community Service','Systems and Institutions','Art'][index]}<\\/span><\\/h1>`));
     assert.match(pageHtml,/class="media-frame media-frame--banner media-placeholder" aria-hidden="true"/);
     assert.doesNotMatch(pageHtml,/section-page__identity|section-page__kicker/);
-    assert.match(pageHtml,/<h2 id="table-of-contents-title">Table of contents<\/h2>/);
-    assert.match(pageHtml,/Explore Jared's practice/);
+    assert.match(pageHtml,/<h2 id="table-of-contents-title"><span class="heading-highlight">Table of contents<\/span><\/h2>/);
+    assert.match(pageHtml,/Explore Jared(?:'|&#39;)s practice/);
     assert.match(pageHtml,/<footer class="site-footer"[\s\S]*?<p class="site-footer__identity type-utility">JAREDGOLDBERG\.ORG<\/p>/);
     assert.doesNotMatch(pageHtml,/Explore the practice/);
     assert.doesNotMatch(pageHtml,/>On this page</);

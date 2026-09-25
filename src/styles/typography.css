@@ -35,6 +35,14 @@ h4 {
   font-weight: var(--font-weight-bold);
 }
 
+.heading-highlight {
+  display: inline-block;
+  max-width: 100%;
+  padding: 0.06em 0.12em 0.1em;
+  color: var(--wordmark-foreground);
+  background: var(--wordmark-background);
+}
+
 p {
   max-width: 66ch;
   text-wrap: pretty;

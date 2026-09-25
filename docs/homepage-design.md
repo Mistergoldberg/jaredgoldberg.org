@@ -68,6 +68,8 @@ destination is rendered as a link.
 
 - The hero, index, standard-page hero, media, article grid, sibling navigation and
   footer share the 94rem stage shell and its outer gutters.
+- On desktop and tablet, the Menu control's right edge aligns with the shared
+  stage/media/article edge rather than floating in an independent right rail.
 - The homepage hero is capped at 44rem on desktop and tablet. Its introduction
   aligns with the top of the `GOLDBERG` highlight rather than the bottom of the
   complete wordmark. Mobile retains a natural-height single-column flow.
@@ -81,17 +83,25 @@ destination is rendered as a link.
 - Supporting-page H1 columns span the full stage width and share both edges with
   their image frames; the text itself wraps naturally within that width.
 - The homepage index uses two columns at desktop and one below 768px. Content sets
-  each entry’s height; descriptions and links are never clamped.
+  each entry’s height; descriptions and links are never clamped. On mobile the
+  bordered index reaches both viewport edges while entry text keeps the 1rem
+  page-column inset.
 - Supporting pages use a sticky two-track contents navigation beside an article
   that begins in track three and reaches the image’s right edge. A 1.618rem gap
   provides the desktop/tablet separation. The contents block clears the 4.75rem
   sticky header by 1rem, remains fixed through the article and “Continue,” and
   hands off behind the related-practice block. Below 768px both regions become
-  one flow and every contents subject stacks in one column.
+  one flow and every contents subject stacks in one compact, non-scrolling
+  column. A divider and 24px on each side separate it from the article.
 - On desktop and tablet, the page title begins 32px below the sticky header and
   ends 24px above the media frame. The media-to-content gap is 48px; adjacent
-  article sections use 32px on either side of their divider. Mobile retains its
-  menu-safe title offset and reduces those latter values to 32px and 24px.
+  article sections use 32px on either side of their divider. Mobile uses an
+  88–96px hero top inset, keeps 24px between title and media, and reduces those
+  latter values to 32px and 24px. The related-practice box also bleeds to both
+  viewport edges while its text remains aligned with the body column.
+- All visible homepage and supporting-page content headings use the shared
+  white-on-black `.heading-highlight` treatment without changing their semantic
+  levels or accessible names.
 - At 320px the name highlights, role line, long headings, destination labels and
   article copy wrap without horizontal overflow. A 720px viewport exercises the
   same CSS-pixel layout as 200% zoom on a 1440px viewport.

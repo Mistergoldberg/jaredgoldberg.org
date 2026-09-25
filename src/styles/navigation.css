@@ -39,10 +39,17 @@ body.is-scroll-locked {
 }
 
 @media (min-width: 48rem) {
+  .site-header--overlay .layout-shell--stage {
+    width: min(100% - (var(--gutter) * 2), var(--container-stage-max));
+    margin-inline: auto;
+  }
+
+  .site-header__inner { padding-inline: 0; }
+
   .site-header__inner--no-brand .menu-trigger {
-    position: relative;
-    right: calc(clamp(11rem, 19vw, 18rem) / 2);
-    transform: translateX(50%);
+    position: static;
+    right: auto;
+    transform: none;
   }
 }
 
@@ -354,7 +361,9 @@ details[open] > summary > .menu-panel__chevron {
 }
 
 
-.site-header--overlay .layout-shell--stage { width: 100%; max-width: none; margin-inline: 0; }
+@media (max-width: 47.99rem) {
+  .site-header--overlay .layout-shell--stage { width: 100%; max-width: none; margin-inline: 0; }
+}
 
 /* Keep the exit animation visible; closed content is inert immediately. */
 .menu-panel { transition: visibility 0s linear var(--motion-menu-reveal-duration); }

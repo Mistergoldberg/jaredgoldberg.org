@@ -28,12 +28,16 @@ function footer(site) {
   return `<footer class="site-footer" data-page-background><div class="layout-shell layout-shell--stage site-footer__inner"><p class="site-footer__identity type-utility">${e(site.footerIdentity)}</p><p class="type-caption">${e(site.role)}</p></div></footer></body></html>\n`;
 }
 
+function headingText(value) {
+  return `<span class="heading-highlight">${e(value)}</span>`;
+}
+
 function renderIndexEntry(section) {
-  return `<article class="index-entry"><h3>${e(section.title)}</h3><p>${e(section.summary)}</p><div class="index-entry__action">${renderTextLink({ href: section.href, label: section.action })}</div></article>`;
+  return `<article class="index-entry"><h3>${headingText(section.title)}</h3><p>${e(section.summary)}</p><div class="index-entry__action">${renderTextLink({ href: section.href, label: section.action })}</div></article>`;
 }
 
 export function renderHomePage({ site, navigation, homepage, stylesheet, script }) {
-  const nameLines = (site.nameLines ?? [site.name]).map(line => `<span aria-hidden="true">${e(line)}</span>`).join('');
+  const nameLines = (site.nameLines ?? [site.name]).map(line => `<span class="heading-highlight" aria-hidden="true">${e(line)}</span>`).join('');
   const start = pageStart({site,navigation,title:site.title,description:homepage.introduction[0],stylesheet,script,path:'/',bodyClass:'home-page'});
   return `${start}
 <main id="main-content" tabindex="-1" data-page-background>
@@ -44,7 +48,7 @@ export function renderHomePage({ site, navigation, homepage, stylesheet, script 
     <p class="home-hero__index-note type-caption">An institutional index of Jared's practice</p>
   </div></section>
   <section id="practice-index" class="home-index" aria-labelledby="practice-index-title"><div class="layout-shell layout-shell--stage">
-    <header class="home-index__header"><h2 id="practice-index-title">Explore Jared's practice</h2><p>${e(homepage.introduction[1])}</p></header>
+    <header class="home-index__header"><h2 id="practice-index-title">${headingText("Explore Jared's practice")}</h2><p>${e(homepage.introduction[1])}</p></header>
     <div class="index-grid">${homepage.sections.map(renderIndexEntry).join('')}</div>
   </div></section>
 </main>
@@ -64,12 +68,12 @@ function renderRichParagraph(paragraph) {
 
 function renderArticleSection(section) {
   const id = slugify(section.title);
-  return `<section class="article-section" aria-labelledby="${id}"><h2 id="${id}">${e(section.title)}</h2>${section.paragraphs.map(renderRichParagraph).join('')}</section>`;
+  return `<section class="article-section" aria-labelledby="${id}"><h2 id="${id}">${headingText(section.title)}</h2>${section.paragraphs.map(renderRichParagraph).join('')}</section>`;
 }
 
 function renderSiblingNavigation(sectionRoutes, currentPath) {
   const items = sectionRoutes.map(route => `<li><a href="${e(route.href)}"${route.href === currentPath ? ' aria-current="page"' : ''}>${e(route.label)}</a></li>`).join('');
-  return `<nav class="section-page__siblings" aria-labelledby="explore-practice-title"><h2 id="explore-practice-title">Explore Jared's practice</h2><ul>${items}</ul></nav>`;
+  return `<nav class="section-page__siblings" aria-labelledby="explore-practice-title"><h2 id="explore-practice-title">${headingText("Explore Jared's practice")}</h2><ul>${items}</ul></nav>`;
 }
 
 export function renderSectionPage({ site, navigation, sectionRoutes, page, stylesheet, script }) {
@@ -81,13 +85,13 @@ export function renderSectionPage({ site, navigation, sectionRoutes, page, style
   return `${start}
 <main id="main-content" tabindex="-1" data-page-background>
   <header class="section-page__hero"><div class="layout-shell layout-shell--stage">
-    <h1>${e(page.title)}</h1>
+    <h1>${headingText(page.title)}</h1>
   </div></header>
   <div class="layout-shell layout-shell--stage section-page__media">${renderMediaPlaceholder({label:'Image pending',decorative:true})}</div>
   <div class="layout-shell layout-shell--stage section-page__layout">
-    <aside class="section-page__toc"><nav aria-labelledby="table-of-contents-title"><h2 id="table-of-contents-title">Table of contents</h2><ul>${toc}</ul></nav></aside>
+    <aside class="section-page__toc"><nav aria-labelledby="table-of-contents-title"><h2 id="table-of-contents-title">${headingText('Table of contents')}</h2><ul>${toc}</ul></nav></aside>
     <article class="section-page__article">${page.sections.map(renderArticleSection).join('')}
-      <section class="section-page__destinations" aria-labelledby="continue-title"><h2 id="continue-title">Continue</h2><ul>${links}</ul></section>
+      <section class="section-page__destinations" aria-labelledby="continue-title"><h2 id="continue-title">${headingText('Continue')}</h2><ul>${links}</ul></section>
     </article>
     ${renderSiblingNavigation(sectionRoutes, path)}
   </div>
