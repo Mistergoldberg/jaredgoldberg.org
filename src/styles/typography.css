@@ -9,6 +9,7 @@ h6 {
   font-weight: var(--font-weight-bold);
   line-height: var(--line-height-title);
   text-wrap: balance;
+  overflow-wrap: break-word;
 }
 
 h1 {
@@ -34,9 +35,23 @@ h4 {
   font-weight: var(--font-weight-bold);
 }
 
+.heading-highlight {
+  display: inline-block;
+  max-width: 100%;
+  padding: 0.06em 0.12em 0.1em;
+  color: var(--wordmark-foreground);
+  background: var(--wordmark-background);
+}
+
 p {
   max-width: 66ch;
   text-wrap: pretty;
+  overflow-wrap: break-word;
+}
+
+.section-introduction,
+.prose {
+  max-width: var(--container-reading-max);
 }
 
 .type-eyebrow,
@@ -60,6 +75,29 @@ p {
   font-size: var(--type-size-meta);
   letter-spacing: var(--tracking-caps);
   color: var(--color-text-secondary);
+}
+
+.record-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  max-width: 100%;
+  font-family: var(--font-family-display);
+  font-size: var(--type-size-meta);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.4;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.record-meta > * {
+  overflow-wrap: anywhere;
+}
+
+.category-label,
+.status-label {
+  display: inline-block;
 }
 
 .type-caption {

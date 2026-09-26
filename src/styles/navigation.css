@@ -16,13 +16,17 @@ body.is-scroll-locked {
 }
 
 .site-header--overlay {
-  position: fixed;
-  inset: 0 0 auto;
+  position: sticky;
+  top: 0;
   z-index: var(--z-header);
+  height: var(--site-header-height);
+  border-bottom: var(--stroke-1) solid var(--color-border-subtle);
+  background: var(--color-background);
   pointer-events: none;
 }
 
 .site-header__inner {
+  height: 100%;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -35,10 +39,17 @@ body.is-scroll-locked {
 }
 
 @media (min-width: 48rem) {
+  .site-header--overlay .layout-shell--stage {
+    width: min(100% - (var(--gutter) * 2), var(--container-stage-max));
+    margin-inline: auto;
+  }
+
+  .site-header__inner { padding-inline: 0; }
+
   .site-header__inner--no-brand .menu-trigger {
-    position: relative;
-    right: calc(clamp(11rem, 19vw, 18rem) / 2);
-    transform: translateX(50%);
+    position: static;
+    right: auto;
+    transform: none;
   }
 }
 
@@ -68,7 +79,7 @@ body.is-scroll-locked {
   border-radius: var(--radius-pill);
   background: var(--menu-surface-solid);
   color: var(--menu-text-primary);
-  box-shadow: 0 5px 18px rgba(20, 20, 18, 0.08);
+  box-shadow: var(--shadow-control);
   cursor: pointer;
   transition:
     background-color var(--motion-micro-duration) var(--easing-standard),
@@ -77,8 +88,8 @@ body.is-scroll-locked {
 
 .menu-trigger:hover,
 .menu-trigger:focus-visible {
-  background: #fafafa;
-  border-color: rgba(20, 20, 18, 0.16);
+  background: var(--menu-trigger-hover);
+  border-color: var(--menu-trigger-border-hover);
 }
 
 .menu-trigger__icon {
@@ -244,7 +255,7 @@ body.is-scroll-locked {
 
 .menu-panel__link:hover,
 .menu-panel__summary:hover {
-  color: #000000;
+  color: var(--color-ink);
 }
 
 .menu-panel__group,
@@ -332,9 +343,9 @@ details[open] > summary > .menu-panel__chevron {
 .menu-panel__summary:focus-visible,
 .menu-panel__nested-link:focus-visible,
 .menu-panel__nested-summary:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 3px;
-  box-shadow: 0 0 0 1px var(--color-focus-contrast);
+  outline: var(--focus-outline-width) solid var(--color-focus);
+  outline-offset: var(--focus-outline-offset);
+  box-shadow: 0 0 0 var(--focus-separator-width) var(--color-focus-contrast);
 }
 
 .menu-panel__utility {
@@ -350,7 +361,9 @@ details[open] > summary > .menu-panel__chevron {
 }
 
 
-.site-header--overlay .layout-shell--stage { width: 100%; max-width: none; margin-inline: 0; }
+@media (max-width: 47.99rem) {
+  .site-header--overlay .layout-shell--stage { width: 100%; max-width: none; margin-inline: 0; }
+}
 
 /* Keep the exit animation visible; closed content is inert immediately. */
 .menu-panel { transition: visibility 0s linear var(--motion-menu-reveal-duration); }

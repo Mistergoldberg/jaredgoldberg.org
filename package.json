@@ -8,13 +8,18 @@
   },
   "scripts": {
     "dev": "node scripts/serve.mjs --watch",
-    "build": "node scripts/build.mjs",
+    "build": "BUILD_ENV=qa node scripts/build.mjs",
+    "build:qa": "BUILD_ENV=qa node scripts/build.mjs",
+    "build:production": "BUILD_ENV=production node scripts/build.mjs",
+    "fixture:new-page": "node scripts/build-new-page-fixture.mjs",
     "preview": "node scripts/serve.mjs",
-    "test": "npm run build && node --test tests/*.test.mjs && npm run test:ops",
+    "test": "npm run build:qa && node --test tests/artifact.test.mjs tests/browser.test.mjs tests/content-patterns.test.mjs && npm run test:ops",
+    "test:production": "npm run build:production && node --test tests/production-artifact.test.mjs",
     "test:browser": "node --test tests/browser.test.mjs",
     "capture:source": "node scripts/capture-source.mjs",
     "test:ops": "python3 -m unittest discover -s tests -p '*_test.py'",
-    "test:public": "QA_PUBLIC=1 node --test tests/browser.test.mjs"
+    "test:public": "QA_PUBLIC=1 node --test tests/browser.test.mjs",
+    "test:public:production": "SITE_PUBLIC_URL=https://jaredgoldberg.org PUBLIC_BUILD_ENV=production node --test tests/browser.test.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",

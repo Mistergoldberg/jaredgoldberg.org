@@ -11,6 +11,10 @@
   width: min(100% - (var(--gutter) * 2), var(--container-content-max));
 }
 
+.layout-shell--reading {
+  width: min(100% - (var(--gutter) * 2), var(--container-reading-max));
+}
+
 .section {
   padding-block: var(--section-space);
 }
@@ -53,6 +57,18 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
   gap: var(--grid-gap);
+}
+
+.record-list,
+.writing-list,
+.inquiry-grid {
+  display: grid;
+  gap: 0;
+}
+
+.inquiry-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--grid-gap-wide);
 }
 
 .text-block {

@@ -4,11 +4,22 @@ import { chromium } from 'playwright';
 import AxeBuilder from '@axe-core/playwright';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { startServer } from '../scripts/serve.mjs';
+import { buildNewPageFixture } from '../scripts/build-new-page-fixture.mjs';
 
-const publicQA=process.env.QA_PUBLIC==='1';
-const results=publicQA?'test-results/public-qa':'test-results';
+const publicUrl=process.env.SITE_PUBLIC_URL || (process.env.QA_PUBLIC==='1'?'https://qa.jaredgoldberg.org':'');
+const publicEnvironment=process.env.PUBLIC_BUILD_ENV || (publicUrl?'qa':'');
+const publicSite=Boolean(publicUrl);
+const results=publicSite?`test-results/public-${publicEnvironment}`:'test-results';
+const googleTagUrl='https://www.googletagmanager.com/gtag/js?id=G-N6X517GEQ2';
 const sizes=[[1440,900],[1024,768],[768,1024],[720,450],[667,375],[430,932],[393,852],[390,844],[375,667],[320,568]];
+const screenshotSizes=new Set(['1440x900','1024x768','390x844','320x568']);
 const mobileSizes=[[430,932],[393,852],[390,844],[375,667],[320,568],[667,375],[720,450]];
+const sectionPages=[
+  {slug:'media-archives-and-memory',title:'Media, Archives and Memory',sections:2,links:2},
+  {slug:'community-service',title:'Community Service',sections:3,links:3},
+  {slug:'systems-and-institutions',title:'Systems and Institutions',sections:4,links:4},
+  {slug:'art',title:'Art',sections:4,links:1},
+];
 const relativeLuminance=hex=>{
   const channels=hex.match(/[\da-f]{2}/gi).map(value=>parseInt(value,16)/255).map(value=>value<=.04045?value/12.92:((value+.055)/1.055)**2.4);
   return .2126*channels[0]+.7152*channels[1]+.0722*channels[2];
@@ -17,306 +28,190 @@ const contrastRatio=(left,right)=>{
   const values=[relativeLuminance(left),relativeLuminance(right)].sort((a,b)=>b-a);
   return (values[0]+.05)/(values[1]+.05);
 };
-test('responsive browser, navigation, focus, assets, motion and accessibility gates', {timeout:120000},async(t)=>{
-  const server=publicQA?null:await startServer({port:0});
-  const base=publicQA?'https://qa.jaredgoldberg.org':`http://127.0.0.1:${server.address().port}`;
-  const browser=await chromium.launch(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE?{executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE}:{});
-  await mkdir(`${results}/screenshots`,{recursive:true});
-  const report={url:base,browser:browser.version(),fontNote:'Source-served Raleway 4.026 variable WOFF2 loaded locally; authentic named 200 plus 400/700/900 are available without synthesis.',viewports:[],mobileSticky:[]};
+const newContext=async(browser,options)=>{
+  const context=await browser.newContext(options);
+  await context.route(googleTagUrl,route=>route.fulfill({status:200,contentType:'application/javascript',body:''}));
+  return context;
+};
+const observe=(page,base)=>{
+  const state={errors:[],external:[],badResponses:[],requests:[]};
+  page.on('pageerror',error=>state.errors.push(error.message));
+  page.on('console',message=>{if(message.type()==='error') state.errors.push(message.text());});
+  page.on('request',request=>{state.requests.push(request.url());if(new URL(request.url()).origin!==new URL(base).origin) state.external.push(request.url());});
+  page.on('response',response=>{if(response.status()>=400) state.badResponses.push(response.url());});
+  return state;
+};
+
+test('four-route index, navigation, focus, motion and accessibility gates', {timeout:180000},async(t)=>{
+  const server=publicSite?null:await startServer({port:0});
+  const base=publicSite?publicUrl:`http://127.0.0.1:${server.address().port}`;
+  let browser;
   try {
-    for(const [width,height] of sizes) await t.test(`${width}x${height}`,async()=>{
-      const context=await browser.newContext({viewport:{width,height},isMobile:width<768,hasTouch:width<768});
-      const page=await context.newPage();
-      const errors=[],external=[],badResponses=[],requests=[];
-      page.on('pageerror',error=>errors.push(error.message));
-      page.on('console',message=>{if(message.type()==='error') errors.push(message.text());});
-      page.on('request',request=>{requests.push(request.url());if(new URL(request.url()).origin!==base) external.push(request.url());});
-      page.on('response',response=>{if(response.status()>=400) badResponses.push(response.url());});
+    browser=await chromium.launch(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE?{executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE}:{});
+    await mkdir(`${results}/screenshots`,{recursive:true});
+    const report={url:base,browser:browser.version(),page:'four-route institutional index',viewports:[],sections:[],mobileSticky:[],fixture:[]};
+    for(const [width,height] of sizes) await t.test(`home ${width}x${height}`,async()=>{
+      const context=await newContext(browser,{viewport:{width,height},isMobile:width<768,hasTouch:width<768});
+      const page=await context.newPage(),network=observe(page,base);
       assert.equal((await page.goto(base)).status(),200);
       await page.evaluate(()=>document.fonts.ready);
       assert.equal(await page.locator('link[rel=canonical]').count(),0);
-      assert.equal(await page.locator('meta[name=robots]').getAttribute('content'),'noindex, nofollow');
-      const computed=await page.evaluate(()=>({fontFamily:getComputedStyle(document.body).fontFamily,fonts:document.fonts.size,overflow:document.documentElement.scrollWidth>innerWidth,menuTrigger:document.querySelector('[data-menu-toggle]').getBoundingClientRect().toJSON()}));
-      assert.equal(computed.overflow,false);
-      assert.ok(computed.menuTrigger.width>=44 && computed.menuTrigger.height>=44);
-      assert.match(computed.fontFamily,/Raleway.*Avenir Next.*Segoe UI/);
+      if(publicEnvironment==='production') assert.equal(await page.locator('meta[name=robots]').count(),0);
+      else assert.equal(await page.locator('meta[name=robots]').getAttribute('content'),'noindex, nofollow');
+      assert.match(await page.locator('meta[name=description]').getAttribute('content'),/^Jared Goldberg makes art, software/);
+      const analytics=await page.evaluate(()=>window.dataLayer?.map(entry=>[entry[0],entry[1] instanceof Date?'date':entry[1]]));
+      assert.deepEqual(analytics,[['js','date'],['config','G-N6X517GEQ2']]);
+      const computed=await page.evaluate(()=>{const menuTrigger=document.querySelector('[data-menu-toggle]').getBoundingClientRect(),stage=document.querySelector('.home-index > .layout-shell').getBoundingClientRect();return {fontFamily:getComputedStyle(document.body).fontFamily,fonts:document.fonts.size,overflow:document.documentElement.scrollWidth>innerWidth,menuTrigger:menuTrigger.toJSON(),menuStageRightDelta:stage.right-menuTrigger.right};});
+      assert.equal(computed.overflow,false);assert.ok(computed.menuTrigger.width>=44&&computed.menuTrigger.height>=44);assert.match(computed.fontFamily,/Raleway.*Avenir Next.*Segoe UI/);
+      if(width>=768)assert.ok(Math.abs(computed.menuStageRightDelta)<1);
+      const shellWidths=await page.locator('.home-hero > .layout-shell, .home-index > .layout-shell, .site-footer .layout-shell').evaluateAll(shells=>shells.map(shell=>shell.getBoundingClientRect().width));
+      assert.equal(shellWidths.length,3);for(const shellWidth of shellWidths) assert.ok(Math.abs(shellWidth-shellWidths[0])<.5);
+      if(width<768) {
+        const gutters=await page.locator('main .layout-shell').evaluateAll((shells,viewportWidth)=>shells.map(shell=>{const rect=shell.getBoundingClientRect();return {left:rect.left,right:viewportWidth-rect.right};}),width);
+        for(const gutter of gutters) assert.ok(Math.abs(gutter.left-gutter.right)<.5);
+      }
       assert.equal(await page.getByRole('heading',{level:1,name:'Jared Goldberg',exact:true}).count(),1);
-      const displayType=await page.locator('h1').evaluate(e=>{
-        const style=getComputedStyle(e);
-        return {
-          fontWeight:style.fontWeight,
-          lineHeightRatio:parseFloat(style.lineHeight)/parseFloat(style.fontSize),
-          trackingRatio:parseFloat(style.letterSpacing)/parseFloat(style.fontSize),
-        };
-      });
-      assert.equal(displayType.fontWeight,'900');
-      assert.ok(Math.abs(displayType.lineHeightRatio-.9)<.001);
-      assert.ok(Math.abs(displayType.trackingRatio+.03)<.001);
-      const unaffectedType=await page.evaluate(()=>{
-        const body=getComputedStyle(document.querySelector('.fixture-intro p:not([class])'));
-        const nav=getComputedStyle(document.querySelector('[data-menu-toggle]'));
-        const utility=getComputedStyle(document.querySelector('.type-meta'));
-        const ratios=style=>({
-          lineHeight:parseFloat(style.lineHeight)/parseFloat(style.fontSize),
-          tracking:parseFloat(style.letterSpacing)/parseFloat(style.fontSize),
-        });
-        return {
-          body:ratios(body),
-          nav:ratios(nav),
-          utility:ratios(utility),
-        };
-      });
-      assert.ok(Math.abs(unaffectedType.body.lineHeight-1.55)<.001);
-      assert.ok(Math.abs(unaffectedType.body.tracking-.002)<.001);
-      assert.ok(Math.abs(unaffectedType.nav.tracking-.11)<.001);
-      assert.ok(Math.abs(unaffectedType.utility.tracking-.11)<.001);
-      const accent=await page.evaluate(()=>{
-        const style=getComputedStyle(document.documentElement);
-        return {
-          value:style.getPropertyValue('--color-accent').trim(),
-          focus:style.getPropertyValue('--color-focus').trim(),
-          contrast:style.getPropertyValue('--color-focus-contrast').trim(),
-          surfaces:['--color-background','--color-surface','--color-surface-muted'].map(token=>style.getPropertyValue(token).trim()),
-          dark:style.getPropertyValue('--color-text-primary').trim(),
-        };
-      });
-      assert.equal(accent.value,'#990202');
-      assert.equal(accent.focus,'#990202');
-      assert.equal(accent.contrast,'#ffffff');
-      for(const surface of accent.surfaces) assert.ok(contrastRatio(accent.value,surface)>=4.5,`Insufficient accent contrast on ${surface}`);
-      assert.ok(contrastRatio(accent.value,accent.dark)<3);
-      assert.ok(contrastRatio(accent.contrast,accent.dark)>=3);
-      assert.ok(contrastRatio(accent.contrast,accent.value)>=3);
-      const wordmark=await page.locator('.site-wordmark').evaluate(e=>({
-        lines:[...e.children].map(line=>{const r=line.getBoundingClientRect(),style=getComputedStyle(line);return {text:line.textContent,rect:r.toJSON(),background:style.backgroundColor,color:style.color};}),
-        overflow:e.scrollWidth>e.clientWidth,
-      }));
-      assert.deepEqual(wordmark.lines.map(line=>line.text),['Jared','Goldberg']);
-      assert.equal(wordmark.overflow,false);
-      assert.ok(wordmark.lines[1].rect.width>wordmark.lines[0].rect.width);
-      assert.ok(Math.abs(wordmark.lines[1].rect.top-wordmark.lines[0].rect.bottom)<1);
-      for(const line of wordmark.lines) { assert.equal(line.background,'rgb(0, 0, 0)'); assert.equal(line.color,'rgb(255, 255, 255)'); }
-      const fontPolicy=JSON.parse(await readFile('tests/font-policy.json','utf8'));
-      for(const font of fontPolicy.requiredFiles) assert.ok(requests.includes(base+'/'+font),`Font not loaded: ${font}`);
-      const cdp=await context.newCDPSession(page);
-      await cdp.send('DOM.enable');await cdp.send('CSS.enable');
-      const {root}=await cdp.send('DOM.getDocument');
-      for(const selector of ['h1',...(width>=768?['[data-menu-toggle]']:[]),'.fixture-intro p:not([class])']) {
-        const {nodeId}=await cdp.send('DOM.querySelector',{nodeId:root.nodeId,selector});
-        const {fonts}=await cdp.send('CSS.getPlatformFontsForNode',{nodeId});
-        assert.ok(fonts.some(font=>font.isCustomFont && font.familyName.startsWith('Raleway')),`Font fallback on ${selector}`);
-      }
-      await page.screenshot({path:`${results}/screenshots/qa-${width}x${height}-closed.png`,fullPage:false});
-      const closedAxe=await new AxeBuilder({page}).analyze();
-      assert.deepEqual(closedAxe.violations,[]);
-      await page.keyboard.press('Tab');
-      assert.equal(await page.locator('.skip-link').evaluate(e=>e===document.activeElement),true);
-      await page.keyboard.press('Tab');
-      assert.equal(await page.locator('[data-menu-toggle]').evaluate(e=>e===document.activeElement),true);
-      const triggerFocus=await page.locator('[data-menu-toggle]').evaluate(e=>({outline:getComputedStyle(e).outlineColor,inner:getComputedStyle(e).boxShadow}));
-      assert.equal(triggerFocus.outline,'rgb(153, 2, 2)');
-      assert.match(triggerFocus.inner,/rgb\(255, 255, 255\)/);
-      await page.keyboard.press('Enter');
-      await page.locator('.menu-panel.is-open').waitFor();
-      const close=page.getByRole('button',{name:'Close menu',exact:true});
-      assert.equal(await close.evaluate(e=>e===document.activeElement),true);
-      assert.equal(await page.locator('main').getAttribute('inert'),'');
-      assert.equal(await page.locator('[data-menu-toggle]').getAttribute('aria-expanded'),'true');
-      assert.equal(await page.evaluate(()=>getComputedStyle(document.body).position),'fixed');
-      await page.locator('.menu-panel__sheet').evaluate(e=>Promise.all(e.getAnimations().map(a=>a.finished)));
-      const sheetWidth=await page.locator('.menu-panel__sheet').evaluate(e=>e.getBoundingClientRect().width);
-      const expectedSheetWidth=width<768?Math.min(384,width-44):width<1024?Math.min(384,width-48):Math.min(448,width-48);
-      assert.ok(Math.abs(sheetWidth-expectedSheetWidth)<1);
-      await page.screenshot({path:`${results}/screenshots/qa-${width}x${height}-menu.png`});
-      await page.screenshot({path:`${results}/screenshots/qa-${width}x${height}-active.png`});
-      const openAxe=await new AxeBuilder({page}).analyze();
-      assert.deepEqual(openAxe.violations,[]);
-      const primary=page.locator('.menu-panel__link[aria-current]');
-      const primaryType=await primary.evaluate(e=>({weight:getComputedStyle(e).fontWeight,synthesis:getComputedStyle(e).fontSynthesisWeight}));
-      assert.equal(primaryType.weight,'200');
-      assert.equal(primaryType.synthesis,'none');
-      const {nodeId:primaryNodeId}=await cdp.send('DOM.querySelector',{nodeId:root.nodeId,selector:'.menu-panel__link[aria-current]'});
-      const {fonts:primaryFonts}=await cdp.send('CSS.getPlatformFontsForNode',{nodeId:primaryNodeId});
-      assert.ok(primaryFonts.some(font=>font.isCustomFont && font.familyName.startsWith('Raleway')),'Raleway 200 fallback or synthesis');
-      // With details closed, Tab cycles only visible controls (no hidden leaf links).
-      await page.keyboard.press('Shift+Tab');
-      assert.equal(await page.getByText('Specimens',{exact:true}).evaluate(e=>e.closest('summary')===document.activeElement),true);
-      await page.keyboard.press('Tab');
-      assert.equal(await close.evaluate(e=>e===document.activeElement),true);
-      await page.getByText('Specimens',{exact:true}).click();
-      await page.getByText('Components',{exact:true}).click();
-      await page.screenshot({path:`${results}/screenshots/qa-${width}x${height}-nested.png`});
-      const interactive=page.locator('.menu-panel__sheet a, .menu-panel__sheet button, .menu-panel__sheet summary');
-      for(const element of await interactive.all()) {
-        if(!await element.isVisible()) continue;
-        const rect=await element.evaluate(e=>e.getBoundingClientRect().toJSON());
-        assert.ok(rect.width>=44 && rect.height>=44,`Undersized menu target: ${rect.width}x${rect.height}`);
-      }
-      const nestedRects=await page.locator('.menu-panel__nested-link, .menu-panel__nested-summary').evaluateAll(elements=>elements.filter(e=>e.checkVisibility()).map(e=>e.getBoundingClientRect().toJSON()));
-      for(let index=1;index<nestedRects.length;index++) assert.ok(nestedRects[index].top>=nestedRects[index-1].bottom,'Overlapping nested targets');
-      await page.keyboard.press('Tab');
-      await page.keyboard.press('Tab');
-      assert.equal(await page.getByRole('navigation',{name:'QA fixture'}).getByRole('link',{name:'Surfaces',exact:true}).evaluate(e=>e===document.activeElement),true);
-      const nestedFocus=await page.getByRole('navigation',{name:'QA fixture'}).getByRole('link',{name:'Surfaces',exact:true}).evaluate(e=>({outline:getComputedStyle(e).outlineColor,inner:getComputedStyle(e).boxShadow}));
-      assert.equal(nestedFocus.outline,'rgb(153, 2, 2)');
-      assert.match(nestedFocus.inner,/rgb\(255, 255, 255\)/);
-      await page.screenshot({path:`${results}/screenshots/qa-${width}x${height}-focus.png`});
-      await page.keyboard.press('Tab');
-      assert.equal(await close.evaluate(e=>e===document.activeElement),true);
-      await page.keyboard.press('Escape');
-      assert.equal(await page.locator('[data-menu-toggle]').getAttribute('aria-expanded'),'false');
-      assert.equal(await page.locator('[data-menu-toggle]').evaluate(e=>e===document.activeElement),true);
-      assert.equal(await page.locator('main').getAttribute('inert'),null);
-      // Click trigger, close button and backdrop, including restoration after page scrolling.
-      await page.locator('[data-menu-toggle]').click(); await close.click();
-      await page.evaluate(()=>scrollTo({top:200,behavior:'instant'}));
-      const before=await page.evaluate(()=>scrollY);
-      await page.locator('[data-menu-toggle]').click();
-      await page.locator('.menu-panel__backdrop').click({position:{x:5,y:100}});
-      assert.equal(await page.evaluate(()=>scrollY),before);
-      await page.locator('[data-menu-toggle]').click();
-      await page.getByRole('navigation',{name:'QA fixture'}).getByRole('link',{name:'Typography',exact:true}).click();
-      assert.equal(await page.locator('[data-menu-toggle]').getAttribute('aria-expanded'),'false');
-      await page.waitForFunction(()=>document.activeElement?.id==='typography');
-      await page.emulateMedia({reducedMotion:'reduce'});
-      await page.locator('[data-menu-toggle]').click();
-      const duration=await page.locator('.menu-panel__sheet').evaluate(e=>parseFloat(getComputedStyle(e).transitionDuration));
-      assert.ok(duration<.001);
-      assert.equal(await page.locator('.menu-panel').evaluate(e=>parseFloat(getComputedStyle(e).transitionDelay)),0);
-      await page.keyboard.press('Escape');
-      assert.equal(await page.locator('[data-menu-toggle]').getAttribute('aria-expanded'),'false');
-      assert.deepEqual(errors,[]); assert.deepEqual(external,[]); assert.deepEqual(badResponses,[]);
-      report.viewports.push({width,height,...computed,sheetWidth,axeViolations:0,consoleErrors:0,externalRequests:0,reducedMotionSeconds:duration});
+      assert.equal(await page.getByRole('heading',{level:2,name:"Explore Jared's practice",exact:true}).count(),1);
+      assert.equal(await page.getByText("An institutional index of Jared's practice",{exact:true}).count(),1);
+      assert.equal(await page.locator('.site-footer__identity').innerText(),'JAREDGOLDBERG.ORG');
+      assert.equal(await page.getByRole('heading',{level:3}).count(),4);
+      assert.equal(await page.locator('.index-entry').count(),4);
+      assert.equal(await page.locator('.index-entry a').count(),4);
+      assert.deepEqual(await page.locator('.index-entry a').evaluateAll(links=>links.map(link=>link.getAttribute('href'))),sectionPages.map(item=>`/${item.slug}/`));
+      assert.equal(await page.locator('main img, main picture, .media-placeholder').count(),0);
+      const displayType=await page.locator('h1').evaluate(element=>{const style=getComputedStyle(element),lines=[...element.children].map(line=>line.getBoundingClientRect().toJSON());return {fontWeight:style.fontWeight,lineHeightRatio:parseFloat(style.lineHeight)/parseFloat(style.fontSize),trackingRatio:parseFloat(style.letterSpacing)/parseFloat(style.fontSize),overflow:element.scrollWidth>element.clientWidth,lines};});
+      assert.equal(displayType.fontWeight,'900');assert.ok(Math.abs(displayType.lineHeightRatio-.9)<.001);assert.ok(Math.abs(displayType.trackingRatio+.03)<.001);assert.equal(displayType.overflow,false);assert.ok(displayType.lines.every(line=>line.width<=width));assert.ok(Math.abs(displayType.lines[1].top-displayType.lines[0].bottom)<1);
+      const heroHighlights=await page.evaluate(()=>[...document.querySelectorAll('.home-hero h1 > span'),document.querySelector('.home-hero__role')].map(element=>({color:getComputedStyle(element).color,background:getComputedStyle(element).backgroundColor})));
+      for(const highlight of heroHighlights){assert.equal(highlight.color,'rgb(255, 255, 255)');assert.equal(highlight.background,'rgb(0, 0, 0)');}
+      const headingHighlights=await page.evaluate(()=>[...document.querySelectorAll('main h1, main h2, main h3')].map(heading=>{const highlights=[...heading.querySelectorAll(':scope > .heading-highlight')];return {highlights:highlights.length,valid:highlights.length>0&&highlights.every(element=>{const style=getComputedStyle(element);return style.color==='rgb(255, 255, 255)'&&style.backgroundColor==='rgb(0, 0, 0)';})};}));
+      assert.ok(headingHighlights.every(heading=>heading.valid));
+      const homeRhythm=await page.evaluate(()=>{const hero=document.querySelector('.home-hero').getBoundingClientRect(),nameLines=[...document.querySelectorAll('.home-hero h1 > span')].map(line=>line.getBoundingClientRect()),introduction=document.querySelector('.home-hero__introduction').getBoundingClientRect(),indexHeader=document.querySelector('.home-index__header').getBoundingClientRect(),indexTitle=document.querySelector('.home-index__header h2').getBoundingClientRect(),indexIntroduction=document.querySelector('.home-index__header p').getBoundingClientRect();return {heroHeight:hero.height,introductionToGoldberg:introduction.top-nameLines[1].top,indexTitleWidth:indexTitle.width,indexHeaderWidth:indexHeader.width,indexIntroductionLeft:indexIntroduction.left,indexTitleLeft:indexTitle.left,indexIntroductionTop:indexIntroduction.top,indexTitleBottom:indexTitle.bottom};});
+      if(width>=768){assert.ok(homeRhythm.heroHeight<=705);assert.ok(Math.abs(homeRhythm.introductionToGoldberg)<2);assert.ok(homeRhythm.indexTitleWidth/homeRhythm.indexHeaderWidth>.6);}
+      assert.ok(Math.abs(homeRhythm.indexIntroductionLeft-homeRhythm.indexTitleLeft)<1);assert.ok(homeRhythm.indexIntroductionTop>homeRhythm.indexTitleBottom);
+      if(width<768){const boxed=await page.evaluate(()=>{const grid=document.querySelector('.index-grid').getBoundingClientRect(),shell=document.querySelector('.home-index > .layout-shell').getBoundingClientRect(),entry=document.querySelector('.index-entry'),heading=entry.querySelector('h3').getBoundingClientRect();return {gridLeft:grid.left,gridRight:grid.right,shellLeft:shell.left,headingLeft:heading.left};});assert.ok(Math.abs(boxed.gridLeft)<1);assert.ok(Math.abs(boxed.gridRight-width)<1);assert.ok(Math.abs(boxed.headingLeft-boxed.shellLeft)<1);}
+      const accent=await page.evaluate(()=>{const style=getComputedStyle(document.documentElement);return {value:style.getPropertyValue('--color-accent').trim(),contrast:style.getPropertyValue('--color-focus-contrast').trim(),surfaces:['--color-background','--color-surface','--color-surface-muted'].map(token=>style.getPropertyValue(token).trim()),dark:style.getPropertyValue('--color-text-primary').trim()};});
+      assert.equal(accent.value,'#990202');for(const surface of accent.surfaces) assert.ok(contrastRatio(accent.value,surface)>=4.5);assert.ok(contrastRatio(accent.contrast,accent.dark)>=3);
+      const fontPolicy=JSON.parse(await readFile('tests/font-policy.json','utf8'));for(const font of fontPolicy.requiredFiles) assert.ok(network.requests.includes(base+'/'+font));
+      await page.screenshot({path:`${results}/screenshots/home-${width}x${height}-closed.png`});
+      if(screenshotSizes.has(`${width}x${height}`)) await page.screenshot({path:`${results}/screenshots/home-${width}x${height}-full.png`,fullPage:true});
+      assert.deepEqual((await new AxeBuilder({page}).analyze()).violations,[]);
+      await page.keyboard.press('Tab');assert.equal(await page.locator('.skip-link').evaluate(element=>element===document.activeElement),true);
+      await page.keyboard.press('Tab');const trigger=page.locator('[data-menu-toggle]');assert.equal(await trigger.evaluate(element=>element===document.activeElement),true);
+      const triggerFocus=await trigger.evaluate(element=>({outline:getComputedStyle(element).outlineColor,inner:getComputedStyle(element).boxShadow}));assert.equal(triggerFocus.outline,'rgb(153, 2, 2)');assert.match(triggerFocus.inner,/rgb\(255, 255, 255\)/);
+      await page.keyboard.press('Enter');await page.locator('.menu-panel.is-open').waitFor();
+      const close=page.getByRole('button',{name:'Close menu',exact:true});assert.equal(await close.evaluate(element=>element===document.activeElement),true);assert.equal(await page.locator('main').getAttribute('inert'),'');
+      await page.locator('.menu-panel__sheet').evaluate(element=>Promise.all(element.getAnimations().map(animation=>animation.finished)));
+      const sheetWidth=await page.locator('.menu-panel__sheet').evaluate(element=>element.getBoundingClientRect().width);const expectedSheetWidth=width<768?Math.min(384,width-44):width<1024?Math.min(384,width-48):Math.min(448,width-48);assert.ok(Math.abs(sheetWidth-expectedSheetWidth)<1);
+      assert.equal(await page.locator('.menu-panel a[aria-current=page]').getAttribute('href'),'/');
+      await page.screenshot({path:`${results}/screenshots/home-${width}x${height}-menu.png`});assert.deepEqual((await new AxeBuilder({page}).analyze()).violations,[]);
+      const explore=page.locator('.menu-panel summary').filter({hasText:"Explore Jared's practice"});
+      await page.keyboard.press('Shift+Tab');assert.equal(await explore.evaluate(element=>element===document.activeElement),true);
+      await page.keyboard.press('Tab');assert.equal(await close.evaluate(element=>element===document.activeElement),true);
+      await explore.click();
+      const interactive=page.locator('.menu-panel__sheet a, .menu-panel__sheet button, .menu-panel__sheet summary');for(const element of await interactive.all()){if(!await element.isVisible())continue;const rect=await element.evaluate(item=>item.getBoundingClientRect().toJSON());assert.ok(rect.width>=44&&rect.height>=44);}
+      await page.keyboard.press('Escape');assert.equal(await trigger.evaluate(element=>element===document.activeElement),true);assert.equal(await page.locator('main').getAttribute('inert'),null);
+      await page.emulateMedia({reducedMotion:'reduce'});await trigger.click();const duration=await page.locator('.menu-panel__sheet').evaluate(element=>parseFloat(getComputedStyle(element).transitionDuration));assert.ok(duration<.001);await page.keyboard.press('Escape');
+      assert.deepEqual(network.errors,[]);assert.deepEqual(network.external,[googleTagUrl]);assert.deepEqual(network.badResponses,[]);
+      report.viewports.push({width,height,...computed,homeRhythm,sheetWidth,headings:{h1:1,h2:1,h3:4},indexEntries:4,axeViolations:0,consoleErrors:0,externalRequests:1,reducedMotionSeconds:duration});
       await context.close();
     });
-    await t.test('tablet, narrow mobile and coarse landscape remain usable',async()=>{
-      for(const [width,height] of [[320,568],[768,1024],[900,768],[667,375]]) {
-        const context=await browser.newContext({viewport:{width,height},isMobile:width<768,hasTouch:true});
-        const page=await context.newPage(); await page.goto(base);
-        assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
-        if(width===667) {
-          const trigger=page.locator('[data-menu-toggle]');
-          const initial=await trigger.evaluate(e=>({rect:e.getBoundingClientRect().toJSON(),position:getComputedStyle(e.closest('header')).position,label:getComputedStyle(e.querySelector('.menu-trigger__label')).display,icon:getComputedStyle(e.querySelector('.menu-trigger__icon')).display}));
-          assert.equal(initial.position,'sticky'); assert.equal(initial.label,'none'); assert.equal(initial.icon,'block');
-          assert.equal(initial.rect.width,44); assert.equal(initial.rect.height,44); assert.ok(initial.rect.left>=16 && initial.rect.right<=width-16);
-          await page.evaluate(()=>{document.documentElement.style.scrollBehavior='auto';scrollTo(0,(document.documentElement.scrollHeight-innerHeight)/2);});
-          assert.ok(Math.abs((await trigger.evaluate(e=>e.getBoundingClientRect().top))-initial.rect.top)<1);
-        }
-        await page.getByRole('button',{name:'Open menu',exact:true}).click();
-        assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
-        await page.getByText('Specimens',{exact:true}).click();
-        await page.getByText('Components',{exact:true}).click();
-        await page.getByRole('navigation',{name:'QA fixture'}).getByRole('link',{name:'Surfaces',exact:true}).click();
-        assert.equal(await page.locator('[data-menu-toggle]').getAttribute('aria-expanded'),'false');
-        await context.close();
-      }
-    });
-    await t.test('200% equivalent reflow keeps the menu usable',async()=>{
-      const context=await browser.newContext({viewport:{width:720,height:450}});
-      const page=await context.newPage();await page.goto(base);
-      assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
-      await page.getByRole('button',{name:'Open menu',exact:true}).click();
-      await page.getByText('Specimens',{exact:true}).click();
-      await page.getByText('Components',{exact:true}).click();
-      assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
-      const targets=page.locator('.menu-panel__sheet a, .menu-panel__sheet button, .menu-panel__sheet summary');
-      for(const element of await targets.all()) {
-        if(!await element.isVisible()) continue;
-        const rect=await element.evaluate(e=>e.getBoundingClientRect().toJSON());
-        assert.ok(rect.width>=44 && rect.height>=44);
-      }
+
+    for(const item of sectionPages) for(const [width,height] of [[1440,900],[768,1024],[390,844]]) await t.test(`${item.slug} ${width}x${height}`,async()=>{
+      const context=await newContext(browser,{viewport:{width,height},isMobile:width<768,hasTouch:width<768});
+      const page=await context.newPage(),network=observe(page,base),url=`${base}/${item.slug}/`;
+      assert.equal((await page.goto(url)).status(),200);await page.evaluate(()=>document.fonts.ready);
+      assert.equal(await page.getByRole('heading',{level:1,name:item.title,exact:true}).count(),1);
+      assert.equal(await page.locator('main').getByText('JAREDGOLDBERG.ORG',{exact:true}).count(),0);
+      assert.equal(await page.getByText('PRACTICE SECTION',{exact:true}).count(),0);
+      assert.equal(await page.getByRole('heading',{level:2,name:'Table of contents',exact:true}).count(),1);
+      assert.equal(await page.getByText('On this page',{exact:true}).count(),0);
+      assert.equal(await page.locator('.article-section').count(),item.sections);
+      assert.equal(await page.locator('.section-page__destinations a.text-link--external').count(),item.links);
+      assert.equal(await page.locator('.section-page__toc a').count(),item.sections);
+      assert.equal(await page.locator('.section-page__siblings a').count(),4);
+      assert.equal(await page.getByRole('heading',{level:2,name:"Explore Jared's practice",exact:true}).count(),1);
+      assert.equal(await page.locator('.site-footer__identity').innerText(),'JAREDGOLDBERG.ORG');
+      assert.equal(await page.locator('.section-page__siblings a[aria-current=page]').getAttribute('href'),`/${item.slug}/`);
+      assert.equal(await page.locator('main img, main picture').count(),0);assert.equal(await page.locator('.media-placeholder[aria-hidden=true]').count(),1);
+      const media=await page.locator('.media-frame--banner').evaluate(element=>{const rect=element.getBoundingClientRect();return {ratio:rect.width/rect.height,overflow:document.documentElement.scrollWidth>innerWidth};});
+      assert.equal(media.overflow,false);assert.ok(Math.abs(media.ratio-(width<768?1:16/9))<.02);
+      const rhythm=await page.evaluate(()=>{const header=document.querySelector('.site-header--overlay'),headerRect=header.getBoundingClientRect(),menu=document.querySelector('[data-menu-toggle]').getBoundingClientRect(),title=document.querySelector('.section-page__hero h1').getBoundingClientRect(),media=document.querySelector('.media-frame--banner').getBoundingClientRect(),layout=document.querySelector('.section-page__layout').getBoundingClientRect(),tocElement=document.querySelector('.section-page__toc'),tocNav=tocElement.querySelector('nav'),toc=tocElement.getBoundingClientRect(),tocStyle=getComputedStyle(tocNav),tocItems=[...tocElement.querySelectorAll('li')].map(item=>item.getBoundingClientRect().toJSON()),article=document.querySelector('.section-page__article').getBoundingClientRect(),firstHeading=document.querySelector('.article-section h2').getBoundingClientRect(),firstParagraph=document.querySelector('.article-section p').getBoundingClientRect(),siblings=document.querySelector('.section-page__siblings ul').getBoundingClientRect(),sections=[...document.querySelectorAll('.article-section')];return {headerPosition:getComputedStyle(header).position,headerHeight:headerRect.height,headerBottom:headerRect.bottom,menuRightDelta:media.right-menu.right,titleTop:title.top,titleMenuGap:title.top-menu.bottom,titleToMedia:media.top-title.bottom,titleRightDelta:media.right-title.right,tocPosition:tocStyle.position,tocTopOffset:parseFloat(tocStyle.top),tocOverflowY:tocStyle.overflowY,tocMaxHeight:tocStyle.maxHeight,tocBorderBottom:parseFloat(getComputedStyle(tocElement).borderBottomWidth),tocToFirstHeading:firstHeading.top-toc.bottom,tocItems,mediaToLayout:layout.top-media.bottom,columnGap:article.left-toc.right,articleRightDelta:media.right-article.right,paragraphRightDelta:article.right-firstParagraph.right,siblingsLeft:siblings.left,siblingsRight:siblings.right,sectionGaps:sections.slice(1).map((section,index)=>section.querySelector('h2').getBoundingClientRect().top-sections[index].querySelector('p:last-child').getBoundingClientRect().bottom)};});
+      assert.ok(Math.abs(rhythm.titleRightDelta)<1);
+      if(width>=768){assert.equal(rhythm.headerPosition,'sticky');assert.ok(Math.abs(rhythm.headerHeight-76)<1);assert.ok(Math.abs(rhythm.menuRightDelta)<1);assert.ok(Math.abs(rhythm.titleTop-rhythm.headerBottom-32)<1);assert.ok(Math.abs(rhythm.titleToMedia-24)<1);assert.equal(rhythm.tocPosition,'sticky');assert.ok(rhythm.tocTopOffset>=rhythm.headerHeight+15);assert.ok(Math.abs(rhythm.columnGap-25.888)<1);assert.ok(Math.abs(rhythm.articleRightDelta)<1);assert.ok(Math.abs(rhythm.paragraphRightDelta)<1);}
+      else {assert.ok(rhythm.titleMenuGap>=24&&rhythm.titleMenuGap<=36);assert.ok(Math.abs(rhythm.titleToMedia-24)<1);assert.equal(rhythm.tocPosition,'static');assert.equal(rhythm.tocOverflowY,'visible');assert.equal(rhythm.tocMaxHeight,'none');assert.equal(rhythm.tocBorderBottom,1);assert.ok(rhythm.tocToFirstHeading>=23&&rhythm.tocToFirstHeading<=25);assert.ok(Math.abs(rhythm.siblingsLeft)<1);assert.ok(Math.abs(rhythm.siblingsRight-width)<1);assert.equal(new Set(rhythm.tocItems.map(rect=>Math.round(rect.left))).size,1);for(let index=1;index<rhythm.tocItems.length;index+=1){assert.ok(rhythm.tocItems[index].top>=rhythm.tocItems[index-1].bottom);assert.ok(rhythm.tocItems[index].top-rhythm.tocItems[index-1].bottom<1);}}
+      const sectionHeadingHighlights=await page.evaluate(()=>[...document.querySelectorAll('main h1, main h2, main h3')].every(heading=>[...heading.querySelectorAll(':scope > .heading-highlight')].some(element=>{const style=getComputedStyle(element);return style.color==='rgb(255, 255, 255)'&&style.backgroundColor==='rgb(0, 0, 0)';})));
+      assert.equal(sectionHeadingHighlights,true);
+      assert.ok(rhythm.mediaToLayout<=(width<768?33:49));
+      assert.ok(rhythm.sectionGaps.every(gap=>gap<=(width<768?49:65)));
+      if(width>=768){await page.evaluate(()=>scrollTo({top:document.querySelectorAll('.article-section')[1]?.offsetTop??document.querySelector('.section-page__layout').offsetTop,behavior:'instant'}));await page.evaluate(()=>new Promise(requestAnimationFrame));const sticky=await page.evaluate(()=>{const header=document.querySelector('.site-header--overlay').getBoundingClientRect(),toc=document.querySelector('.section-page__toc nav').getBoundingClientRect();return {headerTop:header.top,headerBottom:header.bottom,tocTop:toc.top};});assert.ok(Math.abs(sticky.headerTop)<1);assert.ok(sticky.tocTop>=sticky.headerBottom+15);if(item.slug==='community-service'&&width===1440)await page.screenshot({path:`${results}/screenshots/community-service-1440x900-sticky.png`});await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));}
+      for(const link of await page.locator('.section-page__destinations a').all()){assert.equal(await link.getAttribute('target'),null);assert.equal(await link.locator('.text-link__external-mark').count(),1);}
+      for(const element of await page.locator('main h1, main h2, main p, main a').all()) assert.equal(await element.evaluate(node=>node.scrollWidth>node.clientWidth),false);
+      assert.deepEqual((await new AxeBuilder({page}).analyze()).violations,[]);
+      if(item.slug==='art'&&width===390)await page.screenshot({path:`${results}/screenshots/art-390x844-top.png`});
+      await page.screenshot({path:`${results}/screenshots/${item.slug}-${width}x${height}-full.png`,fullPage:true});
+      if(item.slug==='art'&&width===390){await page.evaluate(()=>scrollTo({top:document.querySelector('.section-page__toc').offsetTop-16,behavior:'instant'}));await page.evaluate(()=>new Promise(requestAnimationFrame));await page.screenshot({path:`${results}/screenshots/art-390x844-contents.png`});await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));}
+      const trigger=page.locator('[data-menu-toggle]');await trigger.click();await page.locator('.menu-panel.is-open').waitFor();
+      const current=page.locator('.menu-panel a[aria-current=page]');assert.equal(await current.getAttribute('href'),`/${item.slug}/`);assert.equal(await current.isVisible(),true);
+      await page.keyboard.press('Escape');assert.equal(await trigger.evaluate(element=>element===document.activeElement),true);
+      assert.deepEqual(network.errors,[]);assert.deepEqual(network.external,[googleTagUrl]);assert.deepEqual(network.badResponses,[]);
+      report.sections.push({slug:item.slug,width,height,articleSections:item.sections,externalLinks:item.links,mediaRatio:media.ratio,rhythm,axeViolations:0,consoleErrors:0});
       await context.close();
     });
-    await t.test('mobile trigger is iconic, sticky and operable throughout the page',async()=>{
-      for(const [width,height] of mobileSizes) {
-        const context=await browser.newContext({viewport:{width,height},isMobile:true,hasTouch:true});
-        const page=await context.newPage();
-        const errors=[],badResponses=[];
-        page.on('pageerror',error=>errors.push(error.message));
-        page.on('console',message=>{if(message.type()==='error') errors.push(message.text());});
-        page.on('response',response=>{if(response.status()>=400) badResponses.push(response.url());});
-        await page.goto(base); await page.evaluate(async()=>{await document.fonts.ready;document.documentElement.style.scrollBehavior='auto';});
-        assert.equal(await page.getByRole('button',{name:'Open menu',exact:true}).count(),1);
-        const trigger=page.locator('[data-menu-toggle]');
-        const top=await trigger.evaluate(e=>{
-          const r=e.getBoundingClientRect(),icon=e.querySelector('.menu-trigger__icon'),ir=icon.getBoundingClientRect();
-          return {rect:r.toJSON(),headerPosition:getComputedStyle(e.closest('header')).position,headerHeight:e.closest('header').getBoundingClientRect().height,labelDisplay:getComputedStyle(e.querySelector('.menu-trigger__label')).display,visibleText:e.innerText.trim(),icon:{width:ir.width,height:ir.height,shadow:getComputedStyle(icon).boxShadow}};
-        });
-        assert.equal(top.headerPosition,'sticky'); assert.equal(top.headerHeight,0);
-        assert.equal(top.rect.width,44); assert.equal(top.rect.height,44);
-        assert.ok(top.rect.left>=16 && top.rect.right<=width-16);
-        assert.ok(top.rect.top>=14 && top.rect.top<24);
-        assert.equal(top.labelDisplay,'none'); assert.equal(top.visibleText,'');
-        assert.equal(top.icon.width,18); assert.equal(top.icon.height,1); assert.match(top.icon.shadow,/5px/);
-        const contentOverlaps=await trigger.evaluate(e=>{
-          const triggerRect=e.getBoundingClientRect();
-          const intersects=rect=>triggerRect.left<rect.right&&triggerRect.right>rect.left&&triggerRect.top<rect.bottom&&triggerRect.bottom>rect.top;
-          const overlaps=[];
-          for(const root of document.querySelectorAll('main, footer')) {
-            const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
-            let node;
-            while((node=walker.nextNode())) {
-              if(!node.textContent.trim()) continue;
-              const style=getComputedStyle(node.parentElement);
-              if(style.display==='none'||style.visibility==='hidden') continue;
-              const range=document.createRange();
-              range.selectNodeContents(node);
-              if([...range.getClientRects()].some(rect=>rect.width&&rect.height&&intersects(rect))) {
-                overlaps.push(node.textContent.trim().slice(0,80));
-              }
-            }
-          }
-          return [...new Set(overlaps)];
-        });
-        assert.deepEqual(contentOverlaps,[],'Mobile trigger obstructs initial visible text');
-        const maxScroll=await page.evaluate(()=>document.documentElement.scrollHeight-innerHeight);
-        const positions=[];
-        for(const fraction of [0,.25,.5,1]) {
-          await page.evaluate(y=>scrollTo({top:y,behavior:'instant'}),Math.round(maxScroll*fraction));
-          await page.evaluate(()=>new Promise(requestAnimationFrame));
-          const state=await trigger.evaluate((e,topY)=>{
-            const r=e.getBoundingClientRect();
-            const intersects=rect=>r.left<rect.right&&r.right>rect.left&&r.top<rect.bottom&&r.bottom>rect.top;
-            const overlaps=[];
-            for(const root of document.querySelectorAll('main, footer')) {
-              const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
-              let node;
-              while((node=walker.nextNode())) {
-                if(!node.textContent.trim()) continue;
-                const style=getComputedStyle(node.parentElement);
-                if(style.display==='none'||style.visibility==='hidden') continue;
-                const range=document.createRange();
-                range.selectNodeContents(node);
-                if([...range.getClientRects()].some(rect=>rect.width&&rect.height&&intersects(rect))) {
-                  overlaps.push(node.textContent.trim().slice(0,80));
-                }
-              }
-            }
-            return {scrollY,rect:r.toJSON(),overflow:document.documentElement.scrollWidth>innerWidth,overlaps:[...new Set(overlaps)],topDelta:Math.abs(r.top-topY)};
-          },top.rect.top);
-          assert.ok(state.topDelta<1,'Sticky trigger moved vertically');
-          assert.equal(state.overflow,false,'Mobile page has horizontal overflow');
-          assert.deepEqual(state.overlaps,[],'Mobile trigger overlaps visible page text');
-          const before=state.scrollY;
-          await trigger.click();
-          assert.equal(await trigger.getAttribute('aria-expanded'),'true');
-          assert.equal(await trigger.evaluate(e=>getComputedStyle(e).visibility),'hidden');
-          assert.equal(await page.evaluate(()=>getComputedStyle(document.body).position),'fixed');
-          await page.getByRole('button',{name:'Close menu',exact:true}).click();
-          await page.locator('.menu-panel__sheet').evaluate(e=>Promise.all(e.getAnimations().map(animation=>animation.finished)));
-          assert.equal(await trigger.getAttribute('aria-expanded'),'false');
-          assert.equal(await trigger.evaluate(e=>e===document.activeElement),true);
-          assert.equal(await page.evaluate(()=>scrollY),before);
-          positions.push({fraction,scrollY:before,top:state.rect.top,left:state.rect.left,right:state.rect.right,width:state.rect.width,height:state.rect.height});
-          if(fraction===.5) await page.screenshot({path:`${results}/screenshots/qa-${width}x${height}-mid-scroll-closed.png`});
-        }
-        await trigger.click(); await page.keyboard.press('Escape');
-        assert.equal(await trigger.evaluate(e=>e===document.activeElement),true);
-        assert.deepEqual(errors,[]); assert.deepEqual(badResponses,[]);
-        report.mobileSticky.push({width,height,top,positions,consoleErrors:0,failedResponses:0});
-        await context.close();
+
+    for(const item of sectionPages) for(const [width,height] of [[1024,450],[768,450]]) await t.test(`${item.slug} keeps contents below header through Continue at ${width}x${height}`,async()=>{
+      const context=await newContext(browser,{viewport:{width,height}});const page=await context.newPage(),url=`${base}/${item.slug}/`;
+      assert.equal((await page.goto(url)).status(),200);await page.evaluate(()=>document.fonts.ready);
+      await page.evaluate(()=>{const section=document.querySelector('.section-page__destinations'),max=document.documentElement.scrollHeight-innerHeight;scrollTo({top:Math.min(max,section.offsetTop+Math.max(0,section.offsetHeight-innerHeight/2)),behavior:'instant'});});
+      await page.evaluate(()=>new Promise(requestAnimationFrame));
+      const state=await page.evaluate(()=>{const header=document.querySelector('.site-header--overlay').getBoundingClientRect(),toc=document.querySelector('.section-page__toc nav'),tocRect=toc.getBoundingClientRect(),siblings=document.querySelector('.section-page__siblings').getBoundingClientRect();return {headerTop:header.top,headerBottom:header.bottom,tocTop:tocRect.top,tocBottom:tocRect.bottom,tocMaxHeight:parseFloat(getComputedStyle(toc).maxHeight),viewportHeight:innerHeight,siblingsTop:siblings.top,overflow:document.documentElement.scrollWidth>innerWidth};});
+      assert.ok(Math.abs(state.headerTop)<1);assert.ok(state.tocTop>=state.headerBottom+15);assert.ok(state.tocBottom<=state.viewportHeight-15);assert.equal(state.overflow,false);
+      if(item.slug==='community-service'&&width===1024)await page.screenshot({path:`${results}/screenshots/community-service-1024x450-continue.png`});
+      await context.close();
+    });
+
+    await t.test('200% equivalent reflow keeps every route and menu usable',async()=>{
+      for(const path of ['/',...sectionPages.map(item=>`/${item.slug}/`)]){
+        const context=await newContext(browser,{viewport:{width:720,height:450}});const page=await context.newPage();await page.goto(base+path);
+        assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+        for(const element of await page.locator('main h1, main h2, main h3, main p, main a').all()) assert.equal(await element.evaluate(item=>item.scrollWidth>item.clientWidth),false);
+        await page.getByRole('button',{name:'Open menu',exact:true}).click();assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);await page.keyboard.press('Escape');await context.close();
       }
+    });
+
+    await t.test('mobile trigger stays iconic and sticky throughout the index',async()=>{
+      for(const [width,height] of mobileSizes){
+        const context=await newContext(browser,{viewport:{width,height},isMobile:true,hasTouch:true});const page=await context.newPage(),network=observe(page,base);await page.goto(base);await page.evaluate(async()=>{await document.fonts.ready;document.documentElement.style.scrollBehavior='auto';});
+        const trigger=page.locator('[data-menu-toggle]');const top=await trigger.evaluate(element=>{const rect=element.getBoundingClientRect(),icon=element.querySelector('.menu-trigger__icon'),iconRect=icon.getBoundingClientRect();return {rect:rect.toJSON(),headerPosition:getComputedStyle(element.closest('header')).position,headerHeight:element.closest('header').getBoundingClientRect().height,labelDisplay:getComputedStyle(element.querySelector('.menu-trigger__label')).display,visibleText:element.innerText.trim(),icon:{width:iconRect.width,height:iconRect.height,shadow:getComputedStyle(icon).boxShadow}};});
+        assert.equal(top.headerPosition,'sticky');assert.equal(top.headerHeight,0);assert.equal(top.rect.width,44);assert.equal(top.rect.height,44);assert.ok(top.rect.left>=16&&top.rect.right<=width-16);assert.equal(top.labelDisplay,'none');assert.equal(top.visibleText,'');assert.equal(top.icon.width,18);assert.equal(top.icon.height,1);
+        const maxScroll=await page.evaluate(()=>document.documentElement.scrollHeight-innerHeight),positions=[];for(const fraction of [0,.5,1]){await page.evaluate(y=>scrollTo({top:y,behavior:'instant'}),Math.round(maxScroll*fraction));await page.evaluate(()=>new Promise(requestAnimationFrame));const state=await trigger.evaluate((element,topY)=>{const rect=element.getBoundingClientRect();return {scrollY,rect:rect.toJSON(),overflow:document.documentElement.scrollWidth>innerWidth,topDelta:Math.abs(rect.top-topY)};},top.rect.top);assert.ok(state.topDelta<1);assert.equal(state.overflow,false);const before=state.scrollY;await trigger.click();await page.getByRole('button',{name:'Close menu',exact:true}).click();await page.locator('.menu-panel__sheet').evaluate(element=>Promise.all(element.getAnimations().map(animation=>animation.finished)));assert.equal(await page.evaluate(()=>scrollY),before);positions.push({fraction,scrollY:before,top:state.rect.top});}
+        assert.deepEqual(network.errors,[]);assert.deepEqual(network.badResponses,[]);report.mobileSticky.push({width,height,top,positions,consoleErrors:0,failedResponses:0});await context.close();
+      }
+    });
+
+    if(!publicSite) await t.test('development-only new-page fixture uses public APIs without page CSS',async()=>{
+      const fixtureRoot=await buildNewPageFixture();
+      const fixtureServer=await startServer({port:0,root:fixtureRoot});
+      const fixtureBase=`http://127.0.0.1:${fixtureServer.address().port}`;
+      try {
+        for(const [width,height] of [[1440,900],[768,1024],[720,450],[320,568]]) {
+          const context=await newContext(browser,{viewport:{width,height},isMobile:width<768,hasTouch:width<768});
+          const page=await context.newPage();
+          assert.equal((await page.goto(fixtureBase)).status(),200);
+          await page.evaluate(()=>document.fonts.ready);
+          assert.equal(await page.getByRole('heading',{level:1,name:'An unfamiliar title long enough to test a future page without borrowing an existing composition',exact:true}).count(),1);
+          assert.equal(await page.locator('.record-meta > *').count(),5);
+          assert.equal(await page.locator('.media-placeholder[role=img]').getAttribute('aria-label'),'Optional media has not been supplied');
+          assert.equal(await page.locator('.record--project').count(),1);
+          assert.equal(await page.locator('.writing-record').count(),1);
+          assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+          for(const element of await page.locator('main h1, main h2, main h3, main p, main a').all()) assert.equal(await element.evaluate(item=>item.scrollWidth>item.clientWidth),false);
+          assert.deepEqual((await new AxeBuilder({page}).analyze()).violations,[]);
+          if(width!==720) await page.screenshot({path:`${results}/screenshots/new-page-fixture-${width}x${height}-full.png`,fullPage:true});
+          report.fixture.push({width,height,overflow:false,axeViolations:0});
+          await context.close();
+        }
+      } finally { await new Promise(done=>fixtureServer.close(done)); }
     });
     await writeFile(`${results}/browser-report.json`,JSON.stringify(report,null,2)+'\n');
-  } finally { await browser.close(); if(server) await new Promise(done=>server.close(done)); }
+  } finally {if(browser)await browser.close();if(server)await new Promise(done=>server.close(done));}
 });

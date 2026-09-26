@@ -9,7 +9,34 @@ import tempfile
 
 URL = 'https://qa.jaredgoldberg.org'
 MIME={'.html':['text/html'],'.css':['text/css'],'.js':['application/javascript','text/javascript'],
-      '.woff2':['font/woff2'],'.svg':['image/svg+xml'],'.json':['application/json'],'.txt':['text/plain']}
+      '.woff2':['font/woff2'],'.svg':['image/svg+xml'],'.png':['image/png'],
+      '.jpg':['image/jpeg'],'.jpeg':['image/jpeg'],'.webp':['image/webp'],
+      '.json':['application/json'],'.txt':['text/plain']}
+APPROVED_EXTERNAL_URLS={
+    'https://jaredgoldberg.ca/writing/the-future-of-work-is-a-design-problem/',
+    'https://jaredgoldberg.ca/writing/dignity-is-a-systems-output/',
+    'https://jaredgoldberg.ca/projects/the-money-club/',
+    'https://jaredgoldberg.ca/projects/capital-works/',
+    'https://jaredgoldberg.ca/projects/',
+    'https://jaredgoldberg.ca/work/china.html',
+    'https://jaredgoldberg.ca/work/loblaw.html',
+    'https://jaredgoldberg.ca/work/walmart.html',
+    'https://jaredgoldberg.ca/work/canadian-tire.html',
+}
+PRETTY_ROUTES={
+    '/media-archives-and-memory/':'media-archives-and-memory/index.html',
+    '/community-service/':'community-service/index.html',
+    '/systems-and-institutions/':'systems-and-institutions/index.html',
+    '/art/':'art/index.html',
+}
+
+def verify_html_policy(html):
+    if re.search(r'rel=[\"\x27]canonical',html):
+        raise ValueError('Unexpected canonical URL')
+    production_urls=set(re.findall(r'https?://jaredgoldberg\.(?:ca|org)[^\s\"\x27<>]*',html))
+    unexpected=production_urls-APPROVED_EXTERNAL_URLS
+    if unexpected:
+        raise ValueError('Unexpected production URL: '+', '.join(sorted(unexpected)))
 
 def request(url):
     with tempfile.TemporaryDirectory(prefix='qa-http-') as tmp:
@@ -18,9 +45,30 @@ def request(url):
             '--dump-header',str(headers),'--output',str(body),'--write-out','%{http_code}',url],check=True,capture_output=True,text=True)
         return int(result.stdout), headers.read_text().lower(), body.read_bytes()
 
+def verify_pretty_routes(directory, base=URL):
+    directory = Path(directory)
+    for route,local_name in PRETTY_ROUTES.items():
+        local=directory/local_name
+        status,headers,body=request(base+route)
+        if local.exists():
+            if status != 200 or body != local.read_bytes():
+                raise ValueError(f'{route}: pretty route mismatch')
+        elif status != 404:
+            raise ValueError(f'{route}: legacy release route must remain unavailable')
+        if 'noindex' not in headers or 'no-store' not in headers:
+            raise ValueError(f'{route}: missing QA headers')
+
 def verify(directory, base=URL):
     directory = Path(directory)
     manifest = json.loads((directory/'artifact-manifest.json').read_text())
+    release = json.loads((directory/'release.json').read_text())
+    if manifest.get('schema') == 2:
+        expected={'site':'jaredgoldberg.org','environment':'qa','gitSha':manifest.get('gitSha'),
+                  'buildId':manifest.get('buildId'),'artifactManifest':'artifact-manifest.json'}
+        if release != expected or any(name.startswith('images/') for name in manifest['files']):
+            raise ValueError('Invalid current QA release identity or allowlist')
+    elif manifest.get('schema') != 1:
+        raise ValueError('Unsupported QA artifact schema')
     for path in ['/','/index.html?qa=redirect']:
         status,headers,_=request(base.replace('https://','http://')+path)
         if status not in (301,308) or f'location: {base+path}\n' not in headers:
@@ -38,10 +86,13 @@ def verify(directory, base=URL):
         if not media or media[1] not in MIME[local.suffix]:raise ValueError(f'{name}: wrong MIME type')
         if body != local.read_bytes(): raise ValueError(f'{name}: public artifact byte mismatch')
     if (directory/'robots.txt').read_text().strip()!='User-agent: *\nDisallow: /':raise ValueError('Robots must disallow all')
-    html=(directory/'index.html').read_text()
-    if re.search(r'rel=[\"\x27]canonical|https?://jaredgoldberg\.(ca|org)',html):raise ValueError('Unexpected production URL/canonical')
+    if manifest.get('schema') == 2 and any('above-the-fold-prototype' in name or 'fixture' in name for name in manifest['files']):
+        raise ValueError('Prototype or development fixture leaked into QA')
+    for html in directory.rglob('*.html'):
+        verify_html_policy(html.read_text())
+    verify_pretty_routes(directory,base)
     for name in ['/.git/config','/.env','/package.json','/src/navigation.js','/scripts/deploy-qa.py',
-                 '/docs/qa-runbook.md','/assets/','/fonts/','/assets/main.js.map','/missing-qa-route']:
+                 '/docs/qa-runbook.md','/assets/','/fonts/','/images/','/assets/main.js.map','/missing-qa-route']:
         status, headers, _ = request(base+name)
         if status != 404: raise ValueError(f'{name}: expected 404, got {status}')
         if 'noindex' not in headers or 'no-store' not in headers: raise ValueError('Missing QA headers on 404')

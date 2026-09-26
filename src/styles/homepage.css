@@ -1,0 +1,131 @@
+/* Institutional index composition. */
+.home-hero {
+  --home-wordmark-size: clamp(4rem, 8.7vw, 8.5rem);
+  min-height: min(calc(44rem - var(--site-header-height)), calc(100svh - var(--site-header-height)));
+  display: grid;
+  align-items: end;
+  padding-block: clamp(5rem, 8vw, 7rem) var(--section-space-loose);
+}
+
+.home-hero__inner {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--space-5) var(--grid-gap);
+  align-items: end;
+}
+
+.home-hero__identity { grid-column: 1 / -1; grid-row: 1; }
+.home-hero__heading { grid-column: 1 / span 7; grid-row: 2; }
+.home-hero__introduction {
+  grid-column: 8 / -1;
+  grid-row: 2;
+  align-self: start;
+  display: grid;
+  gap: var(--space-5);
+  margin-top: calc(var(--home-wordmark-size) + 0.075rem);
+}
+.home-hero__index-note { grid-column: 1 / span 6; grid-row: 3; margin-top: var(--space-8); }
+
+.home-hero h1 {
+  max-width: none;
+  font-size: var(--home-wordmark-size);
+}
+
+.home-hero h1 > span {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  padding: 0.04em 0.1em 0.07em;
+  color: var(--wordmark-foreground);
+  background: var(--wordmark-background);
+  white-space: nowrap;
+}
+
+.home-hero__role {
+  width: fit-content;
+  max-width: 100%;
+  margin-top: var(--space-5);
+  padding: 0.28em 0.45em 0.34em;
+  font-family: var(--font-family-display);
+  font-size: var(--type-size-h4);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--tracking-ui);
+  text-transform: uppercase;
+  color: var(--wordmark-foreground);
+  background: var(--wordmark-background);
+}
+
+.home-index {
+  padding-block: var(--section-space-loose);
+  border-top: var(--stroke-1) solid var(--color-border-subtle);
+  background: var(--color-surface);
+  scroll-margin-top: var(--space-5);
+}
+
+.home-index__header {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--space-4) var(--grid-gap);
+  margin-bottom: var(--section-space-tight);
+}
+
+.home-index__header h2,
+.home-index__header p { grid-column: 1 / span 8; }
+
+.home-index__header h2 { max-width: none; }
+.home-index__header p { max-width: 58ch; }
+
+.index-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: var(--stroke-1) solid var(--color-border-subtle);
+  border-left: var(--stroke-1) solid var(--color-border-subtle);
+}
+
+.index-entry {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: var(--space-4);
+  min-height: 22rem;
+  padding: var(--space-7);
+  border-right: var(--stroke-1) solid var(--color-border-subtle);
+  border-bottom: var(--stroke-1) solid var(--color-border-subtle);
+  background: var(--color-background);
+}
+
+.index-entry h3 { max-width: 16ch; font-size: var(--type-size-h2); }
+.index-entry p { max-width: 50ch; }
+.index-entry__action { align-self: end; }
+
+@media (max-width: 63.99rem) {
+  .home-hero__heading { grid-column: 1 / span 8; }
+  .home-hero__introduction { grid-column: 7 / -1; }
+  .index-entry { min-height: 20rem; padding: var(--space-6); }
+}
+
+@media (max-width: 47.99rem) {
+  .home-hero { min-height: auto; padding-block: clamp(6.5rem, 28vw, 8rem) var(--section-space); }
+  .home-hero__inner,
+  .home-index__header { grid-template-columns: minmax(0, 1fr); }
+  .home-hero__identity,
+  .home-hero__heading,
+  .home-hero__introduction,
+  .home-hero__index-note,
+  .home-index__header h2,
+  .home-index__header p { grid-column: auto; }
+  .home-hero__identity,
+  .home-hero__heading,
+  .home-hero__introduction,
+  .home-hero__index-note { grid-row: auto; }
+  .home-hero__introduction { margin-top: 0; }
+  .home-hero h1 { font-size: clamp(3.3rem, 15vw, 4.5rem); }
+  .home-hero__index-note { margin-top: var(--space-6); }
+  .index-grid {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .index-entry { min-height: 0; padding: var(--space-5) calc(var(--gutter-mobile) - var(--stroke-1)); }
+  .index-entry h3 { font-size: var(--type-size-h3); }
+}

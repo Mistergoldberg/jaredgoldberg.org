@@ -8,6 +8,14 @@ only to immutable `/var/www/jaredgoldberg.org/releases/<timestamp>-<sha12>`.
 The separate production `current` symlink is never written by these tools.
 Private deployment ledger: `/var/www/jaredgoldberg.org/shared/qa/ledger.jsonl`.
 
+The QA allowlist includes `/` and the four published practice routes:
+`/media-archives-and-memory/`, `/community-service/`,
+`/systems-and-institutions/` and `/art/` (plus their exact artifact files). Before
+the first deployment containing these pages, install the updated
+`ops/nginx/qa.jaredgoldberg.org.conf` with the guarded vhost installer and verify
+the live configuration checksum; the site release script deliberately does not
+mutate Nginx.
+
 On 2026-09-19 the authorized continuation established:
 
 - Cloudflare DNS-only A `qa` → `5.161.223.134`, TTL 300. Existing proxied apex A and
@@ -52,6 +60,10 @@ Tests exercise the emitted artifact, not the legacy root placeholder.
 From a clean committed branch that has already been pushed, record the unchanged
 remote-main baseline and exact candidate identity:
 
+The pre-existing untracked `assets/` directory is the only permitted worktree
+exception. Exact-SHA builds use `git archive`, never read that directory, and
+reject any other tracked modification or untracked path.
+
 ```sh
 QA_SHA=$(git rev-parse HEAD)
 QA_SOURCE_BRANCH=$(git branch --show-current)
@@ -63,11 +75,12 @@ python3 scripts/deploy-qa.py --sha "$QA_SHA" \
 ```
 
 Without `--apply`, this performs no server operations. It exports the exact Git
-commit, installs locked dependencies, runs all tests with QA_BUILD_SHA, and saves
+commit, installs locked dependencies, runs all tests with `BUILD_SHA`, and saves
 `artifacts/<id>/site`, local browser evidence and a maintenance baseline. Only
 site files are uploaded. Source, documentation, scripts and dependencies are
-excluded. `release.json` reports the full SHA; `artifact-manifest.json` hashes all
-other emitted files. Mutable local builds report worktree.
+excluded. `release.json` reports the full SHA, environment, build ID and manifest
+name; `artifact-manifest.json` repeats that identity and hashes every other
+emitted file. Mutable local builds report worktree.
 
 ## Deployment and rollback
 
@@ -158,3 +171,104 @@ public verification completes. Never use legacy `scripts/deploy.sh` for QA.
 `npm run capture:source` reads the source site and writes ignored artifacts. Prior
 source references are under `docs/screenshots/source`; new font captures are under
 `docs/screenshots/qa-fonts`. Source repositories and production files stay read-only.
+
+## Production build and release
+
+Production is a separate mode, not a repurposed QA artifact. `npm run
+build:production` emits crawlable HTML, an allow-all `robots.txt`,
+`environment: production`, the exact supplied Git SHA and a unique build ID. QA
+continues to emit `noindex, nofollow`, disallow-all robots and `environment: qa`.
+The explicit build allowlist contains the homepage, four practice routes, two
+hashed assets, favicon, licensed font and OFL text, robots policy, release
+metadata and manifest. The development new-page fixture and retired
+above-the-fold prototype are excluded from both modes.
+
+Before any production action, record the strongest available legacy baseline:
+
+```sh
+PRODUCTION_PREVIOUS=20260918213922
+PRODUCTION_PREVIOUS_INDEX_SHA256=24431c40c90228f6b910b038aaa1b57c6e352b80bba6d0c6723997a6e56a5275
+```
+
+That release has no Git metadata. These values verify its immutable path and
+homepage bytes only; they do not establish an exact production Git SHA.
+
+### Exact-SHA dry run
+
+From a clean, pushed candidate branch, supply the observed remote-main baseline.
+Without `--apply`, the command archives the exact commit, installs locked
+dependencies, runs QA browser/accessibility and Python safety tests, builds and
+checks the production artifact, then simulates a failed post-switch verification
+and automatic restoration of the fingerprinted legacy release. It never contacts
+the production mutation interface.
+
+```sh
+RELEASE_SHA=$(git rev-parse HEAD)
+RELEASE_BRANCH=$(git branch --show-current)
+EXPECTED_MAIN_SHA=$(git rev-parse origin/main)
+python3 scripts/deploy-production.py \
+  --sha "$RELEASE_SHA" --source-branch "$RELEASE_BRANCH" \
+  --expected-main-sha "$EXPECTED_MAIN_SHA" \
+  --expected-current-release "$PRODUCTION_PREVIOUS" \
+  --legacy-release "$PRODUCTION_PREVIOUS" \
+  --legacy-index-sha256 "$PRODUCTION_PREVIOUS_INDEX_SHA256"
+```
+
+The reviewed `ops/nginx/jaredgoldberg.org.conf` exposes only allowlisted routes
+and assets, applies immutable caching only to hashed CSS/JS, and does not emit a
+QA robots header. Installing that vhost is a separate production change: back up
+the live file, stage the reviewed template, compare its SHA-256, run `nginx -t`,
+atomically replace the site file, run `nginx -t` again and gracefully reload.
+Do not combine configuration installation with a site release. The deployment
+command refuses to apply until the active sites-available file exactly matches
+the committed template and Nginx/TLS checks succeed.
+
+### Production deployment
+
+After the PR is reviewed and merged, start from a clean `main` whose local HEAD,
+remote branch tip and remote-main identity are the same full SHA. Re-run the dry
+run, confirm the expected current symlink and legacy homepage hash are unchanged,
+then explicitly add `--apply`:
+
+```sh
+git switch main
+git pull --ff-only origin main
+RELEASE_SHA=$(git rev-parse HEAD)
+python3 scripts/deploy-production.py \
+  --sha "$RELEASE_SHA" --source-branch main \
+  --expected-main-sha "$RELEASE_SHA" \
+  --expected-current-release "$PRODUCTION_PREVIOUS" \
+  --legacy-release "$PRODUCTION_PREVIOUS" \
+  --legacy-index-sha256 "$PRODUCTION_PREVIOUS_INDEX_SHA256" \
+  --apply
+```
+
+The apply gate rechecks Git before upload, verifies the current rollback target
+over public HTTPS, uploads only manifest-listed files, rehashes and seals the new
+immutable release, atomically switches `current`, and verifies HTTPS redirects,
+headers, every artifact byte, pretty routes, private-path 404s and the full
+browser/accessibility suite. Any post-switch failure restores and publicly
+reverifies the prior target before returning an error. Preserve the failed
+release and ledger for diagnosis. Do not use `scripts/deploy.sh`.
+
+### Production rollback
+
+Use recorded actual release IDs, never placeholders. The rollback tool requires
+a clean exact remote-main checkout, accepts only the fingerprinted legacy target
+or a manifest release previously recorded as publicly verified, and restores the
+starting target if rollback verification itself fails.
+
+```sh
+MAIN_SHA=$(git rev-parse HEAD)
+python3 scripts/rollback-production.py \
+  --sha "$MAIN_SHA" \
+  --expected-current-release 'ACTUAL_CURRENT_RELEASE_ID' \
+  --target "$PRODUCTION_PREVIOUS" \
+  --legacy-release "$PRODUCTION_PREVIOUS" \
+  --legacy-index-sha256 "$PRODUCTION_PREVIOUS_INDEX_SHA256"
+```
+
+After rollback, confirm `/var/www/jaredgoldberg.org/current` resolves to the
+recorded target and that the public homepage SHA-256 is the known legacy hash.
+Retain both the failed release and its deployment evidence. Branch deletion is a
+later, separately approved cleanup step after production verification.

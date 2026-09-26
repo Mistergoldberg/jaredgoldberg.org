@@ -50,6 +50,12 @@ class RepositoryGateTests(unittest.TestCase):
             'sourceRefSha':self.candidate,'expectedMainSha':self.base,
             'observedMainSha':self.base})
 
+    def test_allows_only_the_known_untracked_assets_directory(self):
+        assets=self.repo/'assets';assets.mkdir();(assets/'local-reference.txt').write_text('untouched\n')
+        self.assertEqual(self.gate()['sourceRefSha'],self.candidate)
+        (self.repo/'other-untracked.txt').write_text('reject\n')
+        with self.assertRaisesRegex(ValueError,'status --porcelain'): self.gate()
+
     def test_rejects_unpushed_candidate(self):
         (self.repo/'site.txt').write_text('unpushed\n')
         self.git_run('commit','-am','unpushed',cwd=self.repo)

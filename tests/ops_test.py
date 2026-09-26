@@ -5,9 +5,12 @@ import os
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 spec=importlib.util.spec_from_file_location('release',Path(__file__).resolve().parents[1]/'ops/qa-release.py')
 module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+verify_spec=importlib.util.spec_from_file_location('verify_qa',Path(__file__).resolve().parents[1]/'scripts/verify-qa.py')
+verify_module=importlib.util.module_from_spec(verify_spec);verify_spec.loader.exec_module(verify_module)
 SHA='a'*40
 BASE='baseline-20260919T020000Z-'+SHA[:12]
 NEXT='20260919T020001Z-'+SHA[:12]
@@ -24,13 +27,18 @@ class ReleaseTests(unittest.TestCase):
         for path in self.root.rglob('*'):
             if not path.is_symlink(): path.chmod(0o755 if path.is_dir() else 0o644)
         self.tmp.cleanup()
-    def artifact(self,identifier):
+    def artifact(self,identifier,extra_files=None):
         self.store.prepare(identifier)
         path=self.store.path(identifier)
         (path/'index.html').write_text('<meta name="robots" content="noindex, nofollow">QA')
         (path/'robots.txt').write_text('User-agent: *\nDisallow: /\n')
-        (path/'release.json').write_text(json.dumps({'site':'jaredgoldberg.org','environment':'qa','gitSha':SHA}))
-        manifest={'gitSha':SHA,'files':{file.name:hashlib.sha256(file.read_bytes()).hexdigest() for file in path.iterdir()}}
+        build_id=identifier
+        (path/'release.json').write_text(json.dumps({'site':'jaredgoldberg.org','environment':'qa','gitSha':SHA,
+            'buildId':build_id,'artifactManifest':'artifact-manifest.json'}))
+        for name, content in (extra_files or {}).items():
+            file=path/name;file.parent.mkdir(parents=True,exist_ok=True);file.write_bytes(content)
+        manifest={'schema':2,'site':'jaredgoldberg.org','environment':'qa','gitSha':SHA,'buildId':build_id,
+            'files':{str(file.relative_to(path)):hashlib.sha256(file.read_bytes()).hexdigest() for file in path.rglob('*') if file.is_file()}}
         (path/'artifact-manifest.json').write_text(json.dumps(manifest))
         self.store.seal(identifier,hashlib.sha256((path/'artifact-manifest.json').read_bytes()).hexdigest())
         return path
@@ -61,6 +69,14 @@ class ReleaseTests(unittest.TestCase):
         self.assertEqual(path.stat().st_mode&0o777,0o555)
         self.assertEqual((path/'index.html').stat().st_mode&0o777,0o444)
         with self.assertRaises(FileExistsError):self.store.prepare(BASE)
+    def test_release_rejects_unallowlisted_static_assets(self):
+        with self.assertRaises(ValueError):
+            self.artifact(BASE,{'downloads/prototype.bin':b'not public'})
+    def test_release_accepts_only_the_published_pretty_route_pages(self):
+        path=self.artifact(BASE,{name:b'<meta name="robots" content="noindex, nofollow">' for name in module.PAGE_INDEXES})
+        self.assertEqual((path/'community-service/index.html').stat().st_mode&0o777,0o444)
+        with self.assertRaises(ValueError):
+            self.artifact(NEXT,{'unpublished/index.html':b'not allowlisted'})
     def test_symlinks_wrong_manifest_hash_and_wrong_sha_refused(self):
         path=self.artifact(BASE)
         with self.assertRaises(ValueError):self.store.seal(BASE,'0'*64)
@@ -138,5 +154,40 @@ class RollbackGateTests(unittest.TestCase):
             def verify(self,directory):pass
         with self.assertRaises(OSError):deploy.activate_with_rollback(remote,Verifier(),NEXT,BASE,'candidate','previous')
         self.assertEqual(state['target'],BASE)
+
+
+class NginxTemplateTests(unittest.TestCase):
+    def test_qa_vhost_allows_image_files_and_preserves_noarchive(self):
+        text=(Path(__file__).resolve().parents[1]/'ops/nginx/qa.jaredgoldberg.org.conf').read_text()
+        self.assertIn(r'location ~ ^/images/[a-zA-Z0-9_.-]+\.(png|jpe?g|webp)$ { try_files $uri =404; }',text)
+        for route in verify_module.PRETTY_ROUTES:
+            self.assertIn(f'location = {route}',text)
+        self.assertEqual(text.count('X-Robots-Tag "noindex, nofollow, noarchive"'),3)
+
+
+class PublicHtmlPolicyTests(unittest.TestCase):
+    def test_only_approved_jaredgoldberg_urls_are_allowed(self):
+        verify_module.verify_html_policy(' '.join(sorted(verify_module.APPROVED_EXTERNAL_URLS)))
+        with self.assertRaisesRegex(ValueError,'Unexpected production URL'):
+            verify_module.verify_html_policy('https://jaredgoldberg.ca/unverified/')
+        with self.assertRaisesRegex(ValueError,'Unexpected production URL'):
+            verify_module.verify_html_policy('https://jaredgoldberg.org/')
+
+    def test_canonical_remains_forbidden(self):
+        with self.assertRaisesRegex(ValueError,'Unexpected canonical URL'):
+            verify_module.verify_html_policy('<link rel="canonical" href="https://example.com/">')
+
+    def test_pretty_routes_support_new_and_legacy_release_artifacts(self):
+        headers='x-robots-tag: noindex, nofollow\ncache-control: no-store\n'
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            with patch.object(verify_module,'request',return_value=(404,headers,b'')) as request:
+                verify_module.verify_pretty_routes(root,'https://qa.example')
+                self.assertEqual(request.call_count,len(verify_module.PRETTY_ROUTES))
+            for local_name in verify_module.PRETTY_ROUTES.values():
+                file=root/local_name;file.parent.mkdir(parents=True,exist_ok=True);file.write_bytes(b'page')
+            with patch.object(verify_module,'request',return_value=(200,headers,b'page')):
+                verify_module.verify_pretty_routes(root,'https://qa.example')
+
 
 if __name__=='__main__':unittest.main()

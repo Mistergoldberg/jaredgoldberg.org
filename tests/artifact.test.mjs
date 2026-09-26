@@ -2,37 +2,98 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { files, digest } from '../scripts/build.mjs';
+import { files, digest, publicFiles } from '../scripts/build.mjs';
 import { startServer } from '../scripts/serve.mjs';
 
 test('artifact contains only intended public files, verified checksums and local references',async()=>{
+  const googleTagUrl='https://www.googletagmanager.com/gtag/js?id=G-N6X517GEQ2';
+  const approvedExternalLinks=new Set([
+    'https://pixilation.org/',
+    'https://picarty.com/',
+    'https://jaredgoldberg.ca/projects/the-money-club/',
+    'https://jaredgoldberg.ca/projects/capital-works/',
+    'https://jaredgoldberg.ca/projects/',
+    'https://jaredgoldberg.ca/work/china.html',
+    'https://jaredgoldberg.ca/work/loblaw.html',
+    'https://jaredgoldberg.ca/work/walmart.html',
+    'https://jaredgoldberg.ca/work/canadian-tire.html',
+    'https://duchamped.com/',
+  ]);
   const names=await files('dist');
   const manifest=JSON.parse(await readFile('dist/artifact-manifest.json','utf8'));
+  const release=JSON.parse(await readFile('dist/release.json','utf8'));
+  assert.equal(manifest.schema,2);
+  assert.equal(manifest.environment,'qa');
+  assert.equal(manifest.site,'jaredgoldberg.org');
+  assert.equal(manifest.gitSha,release.gitSha);
+  assert.equal(manifest.buildId,release.buildId);
+  assert.equal(release.artifactManifest,'artifact-manifest.json');
   assert.deepEqual(names.filter(x=>x!=='artifact-manifest.json').sort(),Object.keys(manifest.files).sort());
   for(const name of names) {
-    assert.match(name,/^(index\.html|robots\.txt|favicon\.svg|release\.json|artifact-manifest\.json|assets\/[\w.-]+\.(css|js)|fonts\/OFL\.txt|fonts\/[\w.-]+\.(woff2?|ttf|otf))$/);
+    assert.match(name,/^(?:[a-z-]+\/)?index\.html$|^(?:robots\.txt|favicon\.svg|release\.json|artifact-manifest\.json|assets\/[\w.-]+\.(css|js)|images\/[\w.-]+\.(png|jpe?g|webp)|fonts\/OFL\.txt|fonts\/[\w.-]+\.(woff2?|ttf|otf))$/);
     const buffer=await readFile(join('dist',name));
     if(name!=='artifact-manifest.json') assert.equal(digest(buffer),manifest.files[name]);
-    if(/\.(woff2?|ttf|otf)$/.test(name)) continue;
+    if(/\.(woff2?|ttf|otf|png|jpe?g|webp)$/.test(name)) continue;
     const content=buffer.toString();
-    assert.doesNotMatch(content,/jaredgoldberg\.ca|googletagmanager|google-analytics|gtag\(|\bG-[A-Z0-9]{6,}\b|GTM-[A-Z0-9]+|UA-\d+-\d+|cloudflareinsights|data-track|application\/ld\+json|rel=["']canonical|property=["']og:|https:\/\/jaredgoldberg\.org/i);
+    assert.doesNotMatch(content,/GTM-[A-Z0-9]+|UA-\d+-\d+|cloudflareinsights|data-track|application\/ld\+json|rel=["']canonical|property=["']og:|https:\/\/jaredgoldberg\.org/i);
     for(const match of content.matchAll(/(?:src|href)=["']([^"']+)|url\(["']?([^\s)"']+)/g)) {
       const ref=match[1]||match[2];
-      assert.ok(!/^(https?:)?\/\//.test(ref),`External asset/link: ${ref}`);
+      if(ref===googleTagUrl) continue;
+      if(/^(https?:)?\/\//.test(ref)) {
+        assert.ok(approvedExternalLinks.has(ref),`Unapproved external destination: ${ref}`);
+        continue;
+      }
       const path=ref.split(/[?#]/)[0];
-      if(path) assert.ok(names.includes(path==='/'?'index.html':path.replace(/^\//,'')),`Missing ${ref}`);
-      if(ref.includes('#')) assert.ok((await readFile('dist/index.html','utf8')).includes(`id="${ref.split('#')[1]}"`),`Missing anchor ${ref}`);
+      const target=path==='/'?'index.html':path.endsWith('/')?path.replace(/^\//,'')+'index.html':path.replace(/^\//,'');
+      if(path) assert.ok(names.includes(target),`Missing ${ref}`);
+      if(ref.includes('#')) {
+        const anchorFile=path?target:name;
+        assert.ok((await readFile(join('dist',anchorFile),'utf8')).includes(`id="${ref.split('#')[1]}"`),`Missing anchor ${ref}`);
+      }
     }
   }
   assert.match(await readFile('dist/robots.txt','utf8'),/User-agent: \*\s+Disallow: \//);
   const html=await readFile('dist/index.html','utf8');
+  assert.equal(html.match(/G-N6X517GEQ2/g)?.length,2);
+  assert.match(html,/<script async src="https:\/\/www\.googletagmanager\.com\/gtag\/js\?id=G-N6X517GEQ2"><\/script>/);
+  assert.match(html,/window\.dataLayer = window\.dataLayer \|\| \[\];\s+function gtag\(\)\{dataLayer\.push\(arguments\);\}\s+gtag\('js', new Date\(\)\);\s+gtag\('config', 'G-N6X517GEQ2'\);/);
   assert.match(html,/<meta name="robots" content="noindex, nofollow">/);
+  assert.match(html,/<link rel="preload" href="\/fonts\/1Ptug8zYS_SKggPNyC0IT4ttDfA\.woff2" as="font" type="font\/woff2" crossorigin>/);
   assert.doesNotMatch(html,/maximum-scale|user-scalable=no/);
   assert.doesNotMatch(html,/menu-panel__icon|>×<|>○<|>\+<|emoji/i);
   assert.match(html,/data-menu-toggle aria-label="Open menu"/);
   assert.match(html,/menu-trigger__label">Menu<\/span><span class="menu-trigger__icon" aria-hidden="true">/);
-  assert.match(html,/<h1 class="site-wordmark" aria-label="Jared Goldberg">/);
-  assert.match(html,/site-wordmark__line" aria-hidden="true">Jared<\/span><span class="site-wordmark__line" aria-hidden="true">Goldberg<\/span>/);
+  assert.match(html,/<meta name="description" content="Jared Goldberg makes art, software, public projects and large work systems\./);
+  assert.match(html,/<h1 id="home-title" aria-label="Jared Goldberg"><span class="heading-highlight" aria-hidden="true">Jared<\/span><span class="heading-highlight" aria-hidden="true">Goldberg<\/span><\/h1>/);
+  assert.match(html,/An institutional index of Jared's practice/);
+  assert.match(html,/Explore Jared(?:'|&#39;)s practice/);
+  assert.doesNotMatch(html,/Explore the practice|An institutional index of one practice/);
+  assert.match(html,/<footer class="site-footer"[\s\S]*?<p class="site-footer__identity type-utility">JAREDGOLDBERG\.ORG<\/p>/);
+  assert.match(html,/<section id="practice-index"/);
+  assert.equal(html.match(/class="index-entry"/g)?.length,4);
+  for(const route of ['media-archives-and-memory','community-service','systems-and-institutions','art']) assert.match(html,new RegExp(`href="/${route}/"`));
+  assert.doesNotMatch(html,/<main[\s\S]*?<img\b|Destination pending|Five areas of inquiry|Selected projects and initiatives/);
+  const sectionFiles=['media-archives-and-memory','community-service','systems-and-institutions','art'];
+  const sectionHtml=await Promise.all(sectionFiles.map(slug=>readFile(`dist/${slug}/index.html`,'utf8')));
+  for(const [index,pageHtml] of sectionHtml.entries()) {
+    assert.equal(pageHtml.match(/G-N6X517GEQ2/g)?.length,2);
+    assert.match(pageHtml,new RegExp(`<h1><span class="heading-highlight">${['Media, Archives and Memory','Community Service','Systems and Institutions','Art'][index]}<\\/span><\\/h1>`));
+    assert.match(pageHtml,/class="media-frame media-frame--banner media-frame--position-center media-placeholder" aria-hidden="true"/);
+    assert.doesNotMatch(pageHtml,/section-page__identity|section-page__kicker/);
+    assert.match(pageHtml,/<h2 id="table-of-contents-title"><span class="heading-highlight">Table of contents<\/span><\/h2>/);
+    assert.match(pageHtml,/Explore Jared(?:'|&#39;)s practice/);
+    assert.match(pageHtml,/<footer class="site-footer"[\s\S]*?<p class="site-footer__identity type-utility">JAREDGOLDBERG\.ORG<\/p>/);
+    assert.doesNotMatch(pageHtml,/Explore the practice/);
+    assert.doesNotMatch(pageHtml,/>On this page</);
+    assert.doesNotMatch(pageHtml,/<main[\s\S]*?<img\b|Editorial QA not for publication/);
+  }
+  assert.match(sectionHtml[1],/This is not yet a proven employment platform\./);
+  assert.match(sectionHtml[1],/https:\/\/jaredgoldberg\.ca\/projects\/capital-works\//);
+  assert.match(sectionHtml[2],/https:\/\/jaredgoldberg\.ca\/work\/canadian-tire\.html/);
+  assert.match(sectionHtml[3],/<em>Sperme d’artiste<\/em>/);
+  assert.match(sectionHtml[3],/https:\/\/duchamped\.com\//);
+  assert.deepEqual(publicFiles.slice().sort(),['favicon.svg','fonts/1Ptug8zYS_SKggPNyC0IT4ttDfA.woff2','fonts/OFL.txt']);
+  assert.doesNotMatch(names.join('\n'),/above-the-fold-prototype|fixture|test-results/);
   assert.match(html,/menu-panel__close-icon/);
   assert.match(html,/menu-panel__chevron/);
 });
@@ -61,6 +122,10 @@ test('required licensed webfont is unmodified and embedded locally',async()=>{
   assert.match(rules,/--color-accent:\s*#990202/);
   assert.match(rules,/--color-focus:\s*var\(--color-accent\)/);
   assert.match(rules,/--color-focus-contrast:\s*#ffffff/);
+  assert.match(rules,/--color-link:\s*var\(--color-accent\)/);
+  assert.doesNotMatch(rules,/counter-(?:reset|increment):\s*inquiry|content:\s*"0"\s*counter\(inquiry\)/);
+  assert.match(rules,/\.media-frame--banner\s*\{[^}]*aspect-ratio:\s*16\s*\/\s*9/s);
+  assert.match(rules,/@media \(max-width: 47\.99rem\)[\s\S]*?\.media-frame--banner\s*\{\s*aspect-ratio:\s*1/s);
   assert.doesNotMatch(rules,/#1f5fff/i);
 });
 
@@ -75,6 +140,7 @@ test('HTTP routes, QA headers, hashed cache rules and private paths',async()=>{
       assert.match(response.headers.get('cache-control'),/\.[a-f0-9]{16}\.(css|js)$/.test(file)?/immutable/:/no-store/);
     }
     assert.equal((await fetch(url+'/')).status,200);
+    for(const path of ['/media-archives-and-memory/','/community-service/','/systems-and-institutions/','/art/']) assert.equal((await fetch(url+path)).status,200,path);
     for(const path of ['/missing','/.git/config','/src/navigation.js','/docs/qa-runbook.md','/package.json']) assert.equal((await fetch(url+path)).status,404,path);
     assert.equal((await fetch(url+'/',{method:'POST'})).status,405);
   } finally { await new Promise(done=>server.close(done)); }

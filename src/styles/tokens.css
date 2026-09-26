@@ -32,10 +32,12 @@
   --tracking-body: 0.002em;
 
   --color-background: #eceae4;
+  --color-background-start: #e8e5dd;
   --color-surface: #f7f5f0;
   --color-surface-muted: #e3e0d9;
   --color-text-primary: #141412;
   --color-text-secondary: #57544f;
+  --color-text-subtle: #68655f;
   --color-text-inverse: #f8f7f3;
   --color-border-subtle: rgba(20, 20, 18, 0.18);
   --color-border-strong: rgba(20, 20, 18, 0.45);
@@ -45,6 +47,9 @@
   --color-focus-contrast: #ffffff;
   --color-interactive-default: #141412;
   --color-interactive-hover: #2f2d28;
+  --color-link: var(--color-accent);
+  --color-link-hover: #650101;
+  --color-ink: #000000;
 
   --wordmark-background: #000000;
   --wordmark-foreground: #ffffff;
@@ -57,6 +62,8 @@
   --menu-text-secondary: #4f4e4a;
   --menu-text-muted: #686761;
   --menu-control-hover: rgba(20, 20, 18, 0.055);
+  --menu-trigger-hover: #fafafa;
+  --menu-trigger-border-hover: rgba(20, 20, 18, 0.16);
   --menu-shadow: -18px 0 58px rgba(20, 20, 18, 0.11);
   --menu-sheet-width: 28rem;
   --menu-sheet-width-compact: 24rem;
@@ -81,6 +88,7 @@
   --container-page-max: 82rem;
   --container-stage-max: 94rem;
   --container-content-max: 70rem;
+  --container-reading-max: 44rem;
 
   --gutter-desktop: clamp(1.4rem, 2.8vw, 2.8rem);
   --gutter-tablet: clamp(1rem, 3vw, 1.6rem);
@@ -90,11 +98,14 @@
   --grid-columns-tablet: 8;
   --grid-columns-mobile: 4;
   --grid-gap: clamp(0.9rem, 1.6vw, 1.8rem);
+  --grid-gap-wide: clamp(1.5rem, 3vw, 3rem);
+  --grid-gap-editorial: 1.618rem;
 
   --stage-safe-top: clamp(0.9rem, 2vw, 1.4rem);
   --stage-safe-right: clamp(1rem, 2.2vw, 2rem);
   --stage-safe-bottom: clamp(1.15rem, 2.4vw, 2.2rem);
   --stage-safe-left: clamp(1rem, 2.2vw, 2rem);
+  --site-header-height: 4.75rem;
 
   --radius-none: 0;
   --radius-xs: 0.12rem;
@@ -107,6 +118,7 @@
   --stroke-2: 2px;
 
   --shadow-soft: 0 8px 26px rgba(20, 20, 18, 0.12);
+  --shadow-control: 0 5px 18px rgba(20, 20, 18, 0.08);
   --shadow-panel: 0 18px 50px rgba(0, 0, 0, 0.35);
 
   --z-base: 1;
@@ -114,6 +126,10 @@
   --z-header: 20;
   --z-menu: 80;
   --z-modal: 100;
+
+  --focus-outline-width: 2px;
+  --focus-outline-offset: 3px;
+  --focus-separator-width: 1px;
 
   --duration-1: 120ms;
   --duration-2: 220ms;

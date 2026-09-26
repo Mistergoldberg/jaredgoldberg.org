@@ -5,8 +5,11 @@ import { spawnSync } from 'node:child_process';
 const mime = {'.html':'text/html; charset=utf-8','.css':'text/css','.js':'text/javascript','.svg':'image/svg+xml','.json':'application/json','.txt':'text/plain','.woff2':'font/woff2','.woff':'font/woff','.ttf':'font/ttf','.otf':'font/otf'};
 export async function startServer({port=4173,root=resolve('dist')}={}) {
   root=resolve(root);
+  let qa=true;
+  try { qa=JSON.parse(await readFile(resolve(root,'release.json'),'utf8')).environment==='qa'; }
+  catch (error) { if(error.code!=='ENOENT') throw error; }
   const server=createServer(async(req,res)=>{
-    res.setHeader('X-Robots-Tag','noindex, nofollow');
+    if(qa) res.setHeader('X-Robots-Tag','noindex, nofollow');
     res.setHeader('Cache-Control','no-store');
     res.setHeader('X-Content-Type-Options','nosniff');
     try {

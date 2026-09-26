@@ -148,3 +148,202 @@ a one-pixel white inner separator. This preserves the approved red outer ring
 while keeping a visible dual treatment on dark controls and surfaces. Neutral
 menu hover and current-page treatments remain intentionally neutral rather than
 being indiscriminately recoloured.
+
+## 2026-09-22 — above-the-fold prototype image
+
+Place the supplied 1536×1024 prototype-review image directly below the introductory
+sentence as local page content. Preserve one unchanged PNG source and use
+`object-fit: cover` with a centered 16:9 frame on desktop/tablet and a 1:1 frame below the mobile
+breakpoint. Retain intrinsic dimensions, descriptive alternative text and an explicit
+high fetch priority; do not add a remote image dependency or duplicate crop files.
+
+## 2026-09-25 — retire the superseded prototype asset
+
+Supersede the 2026-09-22 fixture decision after the institutional-index homepage
+removed the image composition. The unchanged 1,942,972-byte PNG was no longer
+referenced by source or rendered pages but continued to ship only because the
+build copied all of `public/`. Remove it rather than preserve an unused binary.
+Public assets now use an explicit allowlist, and both QA and production manifests
+must prove that the prototype and development-only fixture are absent.
+
+## 2026-09-25 — isolated production artifact and release path
+
+Generate robots policy and page metadata from an explicit `qa` or `production`
+build mode. QA remains noindex and disallow-all; production omits QA robots
+directives and allows crawling. Both artifacts carry exact release identity and
+are constrained to the same reviewed route/asset allowlist. Production releases
+must originate from the exact clean remote `main` tip, use immutable releases and
+an atomic symlink, verify hashes/configuration/public routes, and restore the
+prior verified target automatically on failure. Preserve legacy release
+`20260918213922` only by its active path and known homepage SHA-256; do not assign
+it an unprovable Git revision.
+
+## 2026-09-23 — symmetric mobile content gutters
+
+Supersede the reserved mobile menu-control rail for page content. Center every
+mobile layout shell with the standard 16px gutter on both sides, while retaining
+the existing zero-height sticky header, left-positioned 44×44 menu trigger and
+safe-area positioning. The intro's top spacing keeps its initial content clear
+of the control. While scrolling, the opaque elevated control may pass over page
+content instead of shifting every section into a permanent asymmetric rail.
+Desktop/tablet layout remains unchanged.
+
+## 2026-09-23 — Google Analytics tag
+
+Install Google tag `G-N6X517GEQ2` in the shared page head using the asynchronous
+Google Tag Manager loader and standard `dataLayer` initialization. Treat that
+single loader URL and measurement ID as the only approved analytics integration;
+the artifact checks continue to reject other analytics identifiers and external
+asset URLs.
+
+## 2026-09-23 — design-system hardening
+
+Promote the implemented Raleway, dark-red accent, neutral drawer, sticky mobile
+icon control and responsive banner ratio from scattered decisions into one binding
+design-system contract. Add a reading width, semantic link roles, 44px action
+targets, resilient record/inquiry/archive/writing patterns and an accessible
+asset-pending banner placeholder. Records grow with content and never turn a
+development status into an availability claim.
+
+Use the approved homepage copy only as test data: all seven projects and all five
+inquiries exercise the render APIs, while the QA page shows three representative
+records and a placeholder. This does not approve a homepage composition,
+navigation model, section order, asset crop or final destination. External links
+receive a graphic indicator and stay in the same tab unless a specific workflow
+justifies an announced new tab.
+
+## 2026-09-23 — institutional index homepage
+
+Compose the homepage as a text-led institutional index rather than a promotional
+portfolio or product grid. Use a split identity/introduction hero followed by six
+numbered movements: inquiries, projects, archive, writing, domain ecosystem and
+entry points. Give the five inquiries a parallel research-grid treatment; keep
+the seven projects as factual, variable-height records; give the archive a dark
+editorial field; and retain writing as an externally linked publication list.
+
+The standard-page banner ratio does not apply to this homepage. Stage 1 scoped it
+to standard inner pages, marked the existing prototype image as fixture-only and
+left the homepage composition open. With no approved artwork, focal points or alt
+text, the homepage uses no image or fabricated placeholder. The shared media-frame
+primitive remains ready for later supplied assets without determining this layout.
+
+Only link destinations that exist and were verified: homepage fragments and the
+two supplied JaredGoldberg.ca essay URLs. Render approved calls to unresolved
+research, project-index, archive, writing-index, complete-index and biography/CV
+destinations as visibly pending non-interactive records on QA. Do not infer project
+detail URLs or specialist-domain URLs. Replace these records with links only after
+an exact route is supplied and verified.
+
+## 2026-09-24 — highlighted homepage identity
+
+Apply the established white-on-black wordmark treatment to the institutional-index
+homepage name and extend the same highlight language to its role line. Keep each
+name line content-width, preserve the single accessible H1 name, and allow the role
+line to wrap within its own highlight at narrow widths. Other headings and body
+copy retain their existing treatments.
+
+## 2026-09-24 — unnumbered, stage-width homepage sections
+
+Remove decorative two-digit numbers from section headings, inquiry records and
+ecosystem statements, including the grid columns and offsets reserved for them.
+Use the 94rem stage shell for every homepage section and the footer so the content
+below the fold follows the same outer width and gutters as the hero. Retain semantic
+heading levels, section borders and distinct surfaces as the hierarchy system.
+
+## 2026-09-24 — four-route practice index and supporting pages
+
+Supersede the earlier six-movement homepage candidate with the approved concise
+index. Keep the identity hero, then present Media, Archives and Memory; Community
+Service; Systems and Institutions; and Art as four equally legible editorial
+routes. The menu uses the same route labels and marks the current page.
+
+Publish each route as a real supporting page with the supplied long-form copy, a
+local table of contents, audited onward destinations and sibling navigation. Apply
+the standard-page banner rule here—not to the homepage—with a 16:9 desktop/tablet
+frame and a 1:1 mobile frame. Because no final artwork, focal point or alt text was
+supplied, use the neutral decorative “Image pending” state and do not invent work.
+The editorial QA table in the source document is guidance, not publishable copy.
+
+## 2026-09-24 — compact supporting-page rhythm
+
+Remove the repeated `jaredgoldberg.org` link and generic “Practice section” label
+from all four supporting-page heroes. On desktop and tablet, begin the H1 at the
+menu trigger’s lower edge so the title and global control share one top band.
+Reduce the banner-to-content gap to 48px and each side of an article divider to
+32px; use 32px and 24px respectively on mobile. Keep the local contents navigation,
+banner ratios, article width and mobile menu-safe title offset unchanged.
+
+## 2026-09-25 — balanced contents and article columns
+
+Rename the supporting-page navigation label from “On this page” to “Table of
+contents.” Remove the empty grid track between navigation and article, retain a
+1.618rem column gap, and let the article run from track three to the right edge of
+the stage media. Supporting-page paragraphs follow that article width rather than
+the global 66ch cap. Below 768px, retain the established single-column flow.
+
+## 2026-09-25 — compact homepage opening and stacked index introduction
+
+Reduce the institutional-index hero cap from 58rem to 44rem on desktop and
+tablet. Align the opening paragraph with the top of the `GOLDBERG` highlight,
+while retaining the natural-height mobile flow. Give the index heading and its
+explanatory sentence the same wider eight-track column, with the sentence below
+the heading, so they read as one introduction rather than two opposing labels.
+
+## 2026-09-25 — domain footer, attributed practice labels and full-width titles
+
+Use `jaredgoldberg.org` as the identity in every shared footer. Attribute the
+homepage caption and all “Explore” headings to Jared's practice, including the
+drawer group and supporting-page sibling navigation. Let every supporting-page
+H1 span the full stage width so its column shares both edges with the media frame;
+retain natural wrapping, responsive type and the established top alignment.
+
+## 2026-09-25 — sticky desktop header and stacked mobile contents
+
+Place the desktop/tablet menu control inside a 4.75rem sticky header with a subtle
+lower rule. Offset sticky contents navigation and article anchors below that band.
+On mobile, retain the zero-height icon header but render every table-of-contents
+subject in one stacked column. Use the exact footer identity `JAREDGOLDBERG.ORG`.
+
+## 2026-09-25 — supporting-page title rhythm and contents handoff
+
+On desktop and tablet, place the supporting-page title 2rem below the sticky
+header and reduce its following gap to the media frame to 1.5rem. Keep the
+table-of-contents navigation fixed 1rem below the header through the full article
+and “Continue” section. Give its sticky scope a second row that ends after the
+related-practice navigation, with that opaque navigation providing a clean visual
+handoff instead of allowing the contents list to slide behind the header. Constrain
+the sticky navigation to the available viewport height so every subject remains
+reachable in short landscape viewports.
+
+## 2026-09-25 — shared heading highlights and mobile edge alignment
+
+Apply the wordmark's white-on-black treatment to every visible content heading by
+nesting a reusable presentation span inside the existing semantic heading. Align
+the desktop/tablet Menu control with the right edge of the shared stage, media and
+article column. Below 768px, let bordered practice indexes reach both browser edges
+while retaining the 1rem text-column inset; media remains guttered. Reduce the
+supporting-page menu-to-title inset to 88–96px and title-to-media spacing to 24px.
+Return the mobile table of contents to unbounded document flow, remove inter-item
+margins while retaining 44px targets, and separate it from the article with the
+same 24px/divider/24px rhythm used between article sections.
+
+## 2026-09-25 — modular design-system hardening
+
+Preserve the approved institutional homepage and four practice-page compositions
+while promoting their reusable contracts. Ordinary highlighted headings now come
+from `renderHeading`; shared metadata has explicit default/category/status items;
+and `renderMediaSlot` provides one validated boundary for either a placeholder or
+a supplied local image with intrinsic dimensions, intentional alt text, loading
+priority and a bounded crop position. The split homepage name remains a deliberate
+page-specific exception.
+
+Treat the exported shell and content renderers, semantic tokens and general layout
+utilities as the public authoring surface. Page styles may arrange those pieces for
+their own editorial relationships, but must remain namespaced and must not require
+callers to recreate component internals. Add a generated, ignored new-page fixture
+to exercise this boundary with no production route or artifact entry.
+
+Centralize repeated palette, shadow, focus and editorial-grid values without
+changing the accepted appearance. Preload the one self-hosted variable font from
+the shared head. A browser-launch failure must close the local server, so test
+teardown now begins before Chromium creation.
