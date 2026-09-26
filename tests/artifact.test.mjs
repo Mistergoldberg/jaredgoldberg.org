@@ -39,6 +39,7 @@ test('artifact contains only intended public files, verified checksums and local
     for(const match of content.matchAll(/(?:src|href)=["']([^"']+)|url\(["']?([^\s)"']+)/g)) {
       const ref=match[1]||match[2];
       if(ref===googleTagUrl) continue;
+      if(name==='favicon.svg'&&/^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(ref)) continue;
       if(/^(https?:)?\/\//.test(ref)) {
         assert.ok(approvedExternalLinks.has(ref),`Unapproved external destination: ${ref}`);
         continue;
@@ -127,6 +128,14 @@ test('required licensed webfont is unmodified and embedded locally',async()=>{
   assert.match(rules,/\.media-frame--banner\s*\{[^}]*aspect-ratio:\s*16\s*\/\s*9/s);
   assert.match(rules,/@media \(max-width: 47\.99rem\)[\s\S]*?\.media-frame--banner\s*\{\s*aspect-ratio:\s*1/s);
   assert.doesNotMatch(rules,/#1f5fff/i);
+});
+
+test('favicon embeds the approved PNG artwork losslessly',async()=>{
+  const favicon=await readFile('dist/favicon.svg','utf8');
+  assert.match(favicon,/<svg xmlns="http:\/\/www\.w3\.org\/2000\/svg" viewBox="0 0 677 677">/);
+  const embedded=favicon.match(/<image width="677" height="677" href="data:image\/png;base64,([A-Za-z0-9+/=]+)"\/>/);
+  assert.ok(embedded,'Expected an embedded PNG favicon');
+  assert.equal(digest(Buffer.from(embedded[1],'base64')),'53d1047bd69bd42fe824e1a8027f8c19b39dd3d1bfcef421048a2a261d92980c');
 });
 
 test('HTTP routes, QA headers, hashed cache rules and private paths',async()=>{
