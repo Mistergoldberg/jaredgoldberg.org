@@ -3,11 +3,11 @@
 ## Audit identity and release boundary
 
 - Production baseline: `333c80c091437ac1e1444eaa0338dfae048d4438`
-- Reviewed implementation commit: `21172089cf7fbef7162b09b44f2914493e548fab`
+- Reviewed implementation commit: `6a3fc766a8de4c1ce5fb3952d493478542cd540a`
 - Branch: `codex/content-seo-cycle-audit`
 - Routes: `/`, `/media-archives-and-memory/`, `/community-service/`, `/systems-and-institutions/`, `/art/`
 - Production remained on release `20260927T000841Z-333c80c09143`; no deployment, Cloudflare change, or live Nginx change was made.
-- Public QA remained on its pre-audit `d8754133ca7c8e87ce40101cd4a57e43e250c6d5` release; this audit used local production- and QA-mode artifacts.
+- Public QA release: `20260927T133411Z-6a3fc766a8de`, built from the reviewed implementation commit. It replaced `20260927T124654Z-d8754133ca7c`, which remains the verified rollback target.
 
 The reviewed cycle restores the established index structure, applies the four supplied descriptive page headings, adds the approved page banners, and adds the *Narcissus as Narcosis* section and local responsive images to the Media page. The later global design-system cycle is not included.
 
@@ -82,13 +82,22 @@ Primary guidance consulted:
 
 ## Verification evidence
 
-- Exact-SHA QA suite: `BUILD_SHA=21172089cf7fbef7162b09b44f2914493e548fab BUILD_ID=qa-audit-21172089cf7f ... npm test` — 45 Node/browser/accessibility checks and 27 Python release-safety checks passed.
-- Exact-SHA production suite: `BUILD_SHA=21172089cf7fbef7162b09b44f2914493e548fab BUILD_ID=production-audit-21172089cf7f npm run test:production` — 2 production indexability/artifact checks passed.
+- Exact-SHA QA dry run: release candidate `20260927T133319Z-6a3fc766a8de` re-exported the pushed `6a3fc766a8de4c1ce5fb3952d493478542cd540a` commit; 45 Node/browser/accessibility checks and 27 Python release-safety checks passed.
+- Exact-SHA QA deployment: release `20260927T133411Z-6a3fc766a8de`, manifest SHA-256 `9f5c1ee75f54fb113e06ca46bb30dcd31da48d7736a573392609057c4eb32861`; TLS, Nginx syntax, HTTPS redirects, headers, MIME types, all manifest bytes, all 16 public image paths, private-path 404s, and retained prior-release bytes passed. The public browser run passed 37/37 route, responsive, navigation, focus, image, network, console, and axe checks.
+- Exact-SHA production suite: `BUILD_SHA=6a3fc766a8de4c1ce5fb3952d493478542cd540a BUILD_ID=production-audit-6a3fc766a8de npm run test:production` — 2 production indexability/artifact checks passed.
 - Production artifact: 28 allowlisted files plus manifest; no QA hostname, `noindex`, `nofollow`, prototype path, test-results path, localhost reference, or Duchamped source-image hotlink was found.
 - Browser: Playwright Chromium `147.0.7727.15` with axe-core. Every route was tested at 1440×900, 768×1024, 320×568, and 720×450 200%-equivalent reflow; the broader suite also covered 1024×768, 390×844, 375×667, landscape mobile sizes, open/closed menus, sticky contents, anchors, focus, and reduced motion.
 - Local ignored evidence: `test-results/browser-report.json` and `test-results/screenshots/`, including full-page captures for every route at the required widths and 200%-equivalent reflow.
 - External-link cold checks: ten destinations returned `200`, `text/html`, and zero redirects.
 - Limits: no Firefox, physical Safari/iOS, VoiceOver, other screen reader, Search Console, or field Core Web Vitals test was run.
+
+## Production steps after review
+
+Production remains on `20260927T000841Z-333c80c09143`; no production symlink, Nginx file, Cloudflare setting, or DNS record changed during this follow-up. After approval, production requires these controlled steps:
+
+1. Merge the draft PR, fast-forward a clean local `main` to the resulting remote-main SHA, and rerun the exact-SHA production dry run with the observed current release and legacy rollback fingerprint.
+2. Install the reviewed `ops/nginx/jaredgoldberg.org.conf` as a separate configuration change: back up the live vhost, verify the candidate checksum, run `nginx -t`, replace the vhost atomically, run `nginx -t` again, and gracefully reload. The production deploy gate will not apply until this checksum matches.
+3. Reconfirm the production symlink and rollback fingerprint, then run `scripts/deploy-production.py` with the merged main SHA and explicit `--apply`. The tool uploads only manifest-listed files, switches atomically, verifies public HTTPS and the full browser suite, and restores the previous target on post-switch failure.
 
 ## Decisions before closeout
 
