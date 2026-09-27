@@ -12,6 +12,8 @@
     "build:qa": "BUILD_ENV=qa node scripts/build.mjs",
     "build:production": "BUILD_ENV=production node scripts/build.mjs",
     "fixture:new-page": "node scripts/build-new-page-fixture.mjs",
+    "reviews:copy": "node scripts/generate-copy-reviews.mjs",
+    "check:copy-overlap": "node scripts/check-copy-overlap.mjs",
     "preview": "node scripts/serve.mjs",
     "test": "npm run build:qa && node --test tests/artifact.test.mjs tests/browser.test.mjs tests/content-patterns.test.mjs && npm run test:ops",
     "test:production": "npm run build:production && node --test tests/production-artifact.test.mjs",

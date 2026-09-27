@@ -47,7 +47,6 @@
 }
 
 .section-page__toc ul,
-.section-page__destinations ul,
 .section-page__siblings ul {
   margin: 0;
   padding: 0;
@@ -73,6 +72,16 @@
 
 .section-page__article p { max-width: none; }
 
+.section-page__introduction {
+  padding-bottom: var(--space-6);
+}
+
+.section-page__introduction p + p { margin-top: var(--space-4); }
+.section-page__introduction > p:first-child {
+  font-size: clamp(1.12rem, 1.02rem + 0.38vw, 1.38rem);
+  line-height: 1.48;
+}
+
 .article-section {
   padding-block: 0 var(--space-6);
   scroll-margin-top: calc(var(--site-header-height) + var(--space-4));
@@ -97,12 +106,11 @@
   border-top: var(--stroke-1) solid var(--color-border-subtle);
 }
 
-.section-page__destinations li {
+.section-page__destinations p {
   padding-block: var(--space-4);
-  border-top: var(--stroke-1) solid var(--color-border-subtle);
+  padding-inline-end: var(--space-1);
+  border-block: var(--stroke-1) solid var(--color-border-subtle);
 }
-
-.section-page__destinations li:last-child { border-bottom: var(--stroke-1) solid var(--color-border-subtle); }
 
 .section-page__siblings {
   grid-column: 1 / -1;
@@ -153,7 +161,11 @@
   .section-page__toc,
   .section-page__article,
   .section-page__siblings { grid-column: auto; grid-row: auto; }
-  .section-page__hero h1 { font-size: clamp(2.8rem, 14vw, 4rem); }
+  .section-page__hero h1 {
+    font-size: clamp(2.25rem, 10vw, 3rem);
+    overflow-wrap: normal;
+    word-break: normal;
+  }
   .section-page__media { margin-bottom: var(--space-6); }
   .section-page__article { padding-bottom: var(--space-7); }
   .article-section { padding-bottom: var(--space-5); }

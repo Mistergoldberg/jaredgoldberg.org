@@ -19,12 +19,10 @@
 .home-hero__introduction {
   grid-column: 8 / -1;
   grid-row: 2;
-  align-self: start;
+  align-self: end;
   display: grid;
   gap: var(--space-5);
-  margin-top: calc(var(--home-wordmark-size) + 0.075rem);
 }
-.home-hero__index-note { grid-column: 1 / span 6; grid-row: 3; margin-top: var(--space-8); }
 
 .home-hero h1 {
   max-width: none;
@@ -36,22 +34,6 @@
   width: fit-content;
   max-width: 100%;
   padding: 0.04em 0.1em 0.07em;
-  color: var(--wordmark-foreground);
-  background: var(--wordmark-background);
-  white-space: nowrap;
-}
-
-.home-hero__role {
-  width: fit-content;
-  max-width: 100%;
-  margin-top: var(--space-5);
-  padding: 0.28em 0.45em 0.34em;
-  font-family: var(--font-family-display);
-  font-size: var(--type-size-h4);
-  font-weight: var(--font-weight-bold);
-  line-height: var(--line-height-tight);
-  letter-spacing: var(--tracking-ui);
-  text-transform: uppercase;
   color: var(--wordmark-foreground);
   background: var(--wordmark-background);
 }
@@ -98,6 +80,16 @@
 .index-entry p { max-width: 50ch; }
 .index-entry__action { align-self: end; }
 
+.home-about {
+  padding-block: var(--section-space-loose);
+  border-top: var(--stroke-1) solid var(--color-border-subtle);
+  background: var(--color-background);
+}
+
+.home-about h2 { margin-bottom: var(--space-6); }
+.home-about p + p { margin-top: var(--space-5); }
+.home-about__links { max-width: none; }
+
 @media (max-width: 63.99rem) {
   .home-hero__heading { grid-column: 1 / span 8; }
   .home-hero__introduction { grid-column: 7 / -1; }
@@ -111,16 +103,13 @@
   .home-hero__identity,
   .home-hero__heading,
   .home-hero__introduction,
-  .home-hero__index-note,
   .home-index__header h2,
   .home-index__header p { grid-column: auto; }
   .home-hero__identity,
   .home-hero__heading,
-  .home-hero__introduction,
-  .home-hero__index-note { grid-row: auto; }
+  .home-hero__introduction { grid-row: auto; }
   .home-hero__introduction { margin-top: 0; }
   .home-hero h1 { font-size: clamp(3.3rem, 15vw, 4.5rem); }
-  .home-hero__index-note { margin-top: var(--space-6); }
   .index-grid {
     width: 100vw;
     margin-left: calc(50% - 50vw);

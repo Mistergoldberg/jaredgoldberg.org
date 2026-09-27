@@ -1,0 +1,18 @@
+
+> jaredgoldberg-org@0.1.0 check:copy-overlap
+> node scripts/check-copy-overlap.mjs
+
+home | 3 words | https://jaredgoldberg.ca/writing/ | the money club
+media-archives-and-memory | 3 words | https://jaredgoldberg.ca/writing/medium-is-the-message/ | narcissus as narcosis
+community-service | 5 words | https://jaredgoldberg.ca/projects/the-money-club/maiden-voyage/ | at the utsu student commons
+community-service | 5 words | https://jaredgoldberg.ca/writing/the-money-club-as-a-deployable-education-system/ | at the utsu student commons
+community-service | 4 words | https://jaredgoldberg.ca/projects/capital-works/ | a deployable education system
+community-service | 4 words | https://jaredgoldberg.ca/writing/the-future-of-work-is-a-design-problem/ | may be able to
+community-service | 4 words | https://jaredgoldberg.ca/writing/dignity-is-a-systems-output/ | with the person who
+systems-and-institutions | 7 words | https://jaredgoldberg.ca/work/china.html | what real systems taught me about incentives
+systems-and-institutions | 7 words | https://jaredgoldberg.ca/work/loblaw.html | what real systems taught me about incentives
+systems-and-institutions | 7 words | https://jaredgoldberg.ca/work/walmart.html | what real systems taught me about incentives
+systems-and-institutions | 7 words | https://jaredgoldberg.ca/work/canadian-tire.html | what real systems taught me about incentives
+systems-and-institutions | 7 words | https://jaredgoldberg.ca/writing/real-systems-incentives/ | what real systems taught me about incentives
+art | 3 words | https://jaredgoldberg.ca/writing/ | do not have
+No shared run reached the 18-word substantive-repetition threshold.

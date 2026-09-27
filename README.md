@@ -25,6 +25,8 @@ npm test                 # build + artifact/HTTP/browser/accessibility/release c
 npm run build            # dist/ only; no deployment
 npm run test:production  # production robots/identity/allowlist checks
 npm run fixture:new-page # ignored design-system assembly exercise
+npm run reviews:copy     # regenerate the five page-copy review files
+npm run check:copy-overlap # compare .org copy with linked first-person .ca pages
 npm run preview          # serve the existing dist/ at 127.0.0.1:4173
 npm run test:browser     # browser checks against the existing local build
 npm run test:public      # direct HTTPS browser checks of the public QA site
@@ -48,7 +50,8 @@ Other supported environments should use the normally installed Playwright browse
 - `src/fixtures/`: development-only integration exercises; never emitted to `dist/`.
 - `src/content/homepage.mjs`: approved four-route index copy and shared navigation.
 - `src/content/section-pages.mjs`: approved long-form copy and audited destinations for
-  Media, Archives and Memory; Community Service; Systems and Institutions; and Art.
+  Media, Archives and Memory; Learning, Work and Agency (at the established
+  `/community-service/` route); Systems and Institutions; and Art.
 - `src/navigation.js`: menu behavior; contains no navigation data.
 - `public/`: only allowlisted source assets. Robots policy is generated for the
   selected build mode; unlisted files are never copied. No source-site images are transferred. The verified source-served Raleway

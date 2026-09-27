@@ -10,14 +10,23 @@ test('artifact contains only intended public files, verified checksums and local
   const approvedExternalLinks=new Set([
     'https://pixilation.org/',
     'https://picarty.com/',
-    'https://jaredgoldberg.ca/projects/the-money-club/',
+    'https://jaredgoldberg.ca/writing/',
+    'https://jaredgoldberg.ca/writing/medium-is-the-message/',
+    'https://the-money-club.org/',
+    'https://jaredgoldberg.ca/projects/the-money-club/maiden-voyage/',
+    'https://jaredgoldberg.ca/writing/the-money-club-as-a-deployable-education-system/',
     'https://jaredgoldberg.ca/projects/capital-works/',
-    'https://jaredgoldberg.ca/projects/',
+    'https://jaredgoldberg.ca/writing/the-future-of-work-is-a-design-problem/',
+    'https://jaredgoldberg.ca/writing/dignity-is-a-systems-output/',
+    'https://jaredgoldberg.ca/work/index.html',
     'https://jaredgoldberg.ca/work/china.html',
     'https://jaredgoldberg.ca/work/loblaw.html',
     'https://jaredgoldberg.ca/work/walmart.html',
     'https://jaredgoldberg.ca/work/canadian-tire.html',
+    'https://jaredgoldberg.ca/writing/real-systems-incentives/',
     'https://duchamped.com/',
+    'https://duchamped.com/duchamped/',
+    'https://duchamped.com/the-pitch/',
   ]);
   const names=await files('dist');
   const manifest=JSON.parse(await readFile('dist/artifact-manifest.json','utf8'));
@@ -64,34 +73,50 @@ test('artifact contains only intended public files, verified checksums and local
   assert.doesNotMatch(html,/menu-panel__icon|>×<|>○<|>\+<|emoji/i);
   assert.match(html,/data-menu-toggle aria-label="Open menu"/);
   assert.match(html,/menu-trigger__label">Menu<\/span><span class="menu-trigger__icon" aria-hidden="true">/);
-  assert.match(html,/<meta name="description" content="Jared Goldberg makes art, software, public projects and large work systems\./);
-  assert.match(html,/<h1 id="home-title" aria-label="Jared Goldberg"><span class="heading-highlight" aria-hidden="true">Jared<\/span><span class="heading-highlight" aria-hidden="true">Goldberg<\/span><\/h1>/);
-  assert.match(html,/An institutional index of Jared's practice/);
-  assert.match(html,/Explore Jared(?:'|&#39;)s practice/);
-  assert.doesNotMatch(html,/Explore the practice|An institutional index of one practice/);
+  assert.match(html,/<title>Art, Archives and Systems \| Practice Index<\/title>/);
+  assert.match(html,/<meta name="description" content="An index of art, digital archives, participatory software, education projects and work with large institutions\.">/);
+  assert.match(html,/<h1 id="home-title" aria-label="Art, archives and systems in practice">/);
+  assert.match(html,/Four ways into the work/);
+  assert.match(html,/About this index/);
+  assert.match(html,/© 2026 Jared Goldberg/);
   assert.match(html,/<footer class="site-footer"[\s\S]*?<p class="site-footer__identity type-utility">JAREDGOLDBERG\.ORG<\/p>/);
   assert.match(html,/<section id="practice-index"/);
   assert.equal(html.match(/class="index-entry"/g)?.length,4);
   for(const route of ['media-archives-and-memory','community-service','systems-and-institutions','art']) assert.match(html,new RegExp(`href="/${route}/"`));
   assert.doesNotMatch(html,/<main[\s\S]*?<img\b|Destination pending|Five areas of inquiry|Selected projects and initiatives/);
   const sectionFiles=['media-archives-and-memory','community-service','systems-and-institutions','art'];
+  const sectionTitles=[
+    '640 × 480, Pixilation and Picarty | Media Archives',
+    'The Money Club and Capability Works | Learning and Work',
+    'How Institutions Make Decisions | Systems and Retail',
+    'Duchamped, The Pitch and Artistic Value | Art',
+  ];
+  const sectionHeadings=[
+    'Digital image archives, pixilation and participatory photography',
+    'What does a person need in order to act?',
+    'How institutions make decisions',
+    'Art and the manufacture of value',
+  ];
   const sectionHtml=await Promise.all(sectionFiles.map(slug=>readFile(`dist/${slug}/index.html`,'utf8')));
   for(const [index,pageHtml] of sectionHtml.entries()) {
     assert.equal(pageHtml.match(/G-N6X517GEQ2/g)?.length,2);
-    assert.match(pageHtml,new RegExp(`<h1><span class="heading-highlight">${['Media, Archives and Memory','Community Service','Systems and Institutions','Art'][index]}<\\/span><\\/h1>`));
+    assert.ok(pageHtml.includes(`<title>${sectionTitles[index]}</title>`));
+    assert.ok(pageHtml.includes(`<h1><span class="heading-highlight">${sectionHeadings[index]}</span></h1>`));
     assert.match(pageHtml,/class="media-frame media-frame--banner media-frame--position-center media-placeholder" aria-hidden="true"/);
     assert.doesNotMatch(pageHtml,/section-page__identity|section-page__kicker/);
     assert.match(pageHtml,/<h2 id="table-of-contents-title"><span class="heading-highlight">Table of contents<\/span><\/h2>/);
     assert.match(pageHtml,/Explore Jared(?:'|&#39;)s practice/);
     assert.match(pageHtml,/<footer class="site-footer"[\s\S]*?<p class="site-footer__identity type-utility">JAREDGOLDBERG\.ORG<\/p>/);
+    assert.match(pageHtml,/© 2026 Jared Goldberg/);
     assert.doesNotMatch(pageHtml,/Explore the practice/);
     assert.doesNotMatch(pageHtml,/>On this page</);
     assert.doesNotMatch(pageHtml,/<main[\s\S]*?<img\b|Editorial QA not for publication/);
   }
-  assert.match(sectionHtml[1],/This is not yet a proven employment platform\./);
+  assert.match(sectionHtml[1],/The market used virtual cash\./);
+  assert.match(sectionHtml[1],/That relationship has not been demonstrated by an operating employment platform\./);
   assert.match(sectionHtml[1],/https:\/\/jaredgoldberg\.ca\/projects\/capital-works\//);
   assert.match(sectionHtml[2],/https:\/\/jaredgoldberg\.ca\/work\/canadian-tire\.html/);
-  assert.match(sectionHtml[3],/<em>Sperme d’artiste<\/em>/);
+  assert.match(sectionHtml[3],/They are not evidence here of independently verified market value, investment performance or an operating securities platform\./);
   assert.match(sectionHtml[3],/https:\/\/duchamped\.com\//);
   assert.deepEqual(publicFiles.slice().sort(),['favicon.svg','fonts/1Ptug8zYS_SKggPNyC0IT4ttDfA.woff2','fonts/OFL.txt']);
   assert.doesNotMatch(names.join('\n'),/above-the-fold-prototype|fixture|test-results/);
