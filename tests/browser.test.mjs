@@ -145,6 +145,8 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
         assert.equal(await page.locator('.section-page__toc a[href="#narcissus-as-narcosis"]').innerText(),'Narcissus as Narcosis');
         assert.equal(await page.locator('.narcissus-gallery img').count(),4);
         assert.equal(await page.locator('.narcissus-figure img').count(),2);
+        assert.equal(await page.locator('.article-section[aria-labelledby="narcissus-as-narcosis"] a[href="https://duchamped.com/narcussis-explained/"]').count(),0);
+        assert.equal(await page.locator('.article-section[aria-labelledby="narcissus-as-narcosis"] a[href="https://picarty.com/"]').count(),0);
         assert.equal(await page.getByText('Selected Orchestrated Self Portraits from Narcissus as Narcosis.',{exact:true}).count(),1);
         assert.equal(await page.getByText('Mashup interface, iOS app, 2012–2016.',{exact:true}).count(),1);
         const projectImageLocator=page.locator('.narcissus-gallery img, .narcissus-figure img');
@@ -153,7 +155,8 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
         assert.equal(projectImages.length,6);
         for(const image of projectImages){assert.equal(image.complete,true);assert.ok(image.naturalWidth>0&&image.naturalHeight>0);assert.ok(Math.abs(image.renderedRatio-image.intrinsicRatio)<.02);assert.equal(image.loading,'lazy');assert.ok(image.src.startsWith('/images/narcissus-as-narcosis-'));assert.match(image.srcset,/\/images\/narcissus-as-narcosis-/);assert.ok(image.sizes);}
         const galleryColumns=await page.locator('.narcissus-gallery__grid').evaluate(element=>getComputedStyle(element).gridTemplateColumns.split(' ').length);
-        assert.equal(galleryColumns,width<768?1:2);
+        assert.equal(galleryColumns,width>=1024?4:width<768?1:2);
+        if(width>=1024){const heights=await page.evaluate(()=>({portrait:document.querySelector('.narcissus-gallery img').getBoundingClientRect().height,login:document.querySelector('.narcissus-figure--portrait-row-height img').getBoundingClientRect().height}));assert.ok(Math.abs(heights.portrait-heights.login)<1);}
         const tocLink=page.locator('.section-page__toc a[href="#narcissus-as-narcosis"]');
         await tocLink.focus();
         assert.equal(await tocLink.evaluate(element=>getComputedStyle(element).outlineColor),'rgb(153, 2, 2)');

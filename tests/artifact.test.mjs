@@ -18,7 +18,6 @@ test('artifact contains only intended public files, verified checksums and local
     'https://jaredgoldberg.ca/work/walmart.html',
     'https://jaredgoldberg.ca/work/canadian-tire.html',
     'https://duchamped.com/',
-    'https://duchamped.com/narcussis-explained/',
   ]);
   const names=await files('dist');
   const manifest=JSON.parse(await readFile('dist/artifact-manifest.json','utf8'));
@@ -126,8 +125,10 @@ test('artifact contains only intended public files, verified checksums and local
   assert.equal(narcissusHtml.match(/ sizes="/g)?.length,6);
   assert.match(narcissusHtml,/Selected Orchestrated Self Portraits from Narcissus as Narcosis\./);
   assert.match(narcissusHtml,/Mashup interface, iOS app, 2012–2016\./);
-  assert.match(narcissusHtml,/href="https:\/\/duchamped\.com\/narcussis-explained\/"/);
-  assert.match(narcissusHtml,/href="https:\/\/picarty\.com\/"/);
+  assert.match(narcissusHtml,/<p><em>Narcissus as Narcosis<\/em> begins where/);
+  assert.match(narcissusHtml,/<p>Picarty is Mashup(?:'|&#39;)s current web form/);
+  assert.doesNotMatch(narcissusHtml,/href="https:\/\/(?:duchamped\.com\/narcussis-explained|picarty\.com)\//);
+  assert.match(narcissusHtml,/class="narcissus-figure narcissus-figure--portrait-row-height"/);
   assert.doesNotMatch(narcissusHtml,/duchamped\.com\/wp-content\/uploads/);
   assert.match(sectionHtml[0],/>Try the current Mashup interface at Picarty</);
   assert.deepEqual(publicFiles.slice().sort(),[

@@ -128,6 +128,21 @@
   line-height: var(--line-height-body);
 }
 
+@media (min-width: 64rem) {
+  .narcissus-gallery__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .narcissus-figure--portrait-row-height {
+    container-type: inline-size;
+  }
+
+  .narcissus-figure--portrait-row-height img {
+    width: auto;
+    height: calc(33.3333cqw - var(--grid-gap-editorial));
+  }
+}
+
 .section-page__destinations {
   padding-top: var(--space-6);
   border-top: var(--stroke-1) solid var(--color-border-subtle);

@@ -43,7 +43,7 @@ export const sectionPages = [
         title: 'Narcissus as Narcosis: the subject is part of the system',
         content: [
           { parts: [
-            { link: { label: 'Narcissus as Narcosis', href: 'https://duchamped.com/narcussis-explained/' }, emphasis: true },
+            { emphasis: 'Narcissus as Narcosis' },
             ' begins where ',
             { emphasis: '640 × 480' },
             ' ends. The first work asks how code can shape an archive. This work asks who gets to claim the image.',
@@ -94,6 +94,7 @@ export const sectionPages = [
           'In 2012, Goldberg, working as The Subversive Artist, released Mashup, a mobile app and social network distributed through iTunes until 2016. It looked like a novelty portrait tool. The app guided users through making mashup portraits, then shared the results through its network.',
           {
             type: 'figure',
+            variant: 'portrait-row-height',
             caption: 'Mashup login screen with a composite portrait, iOS app, 2012–2016.',
             image: {
               src: '/images/narcissus-as-narcosis-login-composition-707.jpg',
@@ -125,8 +126,7 @@ export const sectionPages = [
           },
           'That claim is unstable by design. The user, the code, the platform and the artist each did a different part. No single name can explain how the portrait was made.',
           { parts: [
-            { link: { label: 'Picarty', href: 'https://picarty.com/' } },
-            " is Mashup's current web form, not the original app. The shell has changed, but the question has not: when an app draws someone into making an image, who is the subject, who is the author, and who is serving whom?",
+            "Picarty is Mashup's current web form, not the original app. The shell has changed, but the question has not: when an app draws someone into making an image, who is the subject, who is the author, and who is serving whom?",
           ] },
           { parts: [
             'With ',
