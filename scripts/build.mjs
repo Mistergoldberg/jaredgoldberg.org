@@ -11,6 +11,10 @@ export const publicFiles = [
   'favicon.svg',
   'fonts/1Ptug8zYS_SKggPNyC0IT4ttDfA.woff2',
   'fonts/OFL.txt',
+  'images/art-manufacture-value.png',
+  'images/learning-work-agency.png',
+  'images/media-archives-and-memory.png',
+  'images/systems-and-institutions.png',
 ];
 export async function files(root) {
   const result = [];

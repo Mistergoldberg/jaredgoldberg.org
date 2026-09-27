@@ -17,6 +17,12 @@ PAGE_INDEXES = {
     'systems-and-institutions/index.html',
     'art/index.html',
 }
+APPROVED_PUBLIC_IMAGES = {
+    'images/art-manufacture-value.png',
+    'images/learning-work-agency.png',
+    'images/media-archives-and-memory.png',
+    'images/systems-and-institutions.png',
+}
 
 class Releases:
     def __init__(self, root=ROOT):
@@ -89,7 +95,7 @@ class Releases:
             raise ValueError('Unexpected/missing production files')
         pattern=r'(?:index\.html|robots\.txt|favicon\.svg|release\.json|assets/[\w.-]+\.(?:css|js)|fonts/OFL\.txt|fonts/[\w.-]+\.(?:woff2?|ttf|otf))'
         for name, expected in manifest['files'].items():
-            if name not in PAGE_INDEXES and not re.fullmatch(pattern,name):
+            if name not in PAGE_INDEXES and name not in APPROVED_PUBLIC_IMAGES and not re.fullmatch(pattern,name):
                 raise ValueError('Invalid production artifact filename')
             if hashlib.sha256((path/name).read_bytes()).hexdigest()!=expected:
                 raise ValueError('Artifact checksum mismatch: '+name)

@@ -85,7 +85,7 @@ export function renderSectionPage({ site, navigation, sectionRoutes, page, style
   <header class="section-page__hero"><div class="layout-shell layout-shell--stage">
     ${renderHeading({level:1,text:page.h1 ?? page.title})}
   </div></header>
-  <div class="layout-shell layout-shell--stage section-page__media">${renderMediaSlot({placeholder:{label:'Image pending',decorative:true}})}</div>
+  <div class="layout-shell layout-shell--stage section-page__media">${renderMediaSlot({media:page.media,placeholder:{label:'Image pending',decorative:true}})}</div>
   <div class="layout-shell layout-shell--stage section-page__layout">
     <aside class="section-page__toc"><nav aria-labelledby="table-of-contents-title">${renderHeading({level:2,id:'table-of-contents-title',text:'Table of contents'})}<ul>${toc}</ul></nav></aside>
     <article class="section-page__article">${page.sections.map(renderArticleSection).join('')}

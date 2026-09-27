@@ -3,6 +3,14 @@ export const sectionPages = [
     slug: 'media-archives-and-memory',
     title: 'Media, Archives and Memory',
     h1: 'Media, archives and memory',
+    media: {
+      src: '/images/media-archives-and-memory.png',
+      alt: 'A grid of early silver and blue Pretec DC530 digital cameras.',
+      width: 1920,
+      height: 1080,
+      loading: 'eager',
+      fetchPriority: 'high',
+    },
     sections: [
       {
         title: 'The record is made twice',
@@ -37,6 +45,14 @@ export const sectionPages = [
     slug: 'community-service',
     title: 'Community Service',
     h1: 'Learning, work and agency',
+    media: {
+      src: '/images/learning-work-agency.png',
+      alt: 'A compass surrounded by community networks, public buildings, construction drawings and a classroom.',
+      width: 1536,
+      height: 1024,
+      loading: 'eager',
+      fetchPriority: 'high',
+    },
     sections: [
       {
         title: 'Build it, then test it',
@@ -78,6 +94,14 @@ export const sectionPages = [
     slug: 'systems-and-institutions',
     title: 'Systems and Institutions',
     h1: 'Systems and institutions',
+    media: {
+      src: '/images/systems-and-institutions.png',
+      alt: 'A compass surrounded by shipping, transit, energy and industrial infrastructure.',
+      width: 1536,
+      height: 1024,
+      loading: 'eager',
+      fetchPriority: 'high',
+    },
     sections: [
       {
         title: 'Rules beat intent',
@@ -125,6 +149,14 @@ export const sectionPages = [
     slug: 'art',
     title: 'Art',
     h1: 'Art and the manufacture of value',
+    media: {
+      src: '/images/art-manufacture-value.png',
+      alt: 'A gloved hand holds a specimen cup labelled The subversive Artist.',
+      width: 1481,
+      height: 987,
+      loading: 'eager',
+      fetchPriority: 'high',
+    },
     sections: [
       {
         title: 'The name is the asset',

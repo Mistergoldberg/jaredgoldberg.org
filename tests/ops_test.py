@@ -164,6 +164,10 @@ class NginxTemplateTests(unittest.TestCase):
             self.assertIn(f'location = {route}',text)
         self.assertEqual(text.count('X-Robots-Tag "noindex, nofollow, noarchive"'),3)
 
+    def test_production_vhost_allows_only_image_file_paths(self):
+        text=(Path(__file__).resolve().parents[1]/'ops/nginx/jaredgoldberg.org.conf').read_text()
+        self.assertIn(r'location ~ ^/images/[a-zA-Z0-9_.-]+\.(png|jpe?g|webp)$ { try_files $uri =404; }',text)
+
 
 class PublicHtmlPolicyTests(unittest.TestCase):
     def test_only_approved_jaredgoldberg_urls_are_allowed(self):

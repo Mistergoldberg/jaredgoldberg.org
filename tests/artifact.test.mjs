@@ -84,25 +84,42 @@ test('artifact contains only intended public files, verified checksums and local
   for(const route of ['media-archives-and-memory','community-service','systems-and-institutions','art']) assert.match(html,new RegExp(`href="/${route}/"`));
   assert.doesNotMatch(html,/<main[\s\S]*?<img\b|Destination pending|Five areas of inquiry|Selected projects and initiatives/);
   const sectionFiles=['media-archives-and-memory','community-service','systems-and-institutions','art'];
+  const sectionImages=[
+    ['media-archives-and-memory.png','A grid of early silver and blue Pretec DC530 digital cameras.',1920,1080],
+    ['learning-work-agency.png','A compass surrounded by community networks, public buildings, construction drawings and a classroom.',1536,1024],
+    ['systems-and-institutions.png','A compass surrounded by shipping, transit, energy and industrial infrastructure.',1536,1024],
+    ['art-manufacture-value.png','A gloved hand holds a specimen cup labelled The subversive Artist.',1481,987],
+  ];
   const sectionHtml=await Promise.all(sectionFiles.map(slug=>readFile(`dist/${slug}/index.html`,'utf8')));
   for(const [index,pageHtml] of sectionHtml.entries()) {
+    const [imageName,imageAlt,imageWidth,imageHeight]=sectionImages[index];
     assert.equal(pageHtml.match(/G-N6X517GEQ2/g)?.length,2);
     assert.match(pageHtml,new RegExp(`<h1><span class="heading-highlight">${['Media, archives and memory','Learning, work and agency','Systems and institutions','Art and the manufacture of value'][index]}<\\/span><\\/h1>`));
-    assert.match(pageHtml,/class="media-frame media-frame--banner media-frame--position-center media-placeholder" aria-hidden="true"/);
+    assert.ok(pageHtml.includes(`<img src="/images/${imageName}" alt="${imageAlt}" width="${imageWidth}" height="${imageHeight}" loading="eager" decoding="async" fetchpriority="high">`));
+    assert.doesNotMatch(pageHtml,/media-placeholder|Image pending/);
     assert.doesNotMatch(pageHtml,/section-page__identity|section-page__kicker/);
     assert.match(pageHtml,/<h2 id="table-of-contents-title"><span class="heading-highlight">Table of contents<\/span><\/h2>/);
     assert.match(pageHtml,/Explore Jared(?:'|&#39;)s practice/);
     assert.match(pageHtml,/<footer class="site-footer"[\s\S]*?<p class="site-footer__identity type-utility">JAREDGOLDBERG\.ORG<\/p>/);
     assert.doesNotMatch(pageHtml,/Explore the practice/);
     assert.doesNotMatch(pageHtml,/>On this page</);
-    assert.doesNotMatch(pageHtml,/<main[\s\S]*?<img\b|Editorial QA not for publication/);
+    assert.equal(pageHtml.match(/<main[\s\S]*?<img\b/g)?.length,1);
+    assert.doesNotMatch(pageHtml,/Editorial QA not for publication/);
   }
   assert.match(sectionHtml[1],/This is not yet a proven employment platform\./);
   assert.match(sectionHtml[1],/https:\/\/jaredgoldberg\.ca\/projects\/capital-works\//);
   assert.match(sectionHtml[2],/https:\/\/jaredgoldberg\.ca\/work\/canadian-tire\.html/);
   assert.match(sectionHtml[3],/<em>Sperme d’artiste<\/em>/);
   assert.match(sectionHtml[3],/https:\/\/duchamped\.com\//);
-  assert.deepEqual(publicFiles.slice().sort(),['favicon.svg','fonts/1Ptug8zYS_SKggPNyC0IT4ttDfA.woff2','fonts/OFL.txt']);
+  assert.deepEqual(publicFiles.slice().sort(),[
+    'favicon.svg',
+    'fonts/1Ptug8zYS_SKggPNyC0IT4ttDfA.woff2',
+    'fonts/OFL.txt',
+    'images/art-manufacture-value.png',
+    'images/learning-work-agency.png',
+    'images/media-archives-and-memory.png',
+    'images/systems-and-institutions.png',
+  ]);
   assert.doesNotMatch(names.join('\n'),/above-the-fold-prototype|fixture|test-results/);
   assert.match(html,/menu-panel__close-icon/);
   assert.match(html,/menu-panel__chevron/);
