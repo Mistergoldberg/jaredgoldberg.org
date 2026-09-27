@@ -194,6 +194,7 @@ test('required licensed webfont is unmodified and embedded locally',async()=>{
   assert.match(rules,/--color-link:\s*var\(--color-accent\)/);
   assert.doesNotMatch(rules,/counter-(?:reset|increment):\s*inquiry|content:\s*"0"\s*counter\(inquiry\)/);
   assert.match(rules,/\.media-frame--banner\s*\{[^}]*aspect-ratio:\s*16\s*\/\s*9/s);
+  assert.match(rules,/\.media-frame--banner > img,\s*\.media-frame--banner picture > img\s*\{[^}]*transform:\s*scale\(1\.25\);[^}]*transform-origin:\s*center center/s);
   assert.match(rules,/@media \(max-width: 47\.99rem\)[\s\S]*?\.media-frame--banner\s*\{\s*aspect-ratio:\s*1/s);
   assert.doesNotMatch(rules,/#1f5fff/i);
 });
