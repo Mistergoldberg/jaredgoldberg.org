@@ -92,6 +92,57 @@
   line-height: 1.48;
 }
 
+.narcissus-gallery,
+.narcissus-figure {
+  margin: var(--space-6) 0;
+}
+
+#narcissus-as-narcosis {
+  scroll-margin-top: calc(var(--site-header-height) + var(--space-4));
+}
+
+.narcissus-gallery__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--grid-gap-editorial);
+}
+
+.narcissus-gallery img,
+.narcissus-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.narcissus-figure img {
+  width: auto;
+  max-width: 100%;
+  margin-inline: auto;
+}
+
+.narcissus-gallery figcaption,
+.narcissus-figure figcaption {
+  margin-top: var(--space-3);
+  color: var(--color-text-secondary);
+  font-size: var(--type-size-meta);
+  line-height: var(--line-height-body);
+}
+
+@media (min-width: 64rem) {
+  .narcissus-gallery__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .narcissus-figure--portrait-row-height {
+    container-type: inline-size;
+  }
+
+  .narcissus-figure--portrait-row-height img {
+    width: auto;
+    height: calc(33.3333cqw - var(--grid-gap-editorial));
+  }
+}
+
 .section-page__destinations {
   padding-top: var(--space-6);
   border-top: var(--stroke-1) solid var(--color-border-subtle);
@@ -153,7 +204,11 @@
   .section-page__toc,
   .section-page__article,
   .section-page__siblings { grid-column: auto; grid-row: auto; }
-  .section-page__hero h1 { font-size: clamp(2.8rem, 14vw, 4rem); }
+  .section-page__hero h1 {
+    font-size: clamp(2.35rem, 11.5vw, 4rem);
+    overflow-wrap: normal;
+    word-break: normal;
+  }
   .section-page__media { margin-bottom: var(--space-6); }
   .section-page__article { padding-bottom: var(--space-7); }
   .article-section { padding-bottom: var(--space-5); }
@@ -175,6 +230,10 @@
   .section-page__toc li + li { margin-top: 0; }
   .section-page__toc a { display: flex; align-items: center; padding-block: var(--space-1); }
   .article-section { scroll-margin-top: var(--space-6); }
+  #narcissus-as-narcosis { scroll-margin-top: var(--space-8); }
+  .narcissus-gallery,
+  .narcissus-figure { margin-block: var(--space-5); }
+  .narcissus-gallery__grid { grid-template-columns: minmax(0, 1fr); }
   .section-page__siblings ul {
     width: 100vw;
     margin-left: calc(50% - 50vw);

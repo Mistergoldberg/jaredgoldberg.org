@@ -11,6 +11,22 @@ export const publicFiles = [
   'favicon.svg',
   'fonts/1Ptug8zYS_SKggPNyC0IT4ttDfA.woff2',
   'fonts/OFL.txt',
+  'images/art-manufacture-value.png',
+  'images/learning-work-agency.png',
+  'images/media-archives-and-memory.png',
+  'images/narcissus-as-narcosis-ios-interface-1024.jpg',
+  'images/narcissus-as-narcosis-ios-interface-640.jpg',
+  'images/narcissus-as-narcosis-login-composition-480.jpg',
+  'images/narcissus-as-narcosis-login-composition-707.jpg',
+  'images/narcissus-as-narcosis-portrait-01-480.jpg',
+  'images/narcissus-as-narcosis-portrait-01-768.jpg',
+  'images/narcissus-as-narcosis-portrait-02-480.jpg',
+  'images/narcissus-as-narcosis-portrait-02-768.jpg',
+  'images/narcissus-as-narcosis-portrait-03-480.jpg',
+  'images/narcissus-as-narcosis-portrait-03-768.jpg',
+  'images/narcissus-as-narcosis-portrait-04-480.jpg',
+  'images/narcissus-as-narcosis-portrait-04-768.jpg',
+  'images/systems-and-institutions.png',
 ];
 export async function files(root) {
   const result = [];

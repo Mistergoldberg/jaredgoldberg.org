@@ -63,10 +63,19 @@ test('artifact contains only intended public files, verified checksums and local
   assert.doesNotMatch(html,/menu-panel__icon|>×<|>○<|>\+<|emoji/i);
   assert.match(html,/data-menu-toggle aria-label="Open menu"/);
   assert.match(html,/menu-trigger__label">Menu<\/span><span class="menu-trigger__icon" aria-hidden="true">/);
+  assert.match(html,/<title>Jared Goldberg — Artist, systems designer and writer<\/title>/);
   assert.match(html,/<meta name="description" content="Jared Goldberg makes art, software, public projects and large work systems\./);
   assert.match(html,/<h1 id="home-title" aria-label="Jared Goldberg"><span class="heading-highlight" aria-hidden="true">Jared<\/span><span class="heading-highlight" aria-hidden="true">Goldberg<\/span><\/h1>/);
   assert.match(html,/An institutional index of Jared's practice/);
-  assert.match(html,/Explore Jared(?:'|&#39;)s practice/);
+  assert.match(html,/Four ways into the work/);
+  assert.match(html,/How does a photograph change when it becomes a sequence, a playable archive or material for another artist(?:'|&#39;)s self-portrait\? Follow 640 × 480, Pixilation and Narcissus as Narcosis through Picarty\./);
+  assert.match(html,/What must a system provide before a person can act\? The Money Club tests an education method with young people\. Capability Works proposes a way to rebuild jobs around actual capabilities\./);
+  assert.match(html,/How do factories and retailers turn decisions into products, shelf space and media\? Read an institutional account of the roles, measures and incentives behind Goldberg(?:'|&#39;)s work in China and Canadian retail\./);
+  assert.match(html,/What happens when an artist changes the frame around an object, a name or a price\? Enter Duchamped, the historical stage name Jared the Jew, and <em>The Pitch<\/em>\./);
+  assert.match(html,/Explore the image archives and participatory media/);
+  assert.match(html,/Explore the education and employment projects/);
+  assert.match(html,/Explore the systems and institutions/);
+  assert.match(html,/Explore the art practice/);
   assert.doesNotMatch(html,/Explore the practice|An institutional index of one practice/);
   assert.match(html,/<footer class="site-footer"[\s\S]*?<p class="site-footer__identity type-utility">JAREDGOLDBERG\.ORG<\/p>/);
   assert.match(html,/<section id="practice-index"/);
@@ -74,25 +83,74 @@ test('artifact contains only intended public files, verified checksums and local
   for(const route of ['media-archives-and-memory','community-service','systems-and-institutions','art']) assert.match(html,new RegExp(`href="/${route}/"`));
   assert.doesNotMatch(html,/<main[\s\S]*?<img\b|Destination pending|Five areas of inquiry|Selected projects and initiatives/);
   const sectionFiles=['media-archives-and-memory','community-service','systems-and-institutions','art'];
+  const sectionImages=[
+    ['media-archives-and-memory.png','A six-frame collage of a person holding a Pretec DC530 camera, the camera alone, and overexposed light.',1920,1080],
+    ['learning-work-agency.png','A compass surrounded by community networks, public buildings, construction drawings and a classroom.',1536,1024],
+    ['systems-and-institutions.png','A compass surrounded by shipping, transit, energy and industrial infrastructure.',1536,1024],
+    ['art-manufacture-value.png','A gloved hand holds a specimen cup labeled Jared beside a small Star of David against a blue background.',1481,987],
+  ];
   const sectionHtml=await Promise.all(sectionFiles.map(slug=>readFile(`dist/${slug}/index.html`,'utf8')));
   for(const [index,pageHtml] of sectionHtml.entries()) {
+    const [imageName,imageAlt,imageWidth,imageHeight]=sectionImages[index];
     assert.equal(pageHtml.match(/G-N6X517GEQ2/g)?.length,2);
-    assert.match(pageHtml,new RegExp(`<h1><span class="heading-highlight">${['Media, Archives and Memory','Community Service','Systems and Institutions','Art'][index]}<\\/span><\\/h1>`));
-    assert.match(pageHtml,/class="media-frame media-frame--banner media-frame--position-center media-placeholder" aria-hidden="true"/);
+    assert.match(pageHtml,new RegExp(`<h1><span class="heading-highlight">${['Media, archives and memory','Learning, work and agency','Systems and institutions','Art and the manufacture of value'][index]}<\\/span><\\/h1>`));
+    assert.ok(pageHtml.includes(`<img src="/images/${imageName}" alt="${imageAlt}" width="${imageWidth}" height="${imageHeight}" loading="eager" decoding="async" fetchpriority="high">`));
+    assert.doesNotMatch(pageHtml,/media-placeholder|Image pending/);
     assert.doesNotMatch(pageHtml,/section-page__identity|section-page__kicker/);
     assert.match(pageHtml,/<h2 id="table-of-contents-title"><span class="heading-highlight">Table of contents<\/span><\/h2>/);
     assert.match(pageHtml,/Explore Jared(?:'|&#39;)s practice/);
     assert.match(pageHtml,/<footer class="site-footer"[\s\S]*?<p class="site-footer__identity type-utility">JAREDGOLDBERG\.ORG<\/p>/);
     assert.doesNotMatch(pageHtml,/Explore the practice/);
     assert.doesNotMatch(pageHtml,/>On this page</);
-    assert.doesNotMatch(pageHtml,/<main[\s\S]*?<img\b|Editorial QA not for publication/);
+    assert.equal(pageHtml.match(/<img\b/g)?.length,index===0?7:1);
+    assert.doesNotMatch(pageHtml,/Editorial QA not for publication/);
   }
   assert.match(sectionHtml[1],/This is not yet a proven employment platform\./);
   assert.match(sectionHtml[1],/https:\/\/jaredgoldberg\.ca\/projects\/capital-works\//);
   assert.match(sectionHtml[2],/https:\/\/jaredgoldberg\.ca\/work\/canadian-tire\.html/);
   assert.match(sectionHtml[3],/<em>Sperme d’artiste<\/em>/);
   assert.match(sectionHtml[3],/https:\/\/duchamped\.com\//);
-  assert.deepEqual(publicFiles.slice().sort(),['favicon.svg','fonts/1Ptug8zYS_SKggPNyC0IT4ttDfA.woff2','fonts/OFL.txt']);
+  assert.equal(sectionHtml[0].match(/<title>640 × 480, Pixilation and Narcissus as Narcosis<\/title>/g)?.length,1);
+  assert.equal(sectionHtml[0].match(/<meta name="description" content="How 640 × 480, Pixilation and Narcissus as Narcosis use archives, interfaces and participation to change how photographs are made and read\.">/g)?.length,1);
+  assert.doesNotMatch(sectionHtml[0],/<title>[^<]*Jared Goldberg/);
+  assert.match(sectionHtml[0],/<li><a href="#narcissus-as-narcosis">Narcissus as Narcosis<\/a><\/li>/);
+  const narcissusHtml=sectionHtml[0].match(/<section class="article-section" aria-labelledby="narcissus-as-narcosis">[\s\S]*?<\/section>/)?.[0];
+  assert.ok(narcissusHtml);
+  assert.match(narcissusHtml,/<h2 id="narcissus-as-narcosis"><span class="heading-highlight">Narcissus as Narcosis: the subject is part of the system<\/span><\/h2>/);
+  assert.equal(narcissusHtml.match(/<p>/g)?.length,9);
+  assert.equal(narcissusHtml.match(/<img\b/g)?.length,6);
+  assert.equal(narcissusHtml.match(/ loading="lazy"/g)?.length,6);
+  assert.equal(narcissusHtml.match(/ srcset="/g)?.length,6);
+  assert.equal(narcissusHtml.match(/ sizes="/g)?.length,6);
+  assert.match(narcissusHtml,/Selected Orchestrated Self Portraits from Narcissus as Narcosis\./);
+  assert.match(narcissusHtml,/Mashup interface, iOS app, 2012–2016\./);
+  assert.match(narcissusHtml,/<p><em>Narcissus as Narcosis<\/em> begins where/);
+  assert.match(narcissusHtml,/<p>Picarty is Mashup(?:'|&#39;)s current web form/);
+  assert.doesNotMatch(narcissusHtml,/href="https:\/\/(?:duchamped\.com\/narcussis-explained|picarty\.com)\//);
+  assert.match(narcissusHtml,/class="narcissus-figure narcissus-figure--portrait-row-height"/);
+  assert.doesNotMatch(narcissusHtml,/duchamped\.com\/wp-content\/uploads/);
+  assert.match(sectionHtml[0],/>Try the current Mashup interface at Picarty</);
+  assert.deepEqual(publicFiles.slice().sort(),[
+    'favicon.svg',
+    'fonts/1Ptug8zYS_SKggPNyC0IT4ttDfA.woff2',
+    'fonts/OFL.txt',
+    'images/art-manufacture-value.png',
+    'images/learning-work-agency.png',
+    'images/media-archives-and-memory.png',
+    'images/narcissus-as-narcosis-ios-interface-1024.jpg',
+    'images/narcissus-as-narcosis-ios-interface-640.jpg',
+    'images/narcissus-as-narcosis-login-composition-480.jpg',
+    'images/narcissus-as-narcosis-login-composition-707.jpg',
+    'images/narcissus-as-narcosis-portrait-01-480.jpg',
+    'images/narcissus-as-narcosis-portrait-01-768.jpg',
+    'images/narcissus-as-narcosis-portrait-02-480.jpg',
+    'images/narcissus-as-narcosis-portrait-02-768.jpg',
+    'images/narcissus-as-narcosis-portrait-03-480.jpg',
+    'images/narcissus-as-narcosis-portrait-03-768.jpg',
+    'images/narcissus-as-narcosis-portrait-04-480.jpg',
+    'images/narcissus-as-narcosis-portrait-04-768.jpg',
+    'images/systems-and-institutions.png',
+  ]);
   assert.doesNotMatch(names.join('\n'),/above-the-fold-prototype|fixture|test-results/);
   assert.match(html,/menu-panel__close-icon/);
   assert.match(html,/menu-panel__chevron/);
