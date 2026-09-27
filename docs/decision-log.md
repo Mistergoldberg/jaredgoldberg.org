@@ -347,3 +347,11 @@ Centralize repeated palette, shadow, focus and editorial-grid values without
 changing the accepted appearance. Preload the one self-hosted variable font from
 the shared head. A browser-launch failure must close the local server, so test
 teardown now begins before Chromium creation.
+
+## 2026-09-27 — centered standard-page banner zoom
+
+Interpret the approved “25% crop” as a centered `transform: scale(1.25)` on the
+image inside every `.media-frame--banner`. Retain the existing clipped frame,
+16:9 desktop/tablet and 1:1 mobile ratios, `object-fit: cover`, and
+`object-position: center center`. This is one shared banner rule: it does not
+apply to the homepage, Narcissus gallery or figures, or other inline artwork.

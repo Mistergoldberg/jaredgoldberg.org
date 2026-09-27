@@ -171,6 +171,12 @@
   aspect-ratio: 16 / 9;
 }
 
+.media-frame--banner > img,
+.media-frame--banner picture > img {
+  transform: scale(1.25);
+  transform-origin: center center;
+}
+
 .media-frame--square {
   aspect-ratio: 1;
 }
