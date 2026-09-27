@@ -7,5 +7,6 @@ dist/
 
 test-results/
 artifacts/
+/Images/
 __pycache__/
 *.pyc

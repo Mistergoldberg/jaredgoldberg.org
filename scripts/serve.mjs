@@ -2,7 +2,7 @@ import { createServer } from 'node:http';
 import { readFile, stat, watch } from 'node:fs/promises';
 import { resolve, extname, sep } from 'node:path';
 import { spawnSync } from 'node:child_process';
-const mime = {'.html':'text/html; charset=utf-8','.css':'text/css','.js':'text/javascript','.svg':'image/svg+xml','.json':'application/json','.txt':'text/plain','.woff2':'font/woff2','.woff':'font/woff','.ttf':'font/ttf','.otf':'font/otf'};
+const mime = {'.html':'text/html; charset=utf-8','.css':'text/css','.js':'text/javascript','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.json':'application/json','.txt':'text/plain','.woff2':'font/woff2','.woff':'font/woff','.ttf':'font/ttf','.otf':'font/otf'};
 export async function startServer({port=4173,root=resolve('dist')}={}) {
   root=resolve(root);
   let qa=true;

@@ -100,7 +100,7 @@
 
 @media (max-width: 63.99rem) {
   .home-hero__heading { grid-column: 1 / span 8; }
-  .home-hero__introduction { grid-column: 7 / -1; }
+  .home-hero__introduction { grid-column: 8 / -1; }
   .index-entry { min-height: 20rem; padding: var(--space-6); }
 }
 

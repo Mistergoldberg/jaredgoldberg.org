@@ -31,7 +31,7 @@ export function renderFooter(site) {
 }
 
 function renderIndexEntry(section) {
-  return `<article class="index-entry">${renderHeading({level:3,text:section.title})}<p>${e(section.summary)}</p><div class="index-entry__action">${renderTextLink({ href: section.href, label: section.action })}</div></article>`;
+  return `<article class="index-entry">${renderHeading({level:3,text:section.title})}${renderRichParagraph(section.summary)}<div class="index-entry__action">${renderTextLink({ href: section.href, label: section.action })}</div></article>`;
 }
 
 export function renderHomePage({ site, navigation, homepage, stylesheet, script, environment }) {
@@ -46,7 +46,7 @@ export function renderHomePage({ site, navigation, homepage, stylesheet, script,
     <p class="home-hero__index-note type-caption">An institutional index of Jared's practice</p>
   </div></section>
   <section id="practice-index" class="home-index" aria-labelledby="practice-index-title"><div class="layout-shell layout-shell--stage">
-    <header class="home-index__header">${renderHeading({level:2,id:'practice-index-title',text:"Explore Jared's practice"})}<p>${e(homepage.introduction[1])}</p></header>
+    <header class="home-index__header">${renderHeading({level:2,id:'practice-index-title',text:homepage.indexHeading})}</header>
     <div class="index-grid">${homepage.sections.map(renderIndexEntry).join('')}</div>
   </div></section>
 </main>
@@ -60,13 +60,40 @@ function slugify(value) {
 function renderRichParagraph(paragraph) {
   if (typeof paragraph === 'string') return `<p>${e(paragraph)}</p>`;
   if (!Array.isArray(paragraph?.parts)) throw new Error('Unsupported paragraph structure');
-  const body = paragraph.parts.map(part => typeof part === 'string' ? e(part) : `<em>${e(part.emphasis)}</em>`).join('');
+  const body = paragraph.parts.map(part => {
+    if (typeof part === 'string') return e(part);
+    if (typeof part?.emphasis === 'string') return `<em>${e(part.emphasis)}</em>`;
+    throw new Error('Unsupported rich-text part');
+  }).join('');
   return `<p>${body}</p>`;
 }
 
+function renderResponsiveImage(image) {
+  if (typeof image?.src !== 'string' || !image.src.startsWith('/') || image.src.startsWith('//')) throw new Error('Image src must be a root-relative local path');
+  if (typeof image.alt !== 'string') throw new Error('Image alt is required');
+  if (!Number.isInteger(image.width) || image.width < 1 || !Number.isInteger(image.height) || image.height < 1) throw new Error('Image dimensions must be positive integers');
+  if (typeof image.srcset !== 'string' || typeof image.sizes !== 'string') throw new Error('Responsive image srcset and sizes are required');
+  return `<img src="${e(image.src)}" srcset="${e(image.srcset)}" sizes="${e(image.sizes)}" alt="${e(image.alt)}" width="${image.width}" height="${image.height}" loading="lazy" decoding="async" fetchpriority="low">`;
+}
+
+function renderArticleContent(block) {
+  if (typeof block === 'string' || Array.isArray(block?.parts)) return renderRichParagraph(block);
+  if (block?.type === 'gallery') {
+    const images = block.images.map(image => `<div class="narcissus-gallery__item">${renderResponsiveImage(image)}</div>`).join('');
+    return `<figure class="narcissus-gallery"><div class="narcissus-gallery__grid">${images}</div><figcaption>${e(block.caption)}</figcaption></figure>`;
+  }
+  if (block?.type === 'figure') {
+    if (block.variant && block.variant !== 'portrait-row-height') throw new Error('Unsupported figure variant');
+    const variant = block.variant ? ` narcissus-figure--${block.variant}` : '';
+    return `<figure class="narcissus-figure${variant}">${renderResponsiveImage(block.image)}<figcaption>${e(block.caption)}</figcaption></figure>`;
+  }
+  throw new Error('Unsupported article content block');
+}
+
 function renderArticleSection(section) {
-  const id = slugify(section.title);
-  return `<section class="article-section" aria-labelledby="${id}">${renderHeading({level:2,id,text:section.title})}${section.paragraphs.map(renderRichParagraph).join('')}</section>`;
+  const id = section.id ?? slugify(section.title);
+  const content = section.content ?? section.paragraphs;
+  return `<section class="article-section" aria-labelledby="${id}">${renderHeading({level:2,id,text:section.title})}${content.map(renderArticleContent).join('')}</section>`;
 }
 
 function renderSiblingNavigation(sectionRoutes, currentPath) {
@@ -76,16 +103,16 @@ function renderSiblingNavigation(sectionRoutes, currentPath) {
 
 export function renderSectionPage({ site, navigation, sectionRoutes, page, stylesheet, script, environment }) {
   const path = `/${page.slug}/`;
-  const description = page.sections[0].paragraphs.find(paragraph => typeof paragraph === 'string');
-  const toc = page.sections.map(section => `<li><a href="#${slugify(section.title)}">${e(section.title)}</a></li>`).join('');
+  const description = page.description ?? page.sections[0].paragraphs.find(paragraph => typeof paragraph === 'string');
+  const toc = page.sections.map(section => `<li><a href="#${section.id ?? slugify(section.title)}">${e(section.tocLabel ?? section.title)}</a></li>`).join('');
   const links = page.links.map(link => `<li>${renderTextLink(link)}</li>`).join('');
-  const start = renderPageStart({site,navigation,title:`${page.title} — ${site.name}`,description,stylesheet,script,path,environment,bodyClass:'section-page'});
+  const start = renderPageStart({site,navigation,title:page.metaTitle ?? `${page.title} — ${site.name}`,description,stylesheet,script,path,environment,bodyClass:'section-page'});
   return `${start}
 <main id="main-content" tabindex="-1" data-page-background>
   <header class="section-page__hero"><div class="layout-shell layout-shell--stage">
-    ${renderHeading({level:1,text:page.title})}
+    ${renderHeading({level:1,text:page.h1 ?? page.title})}
   </div></header>
-  <div class="layout-shell layout-shell--stage section-page__media">${renderMediaSlot({placeholder:{label:'Image pending',decorative:true}})}</div>
+  <div class="layout-shell layout-shell--stage section-page__media">${renderMediaSlot({media:page.media,placeholder:{label:'Image pending',decorative:true}})}</div>
   <div class="layout-shell layout-shell--stage section-page__layout">
     <aside class="section-page__toc"><nav aria-labelledby="table-of-contents-title">${renderHeading({level:2,id:'table-of-contents-title',text:'Table of contents'})}<ul>${toc}</ul></nav></aside>
     <article class="section-page__article">${page.sections.map(renderArticleSection).join('')}

@@ -2,6 +2,17 @@ export const sectionPages = [
   {
     slug: 'media-archives-and-memory',
     title: 'Media, Archives and Memory',
+    h1: 'Media, archives and memory',
+    metaTitle: '640 × 480, Pixilation and Narcissus as Narcosis',
+    description: 'How 640 × 480, Pixilation and Narcissus as Narcosis use archives, interfaces and participation to change how photographs are made and read.',
+    media: {
+      src: '/images/media-archives-and-memory.png',
+      alt: 'A six-frame collage of a person holding a Pretec DC530 camera, the camera alone, and overexposed light.',
+      width: 1920,
+      height: 1080,
+      loading: 'eager',
+      fetchPriority: 'high',
+    },
     sections: [
       {
         title: 'The record is made twice',
@@ -26,15 +37,125 @@ export const sectionPages = [
           '640 x 480 gives one answer. Memory does not live in the image alone. It also lives in the sequence, the missing frames and the machine that brings the archive back to life.',
         ],
       },
+      {
+        id: 'narcissus-as-narcosis',
+        tocLabel: 'Narcissus as Narcosis',
+        title: 'Narcissus as Narcosis: the subject is part of the system',
+        content: [
+          { parts: [
+            { emphasis: 'Narcissus as Narcosis' },
+            ' begins where ',
+            { emphasis: '640 × 480' },
+            ' ends. The first work asks how code can shape an archive. This work asks who gets to claim the image.',
+          ] },
+          {
+            type: 'gallery',
+            caption: 'Selected Orchestrated Self Portraits from Narcissus as Narcosis.',
+            images: [
+              {
+                src: '/images/narcissus-as-narcosis-portrait-01-768.jpg',
+                srcset: '/images/narcissus-as-narcosis-portrait-01-480.jpg 480w, /images/narcissus-as-narcosis-portrait-01-768.jpg 768w',
+                sizes: '(max-width: 47.99rem) calc(100vw - 2rem), (max-width: 63.99rem) 34vw, 18vw',
+                alt: 'Composite portrait pairing wide-open eyes with another person’s nose and open mouth.',
+                width: 768,
+                height: 1024,
+              },
+              {
+                src: '/images/narcissus-as-narcosis-portrait-02-768.jpg',
+                srcset: '/images/narcissus-as-narcosis-portrait-02-480.jpg 480w, /images/narcissus-as-narcosis-portrait-02-768.jpg 768w',
+                sizes: '(max-width: 47.99rem) calc(100vw - 2rem), (max-width: 63.99rem) 34vw, 18vw',
+                alt: 'Composite portrait assembled from a torso, heavily made-up eyes, a large nose and a wide-open mouth.',
+                width: 768,
+                height: 1024,
+              },
+              {
+                src: '/images/narcissus-as-narcosis-portrait-03-768.jpg',
+                srcset: '/images/narcissus-as-narcosis-portrait-03-480.jpg 480w, /images/narcissus-as-narcosis-portrait-03-768.jpg 768w',
+                sizes: '(max-width: 47.99rem) calc(100vw - 2rem), (max-width: 63.99rem) 34vw, 18vw',
+                alt: 'Composite portrait joining wide-open eyes beneath ceiling lights with another person’s nose and open mouth.',
+                width: 768,
+                height: 1024,
+              },
+              {
+                src: '/images/narcissus-as-narcosis-portrait-04-768.jpg',
+                srcset: '/images/narcissus-as-narcosis-portrait-04-480.jpg 480w, /images/narcissus-as-narcosis-portrait-04-768.jpg 768w',
+                sizes: '(max-width: 47.99rem) calc(100vw - 2rem), (max-width: 63.99rem) 34vw, 18vw',
+                alt: 'Composite portrait joining a sideways glance and spiked hair with another person’s nose and closed lips.',
+                width: 768,
+                height: 1024,
+              },
+            ],
+          },
+          { parts: [
+            'In ',
+            { emphasis: 'Understanding Media' },
+            " (1964), Marshall McLuhan's Narcissus was not just vain. He was numb. He could not see that the face in the pool was an extension of himself. He fell under the spell of his own image and began to serve it.",
+          ] },
+          'In 2012, Goldberg, working as The Subversive Artist, released Mashup, a mobile app and social network distributed through iTunes until 2016. It looked like a novelty portrait tool. The app guided users through making mashup portraits, then shared the results through its network.',
+          {
+            type: 'figure',
+            variant: 'portrait-row-height',
+            caption: 'Mashup login screen with a composite portrait, iOS app, 2012–2016.',
+            image: {
+              src: '/images/narcissus-as-narcosis-login-composition-707.jpg',
+              srcset: '/images/narcissus-as-narcosis-login-composition-480.jpg 480w, /images/narcissus-as-narcosis-login-composition-707.jpg 707w',
+              sizes: '(max-width: 47.99rem) calc(100vw - 2rem), (max-width: 63.99rem) 68vw, 18vw',
+              alt: 'Mashup login screen on an iPhone showing a portrait assembled from multiple faces.',
+              width: 707,
+              height: 835,
+            },
+          },
+          'The user made the source image. The code performed the merge. The network sent back the result.',
+          'One more actor was waiting inside the system: the artist.',
+          { parts: [
+            'The Subversive Artist chose the output and claimed the set as ',
+            { emphasis: 'Orchestrated Self Portraits' },
+            '. A user brought the face. Yet the prompts, app, network, final choice and title formed the work. Credit no longer sat with the person who pressed the shutter. It moved through the system.',
+          ] },
+          {
+            type: 'figure',
+            caption: 'Mashup interface, iOS app, 2012–2016.',
+            image: {
+              src: '/images/narcissus-as-narcosis-ios-interface-1024.jpg',
+              srcset: '/images/narcissus-as-narcosis-ios-interface-640.jpg 640w, /images/narcissus-as-narcosis-ios-interface-1024.jpg 1024w',
+              sizes: '(max-width: 47.99rem) calc(100vw - 2rem), 68vw',
+              alt: 'Eight iPhone screens demonstrate downloading, cropping, combining, choosing, making, swiping, deleting and sharing a Mashup portrait.',
+              width: 1024,
+              height: 664,
+            },
+          },
+          'That claim is unstable by design. The user, the code, the platform and the artist each did a different part. No single name can explain how the portrait was made.',
+          { parts: [
+            "Picarty is Mashup's current web form, not the original app. The shell has changed, but the question has not: when an app draws someone into making an image, who is the subject, who is the author, and who is serving whom?",
+          ] },
+          { parts: [
+            'With ',
+            { emphasis: '640 × 480' },
+            ', the interface changes how an old record is read. In ',
+            { emphasis: 'Narcissus as Narcosis' },
+            ", the interface helps make the record. It turns a user's act into raw material for art.",
+          ] },
+        ],
+      },
     ],
     links: [
       { label: 'Enter the 640 x 480 archive at Pixilation.org', href: 'https://pixilation.org/' },
-      { label: 'Visit Picarty, a related study of photography, participation and interface', href: 'https://picarty.com/' },
+      { label: 'Try the current Mashup interface at Picarty', href: 'https://picarty.com/' },
     ],
   },
   {
     slug: 'community-service',
     title: 'Community Service',
+    h1: 'Learning, work and agency',
+    metaTitle: 'The Money Club and Capability Works | Learning and Work',
+    media: {
+      src: '/images/learning-work-agency.png',
+      alt: 'A compass surrounded by community networks, public buildings, construction drawings and a classroom.',
+      width: 1536,
+      height: 1024,
+      loading: 'eager',
+      fetchPriority: 'high',
+    },
     sections: [
       {
         title: 'Build it, then test it',
@@ -75,6 +196,16 @@ export const sectionPages = [
   {
     slug: 'systems-and-institutions',
     title: 'Systems and Institutions',
+    h1: 'Systems and institutions',
+    metaTitle: 'How Institutions Make Decisions | Systems and Retail',
+    media: {
+      src: '/images/systems-and-institutions.png',
+      alt: 'A compass surrounded by shipping, transit, energy and industrial infrastructure.',
+      width: 1536,
+      height: 1024,
+      loading: 'eager',
+      fetchPriority: 'high',
+    },
     sections: [
       {
         title: 'Rules beat intent',
@@ -121,6 +252,16 @@ export const sectionPages = [
   {
     slug: 'art',
     title: 'Art',
+    h1: 'Art and the manufacture of value',
+    metaTitle: 'Duchamped, The Pitch and Artistic Value | Art',
+    media: {
+      src: '/images/art-manufacture-value.png',
+      alt: 'A gloved hand holds a specimen cup labeled Jared beside a small Star of David against a blue background.',
+      width: 1481,
+      height: 987,
+      loading: 'eager',
+      fetchPriority: 'high',
+    },
     sections: [
       {
         title: 'The name is the asset',

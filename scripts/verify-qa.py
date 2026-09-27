@@ -29,6 +29,24 @@ PRETTY_ROUTES={
     '/systems-and-institutions/':'systems-and-institutions/index.html',
     '/art/':'art/index.html',
 }
+APPROVED_PUBLIC_IMAGES={
+    'images/art-manufacture-value.png',
+    'images/learning-work-agency.png',
+    'images/media-archives-and-memory.png',
+    'images/narcissus-as-narcosis-ios-interface-1024.jpg',
+    'images/narcissus-as-narcosis-ios-interface-640.jpg',
+    'images/narcissus-as-narcosis-login-composition-480.jpg',
+    'images/narcissus-as-narcosis-login-composition-707.jpg',
+    'images/narcissus-as-narcosis-portrait-01-480.jpg',
+    'images/narcissus-as-narcosis-portrait-01-768.jpg',
+    'images/narcissus-as-narcosis-portrait-02-480.jpg',
+    'images/narcissus-as-narcosis-portrait-02-768.jpg',
+    'images/narcissus-as-narcosis-portrait-03-480.jpg',
+    'images/narcissus-as-narcosis-portrait-03-768.jpg',
+    'images/narcissus-as-narcosis-portrait-04-480.jpg',
+    'images/narcissus-as-narcosis-portrait-04-768.jpg',
+    'images/systems-and-institutions.png',
+}
 
 def verify_html_policy(html):
     if re.search(r'rel=[\"\x27]canonical',html):
@@ -65,7 +83,8 @@ def verify(directory, base=URL):
     if manifest.get('schema') == 2:
         expected={'site':'jaredgoldberg.org','environment':'qa','gitSha':manifest.get('gitSha'),
                   'buildId':manifest.get('buildId'),'artifactManifest':'artifact-manifest.json'}
-        if release != expected or any(name.startswith('images/') for name in manifest['files']):
+        images={name for name in manifest['files'] if name.startswith('images/')}
+        if release != expected or not images.issubset(APPROVED_PUBLIC_IMAGES):
             raise ValueError('Invalid current QA release identity or allowlist')
     elif manifest.get('schema') != 1:
         raise ValueError('Unsupported QA artifact schema')

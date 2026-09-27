@@ -10,7 +10,9 @@ import tempfile
 
 URL='https://jaredgoldberg.org'
 MIME={'.html':['text/html'],'.css':['text/css'],'.js':['application/javascript','text/javascript'],
-      '.woff2':['font/woff2'],'.svg':['image/svg+xml'],'.json':['application/json'],'.txt':['text/plain']}
+      '.woff2':['font/woff2'],'.svg':['image/svg+xml'],'.png':['image/png'],
+      '.jpg':['image/jpeg'],'.jpeg':['image/jpeg'],'.webp':['image/webp'],
+      '.json':['application/json'],'.txt':['text/plain']}
 PRETTY_ROUTES={
     '/media-archives-and-memory/':'media-archives-and-memory/index.html',
     '/community-service/':'community-service/index.html',
