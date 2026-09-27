@@ -1,0 +1,14 @@
+{
+  "id": "20260927T004323Z-b42e9df96198",
+  "gitSha": "b42e9df96198942a01858a0107283be5688c181d",
+  "previous": "20260927T001956Z-6588fe1a9916",
+  "target": "/var/www/jaredgoldberg.org/releases/20260927T004323Z-b42e9df96198",
+  "rollbackCommand": "python3 scripts/deploy-qa.py --sha 333c80c091437ac1e1444eaa0338dfae048d4438 --apply --rollback 20260927T001956Z-6588fe1a9916",
+  "url": "https://qa.jaredgoldberg.org",
+  "status": "verified",
+  "manifestSha256": "fbd9cf7b5e8d3724819cf187b30f87a340d2aa6ba0fd668743243bcad713e02d",
+  "sourceRef": "refs/heads/codex/editorial-seo-copy-update",
+  "sourceRefSha": "b42e9df96198942a01858a0107283be5688c181d",
+  "expectedMainSha": "333c80c091437ac1e1444eaa0338dfae048d4438",
+  "observedMainSha": "333c80c091437ac1e1444eaa0338dfae048d4438"
+}

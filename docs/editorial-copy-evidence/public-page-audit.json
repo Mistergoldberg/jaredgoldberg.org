@@ -1,0 +1,470 @@
+{
+  "checkedAt": "2026-09-27T00:45:42.999Z",
+  "base": "https://qa.jaredgoldberg.org",
+  "pages": [
+    {
+      "path": "/",
+      "status": 200,
+      "xRobots": "noindex, nofollow, noarchive",
+      "title": "Art, Archives and Systems | Practice Index",
+      "description": "An index of art, digital archives, participatory software, education projects and work with large institutions.",
+      "metaRobots": "noindex, nofollow",
+      "canonicalCount": 0,
+      "h1s": [
+        "Art, archives and systems in practice"
+      ],
+      "footerCopyright": true,
+      "forbiddenEditorialLabels": [],
+      "links": [
+        {
+          "label": "Skip to main content",
+          "href": "#main-content"
+        },
+        {
+          "label": "Home",
+          "href": "/"
+        },
+        {
+          "label": "Media, Archives and Memory",
+          "href": "/media-archives-and-memory/"
+        },
+        {
+          "label": "Learning, Work and Agency",
+          "href": "/community-service/"
+        },
+        {
+          "label": "Systems and Institutions",
+          "href": "/systems-and-institutions/"
+        },
+        {
+          "label": "Art",
+          "href": "/art/"
+        },
+        {
+          "label": "Explore the image archives and participatory media",
+          "href": "/media-archives-and-memory/"
+        },
+        {
+          "label": "Explore the education and employment projects",
+          "href": "/community-service/"
+        },
+        {
+          "label": "Explore the systems and institutions",
+          "href": "/systems-and-institutions/"
+        },
+        {
+          "label": "Explore the art practice",
+          "href": "/art/"
+        },
+        {
+          "label": "Read Jared Goldberg's first-person essays and work accounts",
+          "href": "https://jaredgoldberg.ca/writing/"
+        },
+        {
+          "label": "Visit the art practice at Duchamped",
+          "href": "https://duchamped.com/"
+        }
+      ]
+    },
+    {
+      "path": "/media-archives-and-memory/",
+      "status": 200,
+      "xRobots": "noindex, nofollow, noarchive",
+      "title": "640 × 480, Pixilation and Picarty | Media Archives",
+      "description": "How the 640 × 480 image archive, Pixilation player and Picarty Mashup use sequence, software and participation to change photographs.",
+      "metaRobots": "noindex, nofollow",
+      "canonicalCount": 0,
+      "h1s": [
+        "Digital image archives, pixilation and participatory photography"
+      ],
+      "footerCopyright": true,
+      "forbiddenEditorialLabels": [],
+      "links": [
+        {
+          "label": "Skip to main content",
+          "href": "#main-content"
+        },
+        {
+          "label": "Home",
+          "href": "/"
+        },
+        {
+          "label": "Media, Archives and Memory",
+          "href": "/media-archives-and-memory/"
+        },
+        {
+          "label": "Learning, Work and Agency",
+          "href": "/community-service/"
+        },
+        {
+          "label": "Systems and Institutions",
+          "href": "/systems-and-institutions/"
+        },
+        {
+          "label": "Art",
+          "href": "/art/"
+        },
+        {
+          "label": "640 × 480: the sequence is the work",
+          "href": "#640-480-the-sequence-is-the-work"
+        },
+        {
+          "label": "Pixilation: the viewer sets the time",
+          "href": "#pixilation-the-viewer-sets-the-time"
+        },
+        {
+          "label": "Picarty: the image becomes a shared decision",
+          "href": "#picarty-the-image-becomes-a-shared-decision"
+        },
+        {
+          "label": "Pixilation.org, the 640 × 480 player",
+          "href": "https://pixilation.org/"
+        },
+        {
+          "label": "Picarty/Mashup web interface",
+          "href": "https://picarty.com/"
+        },
+        {
+          "label": "essay on Marshall McLuhan and the medium",
+          "href": "https://jaredgoldberg.ca/writing/medium-is-the-message/"
+        },
+        {
+          "label": "Experience 640 × 480 through Pixilation",
+          "href": "https://pixilation.org/"
+        },
+        {
+          "label": "Try the current Picarty/Mashup interface",
+          "href": "https://picarty.com/"
+        },
+        {
+          "label": "Read Goldberg's essay on the medium",
+          "href": "https://jaredgoldberg.ca/writing/medium-is-the-message/"
+        },
+        {
+          "label": "Media, Archives and Memory",
+          "href": "/media-archives-and-memory/"
+        },
+        {
+          "label": "Learning, Work and Agency",
+          "href": "/community-service/"
+        },
+        {
+          "label": "Systems and Institutions",
+          "href": "/systems-and-institutions/"
+        },
+        {
+          "label": "Art",
+          "href": "/art/"
+        }
+      ]
+    },
+    {
+      "path": "/community-service/",
+      "status": 200,
+      "xRobots": "noindex, nofollow, noarchive",
+      "title": "The Money Club and Capability Works | Learning and Work",
+      "description": "An account of The Money Club’s youth financial-literacy pilot and Capability Works, a proposed approach to employment by design.",
+      "metaRobots": "noindex, nofollow",
+      "canonicalCount": 0,
+      "h1s": [
+        "What does a person need in order to act?"
+      ],
+      "footerCopyright": true,
+      "forbiddenEditorialLabels": [],
+      "links": [
+        {
+          "label": "Skip to main content",
+          "href": "#main-content"
+        },
+        {
+          "label": "Home",
+          "href": "/"
+        },
+        {
+          "label": "Media, Archives and Memory",
+          "href": "/media-archives-and-memory/"
+        },
+        {
+          "label": "Learning, Work and Agency",
+          "href": "/community-service/"
+        },
+        {
+          "label": "Systems and Institutions",
+          "href": "/systems-and-institutions/"
+        },
+        {
+          "label": "Art",
+          "href": "/art/"
+        },
+        {
+          "label": "The Money Club: learning inside a small economy",
+          "href": "#the-money-club-learning-inside-a-small-economy"
+        },
+        {
+          "label": "Capability Works: redesigning the job",
+          "href": "#capability-works-redesigning-the-job"
+        },
+        {
+          "label": "What joins these projects",
+          "href": "#what-joins-these-projects"
+        },
+        {
+          "label": "The Money Club",
+          "href": "https://the-money-club.org/"
+        },
+        {
+          "label": "The Money Club: Maiden Voyage",
+          "href": "https://jaredgoldberg.ca/projects/the-money-club/maiden-voyage/"
+        },
+        {
+          "label": "essay on a deployable education system",
+          "href": "https://jaredgoldberg.ca/writing/the-money-club-as-a-deployable-education-system/"
+        },
+        {
+          "label": "Capability Works",
+          "href": "https://jaredgoldberg.ca/projects/capital-works/"
+        },
+        {
+          "label": "essay on the design of work",
+          "href": "https://jaredgoldberg.ca/writing/the-future-of-work-is-a-design-problem/"
+        },
+        {
+          "label": "essay on dignity and continuity",
+          "href": "https://jaredgoldberg.ca/writing/dignity-is-a-systems-output/"
+        },
+        {
+          "label": "See The Money Club's account of its first pilot",
+          "href": "https://jaredgoldberg.ca/projects/the-money-club/maiden-voyage/"
+        },
+        {
+          "label": "Read the Capability Works proposal",
+          "href": "https://jaredgoldberg.ca/projects/capital-works/"
+        },
+        {
+          "label": "Media, Archives and Memory",
+          "href": "/media-archives-and-memory/"
+        },
+        {
+          "label": "Learning, Work and Agency",
+          "href": "/community-service/"
+        },
+        {
+          "label": "Systems and Institutions",
+          "href": "/systems-and-institutions/"
+        },
+        {
+          "label": "Art",
+          "href": "/art/"
+        }
+      ]
+    },
+    {
+      "path": "/systems-and-institutions/",
+      "status": 200,
+      "xRobots": "noindex, nofollow, noarchive",
+      "title": "How Institutions Make Decisions | Systems and Retail",
+      "description": "A comparative reading of design and manufacturing in China, private label at Loblaw and retail media at Walmart and Canadian Tire.",
+      "metaRobots": "noindex, nofollow",
+      "canonicalCount": 0,
+      "h1s": [
+        "How institutions make decisions"
+      ],
+      "footerCopyright": true,
+      "forbiddenEditorialLabels": [],
+      "links": [
+        {
+          "label": "Skip to main content",
+          "href": "#main-content"
+        },
+        {
+          "label": "Home",
+          "href": "/"
+        },
+        {
+          "label": "Media, Archives and Memory",
+          "href": "/media-archives-and-memory/"
+        },
+        {
+          "label": "Learning, Work and Agency",
+          "href": "/community-service/"
+        },
+        {
+          "label": "Systems and Institutions",
+          "href": "/systems-and-institutions/"
+        },
+        {
+          "label": "Art",
+          "href": "/art/"
+        },
+        {
+          "label": "The factory: what can be repeated?",
+          "href": "#the-factory-what-can-be-repeated"
+        },
+        {
+          "label": "The shelf: who controls comparison?",
+          "href": "#the-shelf-who-controls-comparison"
+        },
+        {
+          "label": "The store: who sets the default?",
+          "href": "#the-store-who-sets-the-default"
+        },
+        {
+          "label": "The measure: what result counts?",
+          "href": "#the-measure-what-result-counts"
+        },
+        {
+          "label": "first-person work accounts",
+          "href": "https://jaredgoldberg.ca/work/index.html"
+        },
+        {
+          "label": "account of China and supply chains",
+          "href": "https://jaredgoldberg.ca/work/china.html"
+        },
+        {
+          "label": "Loblaw account",
+          "href": "https://jaredgoldberg.ca/work/loblaw.html"
+        },
+        {
+          "label": "Walmart account",
+          "href": "https://jaredgoldberg.ca/work/walmart.html"
+        },
+        {
+          "label": "Canadian Tire account",
+          "href": "https://jaredgoldberg.ca/work/canadian-tire.html"
+        },
+        {
+          "label": "What Real Systems Taught Me About Incentives",
+          "href": "https://jaredgoldberg.ca/writing/real-systems-incentives/"
+        },
+        {
+          "label": "Read the China account",
+          "href": "https://jaredgoldberg.ca/work/china.html"
+        },
+        {
+          "label": "Read the Loblaw account",
+          "href": "https://jaredgoldberg.ca/work/loblaw.html"
+        },
+        {
+          "label": "Read the Walmart account",
+          "href": "https://jaredgoldberg.ca/work/walmart.html"
+        },
+        {
+          "label": "Read the Canadian Tire account",
+          "href": "https://jaredgoldberg.ca/work/canadian-tire.html"
+        },
+        {
+          "label": "Media, Archives and Memory",
+          "href": "/media-archives-and-memory/"
+        },
+        {
+          "label": "Learning, Work and Agency",
+          "href": "/community-service/"
+        },
+        {
+          "label": "Systems and Institutions",
+          "href": "/systems-and-institutions/"
+        },
+        {
+          "label": "Art",
+          "href": "/art/"
+        }
+      ]
+    },
+    {
+      "path": "/art/",
+      "status": 200,
+      "xRobots": "noindex, nofollow, noarchive",
+      "title": "Duchamped, The Pitch and Artistic Value | Art",
+      "description": "An introduction to Duchamped, the historical stage name Jared the Jew, and artworks that test authorship and value.",
+      "metaRobots": "noindex, nofollow",
+      "canonicalCount": 0,
+      "h1s": [
+        "Art and the manufacture of value"
+      ],
+      "footerCopyright": true,
+      "forbiddenEditorialLabels": [],
+      "links": [
+        {
+          "label": "Skip to main content",
+          "href": "#main-content"
+        },
+        {
+          "label": "Home",
+          "href": "/"
+        },
+        {
+          "label": "Media, Archives and Memory",
+          "href": "/media-archives-and-memory/"
+        },
+        {
+          "label": "Learning, Work and Agency",
+          "href": "/community-service/"
+        },
+        {
+          "label": "Systems and Institutions",
+          "href": "/systems-and-institutions/"
+        },
+        {
+          "label": "Art",
+          "href": "/art/"
+        },
+        {
+          "label": "To Duchamp: changing the frame",
+          "href": "#to-duchamp-changing-the-frame"
+        },
+        {
+          "label": "The artist's names",
+          "href": "#the-artist-s-names"
+        },
+        {
+          "label": "The Pitch: when the offer is part of the work",
+          "href": "#the-pitch-when-the-offer-is-part-of-the-work"
+        },
+        {
+          "label": "Work, document, edition",
+          "href": "#work-document-edition"
+        },
+        {
+          "label": "Duchamped",
+          "href": "https://duchamped.com/"
+        },
+        {
+          "label": "Duchamped manifesto",
+          "href": "https://duchamped.com/duchamped/"
+        },
+        {
+          "label": "The Pitch",
+          "href": "https://duchamped.com/the-pitch/"
+        },
+        {
+          "label": "Read the Duchamped manifesto",
+          "href": "https://duchamped.com/duchamped/"
+        },
+        {
+          "label": "See The Pitch in its original setting",
+          "href": "https://duchamped.com/the-pitch/"
+        },
+        {
+          "label": "Explore the 640 × 480 player",
+          "href": "https://pixilation.org/"
+        },
+        {
+          "label": "Media, Archives and Memory",
+          "href": "/media-archives-and-memory/"
+        },
+        {
+          "label": "Learning, Work and Agency",
+          "href": "/community-service/"
+        },
+        {
+          "label": "Systems and Institutions",
+          "href": "/systems-and-institutions/"
+        },
+        {
+          "label": "Art",
+          "href": "/art/"
+        }
+      ]
+    }
+  ]
+}

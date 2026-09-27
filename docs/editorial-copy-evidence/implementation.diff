@@ -1,0 +1,1687 @@
+diff --git a/README.md b/README.md
+index d81b4f6..b186dfc 100644
+--- a/README.md
++++ b/README.md
+@@ -25,6 +25,8 @@ npm test                 # build + artifact/HTTP/browser/accessibility/release c
+ npm run build            # dist/ only; no deployment
+ npm run test:production  # production robots/identity/allowlist checks
+ npm run fixture:new-page # ignored design-system assembly exercise
++npm run reviews:copy     # regenerate the five page-copy review files
++npm run check:copy-overlap # compare .org copy with linked first-person .ca pages
+ npm run preview          # serve the existing dist/ at 127.0.0.1:4173
+ npm run test:browser     # browser checks against the existing local build
+ npm run test:public      # direct HTTPS browser checks of the public QA site
+@@ -48,7 +50,8 @@ Other supported environments should use the normally installed Playwright browse
+ - `src/fixtures/`: development-only integration exercises; never emitted to `dist/`.
+ - `src/content/homepage.mjs`: approved four-route index copy and shared navigation.
+ - `src/content/section-pages.mjs`: approved long-form copy and audited destinations for
+-  Media, Archives and Memory; Community Service; Systems and Institutions; and Art.
++  Media, Archives and Memory; Learning, Work and Agency (at the established
++  `/community-service/` route); Systems and Institutions; and Art.
+ - `src/navigation.js`: menu behavior; contains no navigation data.
+ - `public/`: only allowlisted source assets. Robots policy is generated for the
+   selected build mode; unlisted files are never copied. No source-site images are transferred. The verified source-served Raleway
+diff --git a/docs/copy-reviews/01-homepage.md b/docs/copy-reviews/01-homepage.md
+new file mode 100644
+index 0000000..737da15
+--- /dev/null
++++ b/docs/copy-reviews/01-homepage.md
+@@ -0,0 +1,75 @@
++# Copy review: Art, archives and systems in practice
++
++- Actual path: `/`
++- Content source: `src/content/homepage.mjs`
++- HTML title: Art, Archives and Systems | Practice Index
++- Meta description: An index of art, digital archives, participatory software, education projects and work with large institutions.
++- H1: Art, archives and systems in practice
++
++## Site interface text
++
++Skip to main content
++
++Menu
++
++Main menu
++
++Home (current page) — /
++
++Explore Jared's practice
++
++Media, Archives and Memory — /media-archives-and-memory/
++
++Learning, Work and Agency — /community-service/
++
++Systems and Institutions — /systems-and-institutions/
++
++Art — /art/
++
++## Main content
++
++# Art, archives and systems in practice
++
++An image becomes an archive when someone decides how it can be kept and seen. A lesson becomes a program when a student can use it. A store becomes a media system when space, data and incentives are joined. An artist's name becomes material when it enters public circulation.
++
++Jared Goldberg works across these situations. His practice includes digital photography, participatory software, art, youth education and the design of large operating systems. Each project has its own form and stakes. This site traces the decisions that give those projects their shape: what is selected, who can take part, what can be changed, and how value is assigned.
++
++## Four ways into the work
++
++### Media, archives and memory
++
++How does a photograph change when it becomes a sequence, a playable archive or the input to someone else's image? Follow *640 × 480*, Pixilation and Picarty.
++
++[Explore the image archives and participatory media](/media-archives-and-memory/)
++
++### Learning, work and agency
++
++What must a system provide before a person can act? The Money Club tests an education method with young people. Capability Works proposes a way to rebuild jobs around actual capabilities.
++
++[Explore the education and employment projects](/community-service/)
++
++### Systems and institutions
++
++How do factories and retailers turn decisions into products, shelf space and media? Read an institutional account of the roles, measures and incentives behind Goldberg's work in China and Canadian retail.
++
++[Explore the systems and institutions](/systems-and-institutions/)
++
++### Art and the manufacture of value
++
++What happens when an artist changes the frame around an object, a name or a price? Enter Duchamped, the historical stage name Jared the Jew, and *The Pitch*.
++
++[Explore the art practice](/art/)
++
++## About this index
++
++The projects are connected by recurring acts of selection, arrangement, participation and circulation. Those connections are a way to read the work, not a claim that all the projects mean the same thing. This index supplies context. The photographs, interfaces, artworks, programs and first-person accounts live at their own sites.
++
++[Read Jared Goldberg's first-person essays and work accounts](https://jaredgoldberg.ca/writing/) · [Visit the art practice at Duchamped](https://duchamped.com/)
++
++## Footer text
++
++JAREDGOLDBERG.ORG
++
++Artist · Systems designer · Writer
++
++© 2026 Jared Goldberg
+diff --git a/docs/copy-reviews/02-media-archives-and-memory.md b/docs/copy-reviews/02-media-archives-and-memory.md
+new file mode 100644
+index 0000000..9ce78a1
+--- /dev/null
++++ b/docs/copy-reviews/02-media-archives-and-memory.md
+@@ -0,0 +1,93 @@
++# Copy review: Digital image archives, pixilation and participatory photography
++
++- Actual path: `/media-archives-and-memory/`
++- Content source: `src/content/section-pages.mjs`
++- HTML title: 640 × 480, Pixilation and Picarty | Media Archives
++- Meta description: How the 640 × 480 image archive, Pixilation player and Picarty Mashup use sequence, software and participation to change photographs.
++- H1: Digital image archives, pixilation and participatory photography
++
++## Site interface text
++
++Skip to main content
++
++Menu
++
++Main menu
++
++Home — /
++
++Explore Jared's practice
++
++Media, Archives and Memory (current page) — /media-archives-and-memory/
++
++Learning, Work and Agency — /community-service/
++
++Systems and Institutions — /systems-and-institutions/
++
++Art — /art/
++
++## Main content
++
++# Digital image archives, pixilation and participatory photography
++
++Image pending
++
++## Table of contents
++
++[640 × 480: the sequence is the work](#640-480-the-sequence-is-the-work)
++
++[Pixilation: the viewer sets the time](#pixilation-the-viewer-sets-the-time)
++
++[Picarty: the image becomes a shared decision](#picarty-the-image-becomes-a-shared-decision)
++
++A digital photograph has more than one life. There is the moment it records. Then there are the decisions that determine its future: which files survive, how they are arranged, what an interface lets the viewer do, and whether other people can add to the image.
++
++Three related projects make those decisions visible. *640 × 480* is a long-running photographic archive and time-based work. Pixilation supplies a player for viewing its sequences. *Narcissus As Narcosis* is a separate participatory project whose Mashup application now has a web presence at Picarty. The projects share an interest in images as things people use, while their sources and forms remain distinct.
++
++## 640 × 480: the sequence is the work
++
++Goldberg began making *640 × 480* images in Shanghai in 2002, using a small early digital camera. Its frames measured 640 by 480 pixels. At the time, an image that size could occupy much of a computer screen. The limits of the camera remain legible in the archive: noise, unstable colour and a small field of detail.
++
++Looking at the files in quick succession revealed another possibility. Still frames began to behave like movement. Goldberg started photographing gestures, walks and changing rooms with the next frame in mind. An individual image could be held, but a sequence could carry time.
++
++The full body of photographs, the chronological albums, any later selected sequence and a single frame are different ways of encountering the material. Selection makes a work legible; it also changes what the archive appears to remember. The record includes gaps. It cannot show an event the camera did not capture or an image that did not survive.
++
++This is why *640 × 480* needs more than a gallery of attractive stills. A frame can serve as evidence of a moment. Sequence gives that moment duration. The accumulated archive shows what repeated acts of looking leave behind.
++
++## Pixilation: the viewer sets the time
++
++At [Pixilation.org, the 640 × 480 player](https://pixilation.org/), the viewer can move through images instead of scanning thumbnails. Pace changes the reading. Rapid playback draws out rhythm and recurrence. Slower playback restores the weight of a particular face, street or gesture. Direction changes the apparent course of an action.
++
++The viewer can make a temporary edit by moving through the material, but cannot make missing files reappear. The interface gives the archive a form without turning the historical record into a complete account of the past. Its controls are part of how the work is experienced.
++
++## Picarty: the image becomes a shared decision
++
++*Narcissus As Narcosis* asks a different question: who acts on an image, and who is allowed to call the result a work? The earlier Mashup application and the current [Picarty/Mashup web interface](https://picarty.com/) belong to this larger project, but they are distinct versions.
++
++A participation session has several layers: a source capture, a participant's crop or mask, a generated composite, and any later selection by the artist. Those layers should remain visible when an image is described or exhibited. The person who supplies or changes an image, the software that combines it, and the artist who selects an outcome do different things. Their roles cannot be collapsed into one signature.
++
++Picarty also changes the position of the viewer. With *640 × 480*, a visitor navigates an existing record. With Mashup, a participant helps produce an image that did not exist before the encounter. Both projects make the interface consequential. They do so through different kinds of agency.
++
++Goldberg's [essay on Marshall McLuhan and the medium](https://jaredgoldberg.ca/writing/medium-is-the-message/) sets out a wider theory of how a medium shapes perception. The projects here provide particular cases: the low-resolution camera, the sequential player and the participatory composite. Each places a different decision between the world and the picture.
++
++## Continue:
++
++[Experience 640 × 480 through Pixilation](https://pixilation.org/) · [Try the current Picarty/Mashup interface](https://picarty.com/) · [Read Goldberg's essay on the medium](https://jaredgoldberg.ca/writing/medium-is-the-message/)
++
++## Explore Jared's practice
++
++[Media, Archives and Memory](/media-archives-and-memory/) (current page)
++
++[Learning, Work and Agency](/community-service/)
++
++[Systems and Institutions](/systems-and-institutions/)
++
++[Art](/art/)
++
++## Footer text
++
++JAREDGOLDBERG.ORG
++
++Artist · Systems designer · Writer
++
++© 2026 Jared Goldberg
+diff --git a/docs/copy-reviews/03-community-service.md b/docs/copy-reviews/03-community-service.md
+new file mode 100644
+index 0000000..73c0810
+--- /dev/null
++++ b/docs/copy-reviews/03-community-service.md
+@@ -0,0 +1,91 @@
++# Copy review: What does a person need in order to act?
++
++- Actual path: `/community-service/`
++- Content source: `src/content/section-pages.mjs`
++- HTML title: The Money Club and Capability Works | Learning and Work
++- Meta description: An account of The Money Club’s youth financial-literacy pilot and Capability Works, a proposed approach to employment by design.
++- H1: What does a person need in order to act?
++
++## Site interface text
++
++Skip to main content
++
++Menu
++
++Main menu
++
++Home — /
++
++Explore Jared's practice
++
++Media, Archives and Memory — /media-archives-and-memory/
++
++Learning, Work and Agency (current page) — /community-service/
++
++Systems and Institutions — /systems-and-institutions/
++
++Art — /art/
++
++## Main content
++
++# What does a person need in order to act?
++
++Image pending
++
++## Table of contents
++
++[The Money Club: learning inside a small economy](#the-money-club-learning-inside-a-small-economy)
++
++[Capability Works: redesigning the job](#capability-works-redesigning-the-job)
++
++[What joins these projects](#what-joins-these-projects)
++
++An opportunity is shaped by its conditions. A young person can be told what a margin is, but learns more when a price has to meet a cost and another person's choice. A worker may be able to do a task, but be excluded by the hours, transport or noise attached to the job.
++
++The Money Club and Capability Works approach different problems through the design of those conditions. Their statuses matter: one has run a first youth-program pilot; the other remains a proposed employment and housing model.
++
++## The Money Club: learning inside a small economy
++
++[The Money Club](https://the-money-club.org/) teaches financial literacy through making, pricing, communication and testing. In August 2026, its first week-long program ran at the UTSU Student Commons in Toronto. Students researched needs, developed offers, examined costs and brought the offers to a Maker Market.
++
++The market used virtual cash. This let students see peers make choices with a limited budget while keeping the financial stakes low. A purchase with virtual cash is stronger feedback than a compliment. It is still a classroom signal, and it does not establish what the same buyer would pay with their own money in another setting.
++
++That distinction makes the pilot useful. The program can ask where students needed help, whether they understood the difference between revenue and profit, how they worked together, and what a later session should change. The first run tested a method of learning. A repeatable program will require documentation, new facilitators and further evidence.
++
++Goldberg gives his own account in [The Money Club: Maiden Voyage](https://jaredgoldberg.ca/projects/the-money-club/maiden-voyage/). His [essay on a deployable education system](https://jaredgoldberg.ca/writing/the-money-club-as-a-deployable-education-system/) describes an ambition beyond one week in Toronto. This page records the difference between the completed pilot and that longer ambition.
++
++## Capability Works: redesigning the job
++
++[Capability Works](https://jaredgoldberg.ca/projects/capital-works/) is a proposal for matching people's capabilities and preferred working conditions to tasks with real demand. It begins with a basic observation: a job description bundles the useful task together with a schedule, setting, pace and social demands. Some of those conditions are essential. Others may be inherited habits of the organization.
++
++The proposed model would examine tasks and conditions separately, then build work with the person who will do it. It also imagines a relationship between paid work and more stable housing. That relationship has not been demonstrated by an operating employment platform. It will require partners, worker participation, research and a pilot that follows what happens after a placement.
++
++Goldberg's [essay on the design of work](https://jaredgoldberg.ca/writing/the-future-of-work-is-a-design-problem/) explains the problem from the worker's point of view. A later [essay on dignity and continuity](https://jaredgoldberg.ca/writing/dignity-is-a-systems-output/) asks what happens when a job can be performed but transport, scheduling and support fail to meet. Here the institutional question is concrete: who has the power and information to repair the connection?
++
++## What joins these projects
++
++One project gives young people a controlled way to test an offer. The other asks how adults might be given better terms for paid contribution. They differ in maturity, audience and risk. Both suggest that advice is limited when the environment gives someone no usable way to act.
++
++For The Money Club, the next evidence is another iteration with clear observations of learning and participation. For Capability Works, it is a participatory design process and a small test of sustained, fairly paid work. In both cases, the system should learn from the people whose lives it organizes.
++
++## Continue:
++
++[See The Money Club's account of its first pilot](https://jaredgoldberg.ca/projects/the-money-club/maiden-voyage/) · [Read the Capability Works proposal](https://jaredgoldberg.ca/projects/capital-works/)
++
++## Explore Jared's practice
++
++[Media, Archives and Memory](/media-archives-and-memory/)
++
++[Learning, Work and Agency](/community-service/) (current page)
++
++[Systems and Institutions](/systems-and-institutions/)
++
++[Art](/art/)
++
++## Footer text
++
++JAREDGOLDBERG.ORG
++
++Artist · Systems designer · Writer
++
++© 2026 Jared Goldberg
+diff --git a/docs/copy-reviews/04-systems-and-institutions.md b/docs/copy-reviews/04-systems-and-institutions.md
+new file mode 100644
+index 0000000..b085f28
+--- /dev/null
++++ b/docs/copy-reviews/04-systems-and-institutions.md
+@@ -0,0 +1,95 @@
++# Copy review: How institutions make decisions
++
++- Actual path: `/systems-and-institutions/`
++- Content source: `src/content/section-pages.mjs`
++- HTML title: How Institutions Make Decisions | Systems and Retail
++- Meta description: A comparative reading of design and manufacturing in China, private label at Loblaw and retail media at Walmart and Canadian Tire.
++- H1: How institutions make decisions
++
++## Site interface text
++
++Skip to main content
++
++Menu
++
++Main menu
++
++Home — /
++
++Explore Jared's practice
++
++Media, Archives and Memory — /media-archives-and-memory/
++
++Learning, Work and Agency — /community-service/
++
++Systems and Institutions (current page) — /systems-and-institutions/
++
++Art — /art/
++
++## Main content
++
++# How institutions make decisions
++
++Image pending
++
++## Table of contents
++
++[The factory: what can be repeated?](#the-factory-what-can-be-repeated)
++
++[The shelf: who controls comparison?](#the-shelf-who-controls-comparison)
++
++[The store: who sets the default?](#the-store-who-sets-the-default)
++
++[The measure: what result counts?](#the-measure-what-result-counts)
++
++A product on a shelf can look like one decision. It is usually the end of many: what a factory can make, what a buyer can stock, what a store can sell, what a customer notices and what the next report measures. The same product changes meaning as it crosses those thresholds.
++
++Goldberg has worked on different sides of this chain: teaching and product development in Shanghai; private-label portfolios at Loblaw; retail media at Walmart; and in-store media systems at Canadian Tire. His [first-person work accounts](https://jaredgoldberg.ca/work/index.html) describe what he saw inside those organizations. This page compares the decision structures those accounts bring into view.
++
++## The factory: what can be repeated?
++
++In China, Goldberg taught design and worked at Bestway, a maker of toys and sporting goods. His account of an innovation lab joins research, product design, manufacturing and the materials used to sell a product. A design can succeed on paper and still fail at tooling, cost, production or presentation.
++
++This makes a factory an interesting site of authorship. A designer proposes a form. Production gives it tolerances and a price. A retailer asks for differentiation. The product that reaches a buyer is the result of negotiation among these demands. Goldberg describes that movement in his [account of China and supply chains](https://jaredgoldberg.ca/work/china.html).
++
++## The shelf: who controls comparison?
++
++At Loblaw, the retailer did more than buy products. It could develop private-label offers, compare them with national brands and decide how the assortment would appear on its own shelves. A brand invests in being chosen; a retailer controls the setting in which the choice is made.
++
++Internal decisions also have an audience. A proposal needs evidence, a financial case and people willing to act on it. In Goldberg's [Loblaw account](https://jaredgoldberg.ca/work/loblaw.html), the competition for investment is as important as the competition between products. Shelf space is physical; attention and approval inside the company are scarce resources too.
++
++## The store: who sets the default?
++
++Goldberg's [Walmart account](https://jaredgoldberg.ca/work/walmart.html) pays attention to repeated store patterns and operating rituals. Layout, price promises and routines can align many people without a new instruction for every choice. Scale depends partly on the ability to repeat a rule; it also makes exceptions harder to see.
++
++At Canadian Tire, the dealer model introduces another form of control. Local operators have room to respond to their markets, while national banners and shared systems create a common network. An automotive errand, a sporting-goods purchase and a workwear trip each put a shopper in a different frame of mind. A media placement that works in one setting cannot simply be assumed to work in another. Goldberg discusses those conditions in his [Canadian Tire account](https://jaredgoldberg.ca/work/canadian-tire.html).
++
++## The measure: what result counts?
++
++Retail media joins physical space to advertising and measurement. A screen can be sold as an impression; a merchant still needs the right stock, price and store experience. A measured sale may include products that were never advertised. Counting what happened is different from showing what the media caused.
++
++The question for an institution is therefore practical: whose objective is being optimized, who can change the conditions and what evidence would show an improvement for the shopper and the business? A dashboard can report an outcome while leaving the decision that produced it obscure.
++
++Goldberg develops the incentive argument in [What Real Systems Taught Me About Incentives](https://jaredgoldberg.ca/writing/real-systems-incentives/). The cases gathered here add a comparative view. The factory, the shelf and the store have different owners and constraints. Each decides what becomes visible and what can be done next. These are accounts of Goldberg's work, not statements on behalf of the organizations named.
++
++## Continue:
++
++[Read the China account](https://jaredgoldberg.ca/work/china.html) · [Read the Loblaw account](https://jaredgoldberg.ca/work/loblaw.html) · [Read the Walmart account](https://jaredgoldberg.ca/work/walmart.html) · [Read the Canadian Tire account](https://jaredgoldberg.ca/work/canadian-tire.html)
++
++## Explore Jared's practice
++
++[Media, Archives and Memory](/media-archives-and-memory/)
++
++[Learning, Work and Agency](/community-service/)
++
++[Systems and Institutions](/systems-and-institutions/) (current page)
++
++[Art](/art/)
++
++## Footer text
++
++JAREDGOLDBERG.ORG
++
++Artist · Systems designer · Writer
++
++© 2026 Jared Goldberg
+diff --git a/docs/copy-reviews/05-art.md b/docs/copy-reviews/05-art.md
+new file mode 100644
+index 0000000..6175e21
+--- /dev/null
++++ b/docs/copy-reviews/05-art.md
+@@ -0,0 +1,97 @@
++# Copy review: Art and the manufacture of value
++
++- Actual path: `/art/`
++- Content source: `src/content/section-pages.mjs`
++- HTML title: Duchamped, The Pitch and Artistic Value | Art
++- Meta description: An introduction to Duchamped, the historical stage name Jared the Jew, and artworks that test authorship and value.
++- H1: Art and the manufacture of value
++
++## Site interface text
++
++Skip to main content
++
++Menu
++
++Main menu
++
++Home — /
++
++Explore Jared's practice
++
++Media, Archives and Memory — /media-archives-and-memory/
++
++Learning, Work and Agency — /community-service/
++
++Systems and Institutions — /systems-and-institutions/
++
++Art (current page) — /art/
++
++## Main content
++
++# Art and the manufacture of value
++
++Image pending
++
++## Table of contents
++
++[To Duchamp: changing the frame](#to-duchamp-changing-the-frame)
++
++[The artist's names](#the-artist-s-names)
++
++[The Pitch: when the offer is part of the work](#the-pitch-when-the-offer-is-part-of-the-work)
++
++[Work, document, edition](#work-document-edition)
++
++Jared Goldberg's art uses more than objects. It uses names, reproductions, storefronts, prices, interfaces and the expectation that an artist will explain what any of these are worth. Some works invite play. Others make the transaction itself uncomfortable. The frame around an artwork can carry as much of the argument as the object inside it.
++
++[Duchamped](https://duchamped.com/) is the principal home for the art practice. This page is a route into its questions and related projects. Artwork records, available editions and the work's own promotional language belong at their source.
++
++## To Duchamp: changing the frame
++
++Goldberg uses “to Duchamp” as a verb for taking a familiar thing and making it operate inside another frame. The thing may be an image, a product, a name or a market convention. Its source can remain recognizable while its use and implied value change.
++
++The verb is Goldberg's artistic usage, explained in the [Duchamped manifesto](https://duchamped.com/duchamped/). It is useful because it names an operation rather than a style. A reproduced image, an inflated object and a staged investment page do not have to look alike to ask who is allowed to assign meaning and price.
++
++That question has limits. Appropriation has a source, an owner and consequences. The relation between an artwork and the thing it borrows must be examined case by case; the verb does not settle it.
++
++## The artist's names
++
++Goldberg has worked under more than one public identity. *The Subversive Artist* appears as a persona in the current art presentation. *Jared the Jew* is a historical stage name and part of the work's record. Its use draws on Goldberg's account of encountering antisemitic language and taking those words into an artistic identity.
++
++Reclaiming a name does not empty it of its prior force. Different audiences will encounter it with different histories. The name belongs in the archive with its context, while Jared Goldberg remains the name under which the wider practice can be found.
++
++## The Pitch: when the offer is part of the work
++
++*[The Pitch](https://duchamped.com/the-pitch/)* adopts the surface of an art-investment offer: an invitation, asset language, shares, price and claims of return. In this setting, the sales page is a performance. It asks how a number begins to feel credible when it is wrapped in the familiar signs of scarcity, expertise and financial opportunity.
++
++The stated prices and returns are claims made within the work. They are not evidence here of independently verified market value, investment performance or an operating securities platform. The distinction matters because a staged offer can be read as an actual one.
++
++Putting a Jewish stage name beside the language of finance can also evoke an antisemitic trope. The work may expose that association or be misread through it; no curatorial statement can decide the viewer's response in advance. The risk is part of how *The Pitch* circulates and must be named with care.
++
++## Work, document, edition
++
++An artwork, a photograph documenting it, a software output and something offered for sale can look similar on a screen. They have different histories and different claims to authorship. Duchamped should hold the artwork record; a retail imprint such as Pure Kitsch can hold editions or merchandise. The institutional index can show how those manifestations relate without treating a product listing as the entire work.
++
++This distinction also leaves room for art that does not fit *The Pitch*. Photographic sequences, participatory composites, objects and proposed large-scale works may share an interest in circulation while asking different questions. The practice grows clearer when those differences remain visible.
++
++## Continue:
++
++[Read the Duchamped manifesto](https://duchamped.com/duchamped/) · [See The Pitch in its original setting](https://duchamped.com/the-pitch/) · [Explore the 640 × 480 player](https://pixilation.org/)
++
++## Explore Jared's practice
++
++[Media, Archives and Memory](/media-archives-and-memory/)
++
++[Learning, Work and Agency](/community-service/)
++
++[Systems and Institutions](/systems-and-institutions/)
++
++[Art](/art/) (current page)
++
++## Footer text
++
++JAREDGOLDBERG.ORG
++
++Artist · Systems designer · Writer
++
++© 2026 Jared Goldberg
+diff --git a/docs/editorial-copy-evidence/copy-overlap.txt b/docs/editorial-copy-evidence/copy-overlap.txt
+new file mode 100644
+index 0000000..752d8ed
+--- /dev/null
++++ b/docs/editorial-copy-evidence/copy-overlap.txt
+@@ -0,0 +1,18 @@
++
++> jaredgoldberg-org@0.1.0 check:copy-overlap
++> node scripts/check-copy-overlap.mjs
++
++home | 3 words | https://jaredgoldberg.ca/writing/ | the money club
++media-archives-and-memory | 3 words | https://jaredgoldberg.ca/writing/medium-is-the-message/ | narcissus as narcosis
++community-service | 5 words | https://jaredgoldberg.ca/projects/the-money-club/maiden-voyage/ | at the utsu student commons
++community-service | 5 words | https://jaredgoldberg.ca/writing/the-money-club-as-a-deployable-education-system/ | at the utsu student commons
++community-service | 4 words | https://jaredgoldberg.ca/projects/capital-works/ | a deployable education system
++community-service | 4 words | https://jaredgoldberg.ca/writing/the-future-of-work-is-a-design-problem/ | may be able to
++community-service | 4 words | https://jaredgoldberg.ca/writing/dignity-is-a-systems-output/ | with the person who
++systems-and-institutions | 7 words | https://jaredgoldberg.ca/work/china.html | what real systems taught me about incentives
++systems-and-institutions | 7 words | https://jaredgoldberg.ca/work/loblaw.html | what real systems taught me about incentives
++systems-and-institutions | 7 words | https://jaredgoldberg.ca/work/walmart.html | what real systems taught me about incentives
++systems-and-institutions | 7 words | https://jaredgoldberg.ca/work/canadian-tire.html | what real systems taught me about incentives
++systems-and-institutions | 7 words | https://jaredgoldberg.ca/writing/real-systems-incentives/ | what real systems taught me about incentives
++art | 3 words | https://jaredgoldberg.ca/writing/ | do not have
++No shared run reached the 18-word substantive-repetition threshold.
+diff --git a/package.json b/package.json
+index c9577f4..a5d069e 100644
+--- a/package.json
++++ b/package.json
+@@ -12,6 +12,8 @@
+     "build:qa": "BUILD_ENV=qa node scripts/build.mjs",
+     "build:production": "BUILD_ENV=production node scripts/build.mjs",
+     "fixture:new-page": "node scripts/build-new-page-fixture.mjs",
++    "reviews:copy": "node scripts/generate-copy-reviews.mjs",
++    "check:copy-overlap": "node scripts/check-copy-overlap.mjs",
+     "preview": "node scripts/serve.mjs",
+     "test": "npm run build:qa && node --test tests/artifact.test.mjs tests/browser.test.mjs tests/content-patterns.test.mjs && npm run test:ops",
+     "test:production": "npm run build:production && node --test tests/production-artifact.test.mjs",
+diff --git a/scripts/check-copy-overlap.mjs b/scripts/check-copy-overlap.mjs
+new file mode 100644
+index 0000000..8a11975
+--- /dev/null
++++ b/scripts/check-copy-overlap.mjs
+@@ -0,0 +1,104 @@
++import { homepage } from '../src/content/homepage.mjs';
++import { sectionPages } from '../src/content/section-pages.mjs';
++
++function plain(value) {
++  if (typeof value === 'string') return value;
++  return value.parts.map(part => {
++    if (typeof part === 'string') return part;
++    if (typeof part.emphasis === 'string') return part.emphasis;
++    if (part.link) return part.link.label;
++    return '';
++  }).join('');
++}
++
++function pageText(page) {
++  return [
++    page.h1,
++    ...page.introduction.map(plain),
++    ...page.sections.flatMap(section => [section.title, ...section.paragraphs.map(plain)]),
++    ...page.links.map(link => link.label),
++  ].join(' ');
++}
++
++function htmlText(html) {
++  return html
++    .replace(/<script\b[\s\S]*?<\/script>/gi, ' ')
++    .replace(/<style\b[\s\S]*?<\/style>/gi, ' ')
++    .replace(/<[^>]+>/g, ' ')
++    .replace(/&#(?:x([\da-f]+)|(\d+));/gi, (_, hex, decimal) => String.fromCodePoint(Number.parseInt(hex ?? decimal, hex ? 16 : 10)))
++    .replace(/&(?:nbsp|amp|quot|apos|#39);/gi, entity => ({
++      '&nbsp;': ' ', '&amp;': '&', '&quot;': '"', '&apos;': "'", '&#39;': "'",
++    })[entity.toLowerCase()])
++    .replace(/\s+/g, ' ');
++}
++
++function words(text) {
++  return text.toLocaleLowerCase('en').match(/[\p{L}\p{N}]+(?:['’][\p{L}\p{N}]+)*/gu) ?? [];
++}
++
++function longestSharedRun(leftText, rightText) {
++  const left = words(leftText), right = words(rightText);
++  let previous = new Uint16Array(right.length + 1);
++  let bestLength = 0, bestEnd = 0;
++  for (let leftIndex = 1; leftIndex <= left.length; leftIndex += 1) {
++    const current = new Uint16Array(right.length + 1);
++    for (let rightIndex = 1; rightIndex <= right.length; rightIndex += 1) {
++      if (left[leftIndex - 1] !== right[rightIndex - 1]) continue;
++      current[rightIndex] = previous[rightIndex - 1] + 1;
++      if (current[rightIndex] > bestLength) {
++        bestLength = current[rightIndex];
++        bestEnd = leftIndex;
++      }
++    }
++    previous = current;
++  }
++  return { words: bestLength, phrase: left.slice(bestEnd - bestLength, bestEnd).join(' ') };
++}
++
++const homeText = [
++  homepage.h1,
++  ...homepage.introduction,
++  homepage.indexHeading,
++  ...homepage.sections.flatMap(section => [section.title, plain(section.summary), section.action]),
++  homepage.about.title,
++  ...homepage.about.paragraphs,
++  ...homepage.about.links.map(link => link.label),
++].join(' ');
++
++const pages = new Map([['home', homeText], ...sectionPages.map(page => [page.slug, pageText(page)])]);
++const comparisons = {
++  home: ['https://jaredgoldberg.ca/writing/'],
++  'media-archives-and-memory': ['https://jaredgoldberg.ca/writing/medium-is-the-message/'],
++  'community-service': [
++    'https://jaredgoldberg.ca/projects/the-money-club/maiden-voyage/',
++    'https://jaredgoldberg.ca/writing/the-money-club-as-a-deployable-education-system/',
++    'https://jaredgoldberg.ca/projects/capital-works/',
++    'https://jaredgoldberg.ca/writing/the-future-of-work-is-a-design-problem/',
++    'https://jaredgoldberg.ca/writing/dignity-is-a-systems-output/',
++  ],
++  'systems-and-institutions': [
++    'https://jaredgoldberg.ca/work/china.html',
++    'https://jaredgoldberg.ca/work/loblaw.html',
++    'https://jaredgoldberg.ca/work/walmart.html',
++    'https://jaredgoldberg.ca/work/canadian-tire.html',
++    'https://jaredgoldberg.ca/writing/real-systems-incentives/',
++  ],
++  art: ['https://jaredgoldberg.ca/writing/'],
++};
++
++const results = [];
++for (const [page, urls] of Object.entries(comparisons)) {
++  for (const url of urls) {
++    const response = await fetch(url);
++    if (!response.ok) throw new Error(`${url} returned ${response.status}`);
++    const overlap = longestSharedRun(pages.get(page), htmlText(await response.text()));
++    results.push({ page, url, status: response.status, ...overlap });
++  }
++}
++
++const threshold = 18;
++for (const result of results) console.log(`${result.page} | ${result.words} words | ${result.url} | ${result.phrase}`);
++if (results.some(result => result.words >= threshold)) {
++  throw new Error(`Found a shared run of ${threshold} or more words`);
++}
++console.log(`No shared run reached the ${threshold}-word substantive-repetition threshold.`);
+diff --git a/scripts/generate-copy-reviews.mjs b/scripts/generate-copy-reviews.mjs
+new file mode 100644
+index 0000000..fca6b50
+--- /dev/null
++++ b/scripts/generate-copy-reviews.mjs
+@@ -0,0 +1,113 @@
++import { mkdir, writeFile } from 'node:fs/promises';
++import { homepage, sectionRoutes, site } from '../src/content/homepage.mjs';
++import { sectionPages } from '../src/content/section-pages.mjs';
++
++const outputDirectory = 'docs/copy-reviews';
++
++function inline(value) {
++  if (typeof value === 'string') return value;
++  return value.parts.map(part => {
++    if (typeof part === 'string') return part;
++    if (typeof part.emphasis === 'string') return `*${part.emphasis}*`;
++    if (part.link) {
++      const link = `[${part.link.label}](${part.link.href})`;
++      return part.link.emphasis ? `*${link}*` : link;
++    }
++    throw new Error('Unsupported rich-text part');
++  }).join('');
++}
++
++function siteInterface(currentPath) {
++  const links = sectionRoutes.map(route => `${route.label}${route.href === currentPath ? ' (current page)' : ''} — ${route.href}`);
++  return [
++    '## Site interface text',
++    '',
++    'Skip to main content',
++    '',
++    'Menu',
++    '',
++    'Main menu',
++    '',
++    `Home${currentPath === '/' ? ' (current page)' : ''} — /`,
++    '',
++    "Explore Jared's practice",
++    '',
++    ...links.flatMap(link => [link, '']),
++  ];
++}
++
++function footer() {
++  return [
++    '## Footer text',
++    '',
++    site.footerIdentity,
++    '',
++    site.role,
++    '',
++    site.copyright,
++    '',
++  ];
++}
++
++function reviewHeader({ route, contentFile, title, description, h1 }) {
++  return [
++    `# Copy review: ${h1}`,
++    '',
++    `- Actual path: \`${route}\``,
++    `- Content source: \`${contentFile}\``,
++    `- HTML title: ${title}`,
++    `- Meta description: ${description}`,
++    `- H1: ${h1}`,
++    '',
++  ];
++}
++
++function homeReview() {
++  const lines = reviewHeader({
++    route: '/',
++    contentFile: 'src/content/homepage.mjs',
++    title: site.title,
++    description: homepage.description,
++    h1: homepage.h1,
++  });
++  lines.push(...siteInterface('/'), '## Main content', '', `# ${homepage.h1}`, '');
++  for (const paragraph of homepage.introduction) lines.push(inline(paragraph), '');
++  lines.push(`## ${homepage.indexHeading}`, '');
++  for (const section of homepage.sections) {
++    lines.push(`### ${section.title}`, '', inline(section.summary), '', `[${section.action}](${section.href})`, '');
++  }
++  lines.push(`## ${homepage.about.title}`, '');
++  for (const paragraph of homepage.about.paragraphs) lines.push(inline(paragraph), '');
++  lines.push(homepage.about.links.map(link => `[${link.label}](${link.href})`).join(' · '), '', ...footer());
++  return lines.join('\n');
++}
++
++function sectionReview(page) {
++  const path = `/${page.slug}/`;
++  const lines = reviewHeader({
++    route: path,
++    contentFile: 'src/content/section-pages.mjs',
++    title: page.metaTitle,
++    description: page.description,
++    h1: page.h1,
++  });
++  lines.push(...siteInterface(path), '## Main content', '', `# ${page.h1}`, '', 'Image pending', '', '## Table of contents', '');
++  for (const section of page.sections) lines.push(`[${section.title}](#${section.title.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')})`, '');
++  for (const paragraph of page.introduction) lines.push(inline(paragraph), '');
++  for (const section of page.sections) {
++    lines.push(`## ${section.title}`, '');
++    for (const paragraph of section.paragraphs) lines.push(inline(paragraph), '');
++  }
++  lines.push('## Continue:', '', page.links.map(link => `[${link.label}](${link.href})`).join(' · '), '', "## Explore Jared's practice", '');
++  for (const route of sectionRoutes) lines.push(`[${route.label}](${route.href})${route.href === path ? ' (current page)' : ''}`, '');
++  lines.push(...footer());
++  return lines.join('\n');
++}
++
++await mkdir(outputDirectory, { recursive: true });
++const reviews = [
++  ['01-homepage.md', homeReview()],
++  ...sectionPages.map((page, index) => [`0${index + 2}-${page.slug}.md`, sectionReview(page)]),
++];
++for (const [filename, contents] of reviews) await writeFile(`${outputDirectory}/${filename}`, `${contents.trim()}\n`);
++console.log(`Wrote ${reviews.length} copy reviews to ${outputDirectory}`);
+diff --git a/scripts/verify-qa.py b/scripts/verify-qa.py
+index 0f07a4f..484d337 100755
+--- a/scripts/verify-qa.py
++++ b/scripts/verify-qa.py
+@@ -13,15 +13,21 @@ MIME={'.html':['text/html'],'.css':['text/css'],'.js':['application/javascript',
+       '.jpg':['image/jpeg'],'.jpeg':['image/jpeg'],'.webp':['image/webp'],
+       '.json':['application/json'],'.txt':['text/plain']}
+ APPROVED_EXTERNAL_URLS={
++    'https://jaredgoldberg.ca/writing/',
++    'https://jaredgoldberg.ca/writing/medium-is-the-message/',
++    'https://jaredgoldberg.ca/projects/the-money-club/',
++    'https://jaredgoldberg.ca/projects/the-money-club/maiden-voyage/',
++    'https://jaredgoldberg.ca/writing/the-money-club-as-a-deployable-education-system/',
+     'https://jaredgoldberg.ca/writing/the-future-of-work-is-a-design-problem/',
+     'https://jaredgoldberg.ca/writing/dignity-is-a-systems-output/',
+-    'https://jaredgoldberg.ca/projects/the-money-club/',
+     'https://jaredgoldberg.ca/projects/capital-works/',
+     'https://jaredgoldberg.ca/projects/',
++    'https://jaredgoldberg.ca/work/index.html',
+     'https://jaredgoldberg.ca/work/china.html',
+     'https://jaredgoldberg.ca/work/loblaw.html',
+     'https://jaredgoldberg.ca/work/walmart.html',
+     'https://jaredgoldberg.ca/work/canadian-tire.html',
++    'https://jaredgoldberg.ca/writing/real-systems-incentives/',
+ }
+ PRETTY_ROUTES={
+     '/media-archives-and-memory/':'media-archives-and-memory/index.html',
+diff --git a/src/components/page.mjs b/src/components/page.mjs
+index 40390ea..09f5626 100644
+--- a/src/components/page.mjs
++++ b/src/components/page.mjs
+@@ -27,28 +27,32 @@ ${renderHeader()}${renderNavigation(navigation, path)}`;
+ }
+
+ export function renderFooter(site) {
+-  return `<footer class="site-footer" data-page-background><div class="layout-shell layout-shell--stage site-footer__inner"><p class="site-footer__identity type-utility">${e(site.footerIdentity)}</p><p class="type-caption">${e(site.role)}</p></div></footer></body></html>\n`;
++  return `<footer class="site-footer" data-page-background><div class="layout-shell layout-shell--stage site-footer__inner"><p class="site-footer__identity type-utility">${e(site.footerIdentity)}</p><p class="type-caption">${e(site.role)}</p><p class="type-caption">${e(site.copyright)}</p></div></footer></body></html>\n`;
+ }
+
+ function renderIndexEntry(section) {
+-  return `<article class="index-entry">${renderHeading({level:3,text:section.title})}<p>${e(section.summary)}</p><div class="index-entry__action">${renderTextLink({ href: section.href, label: section.action })}</div></article>`;
++  return `<article class="index-entry">${renderHeading({level:3,text:section.title})}${renderRichParagraph(section.summary)}<div class="index-entry__action">${renderTextLink({ href: section.href, label: section.action })}</div></article>`;
+ }
+
+ export function renderHomePage({ site, navigation, homepage, stylesheet, script, environment }) {
+-  const nameLines = (site.nameLines ?? [site.name]).map(line => `<span class="heading-highlight" aria-hidden="true">${e(line)}</span>`).join('');
+-  const start = renderPageStart({site,navigation,title:site.title,description:homepage.introduction[0],stylesheet,script,path:'/',environment,bodyClass:'home-page'});
++  const titleLines = (homepage.h1Lines ?? [homepage.h1]).map(line => `<span class="heading-highlight" aria-hidden="true">${e(line)}</span>`).join(' ');
++  const start = renderPageStart({site,navigation,title:site.title,description:homepage.description,stylesheet,script,path:'/',environment,bodyClass:'home-page'});
+   return `${start}
+ <main id="main-content" tabindex="-1" data-page-background>
+   <section class="home-hero" aria-labelledby="home-title"><div class="layout-shell layout-shell--stage home-hero__inner">
+     <p class="home-hero__identity type-eyebrow">${e(site.identity)}</p>
+-    <div class="home-hero__heading"><h1 id="home-title" aria-label="${e(site.name)}">${nameLines}</h1><p class="home-hero__role">${e(site.role)}</p></div>
+-    <div class="home-hero__introduction">${homepage.introduction.slice(0,1).map(paragraph => `<p>${e(paragraph)}</p>`).join('')}</div>
+-    <p class="home-hero__index-note type-caption">An institutional index of Jared's practice</p>
++    <div class="home-hero__heading"><h1 id="home-title" aria-label="${e(homepage.h1)}">${titleLines}</h1></div>
++    <div class="home-hero__introduction">${homepage.introduction.map(renderRichParagraph).join('')}</div>
+   </div></section>
+   <section id="practice-index" class="home-index" aria-labelledby="practice-index-title"><div class="layout-shell layout-shell--stage">
+-    <header class="home-index__header">${renderHeading({level:2,id:'practice-index-title',text:"Explore Jared's practice"})}<p>${e(homepage.introduction[1])}</p></header>
++    <header class="home-index__header">${renderHeading({level:2,id:'practice-index-title',text:homepage.indexHeading})}</header>
+     <div class="index-grid">${homepage.sections.map(renderIndexEntry).join('')}</div>
+   </div></section>
++  <section class="home-about" aria-labelledby="about-index-title"><div class="layout-shell layout-shell--stage">
++    ${renderHeading({level:2,id:'about-index-title',text:homepage.about.title})}
++    ${homepage.about.paragraphs.map(renderRichParagraph).join('')}
++    <p class="home-about__links">${homepage.about.links.map(renderTextLink).join('<span aria-hidden="true"> · </span>')}</p>
++  </div></section>
+ </main>
+ ${renderFooter(site)}`;
+ }
+@@ -57,11 +61,20 @@ function slugify(value) {
+   return value.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+ }
+
++function renderRichPart(part) {
++  if (typeof part === 'string') return e(part);
++  if (typeof part?.emphasis === 'string') return `<em>${e(part.emphasis)}</em>`;
++  if (part?.link) {
++    const link = renderTextLink(part.link);
++    return part.link.emphasis ? `<em>${link}</em>` : link;
++  }
++  throw new Error('Unsupported rich-text part');
++}
++
+ function renderRichParagraph(paragraph) {
+   if (typeof paragraph === 'string') return `<p>${e(paragraph)}</p>`;
+   if (!Array.isArray(paragraph?.parts)) throw new Error('Unsupported paragraph structure');
+-  const body = paragraph.parts.map(part => typeof part === 'string' ? e(part) : `<em>${e(part.emphasis)}</em>`).join('');
+-  return `<p>${body}</p>`;
++  return `<p>${paragraph.parts.map(renderRichPart).join('')}</p>`;
+ }
+
+ function renderArticleSection(section) {
+@@ -76,20 +89,19 @@ function renderSiblingNavigation(sectionRoutes, currentPath) {
+
+ export function renderSectionPage({ site, navigation, sectionRoutes, page, stylesheet, script, environment }) {
+   const path = `/${page.slug}/`;
+-  const description = page.sections[0].paragraphs.find(paragraph => typeof paragraph === 'string');
+   const toc = page.sections.map(section => `<li><a href="#${slugify(section.title)}">${e(section.title)}</a></li>`).join('');
+-  const links = page.links.map(link => `<li>${renderTextLink(link)}</li>`).join('');
+-  const start = renderPageStart({site,navigation,title:`${page.title} — ${site.name}`,description,stylesheet,script,path,environment,bodyClass:'section-page'});
++  const links = page.links.map(renderTextLink).join('<span aria-hidden="true"> · </span>');
++  const start = renderPageStart({site,navigation,title:page.metaTitle,description:page.description,stylesheet,script,path,environment,bodyClass:'section-page'});
+   return `${start}
+ <main id="main-content" tabindex="-1" data-page-background>
+   <header class="section-page__hero"><div class="layout-shell layout-shell--stage">
+-    ${renderHeading({level:1,text:page.title})}
++    ${renderHeading({level:1,text:page.h1})}
+   </div></header>
+   <div class="layout-shell layout-shell--stage section-page__media">${renderMediaSlot({placeholder:{label:'Image pending',decorative:true}})}</div>
+   <div class="layout-shell layout-shell--stage section-page__layout">
+     <aside class="section-page__toc"><nav aria-labelledby="table-of-contents-title">${renderHeading({level:2,id:'table-of-contents-title',text:'Table of contents'})}<ul>${toc}</ul></nav></aside>
+-    <article class="section-page__article">${page.sections.map(renderArticleSection).join('')}
+-      <section class="section-page__destinations" aria-labelledby="continue-title">${renderHeading({level:2,id:'continue-title',text:'Continue'})}<ul>${links}</ul></section>
++    <article class="section-page__article"><div class="section-page__introduction">${page.introduction.map(renderRichParagraph).join('')}</div>${page.sections.map(renderArticleSection).join('')}
++      <section class="section-page__destinations" aria-labelledby="continue-title">${renderHeading({level:2,id:'continue-title',text:'Continue:'})}<p>${links}</p></section>
+     </article>
+     ${renderSiblingNavigation(sectionRoutes, path)}
+   </div>
+diff --git a/src/content/homepage.mjs b/src/content/homepage.mjs
+index 2317943..15ccaf4 100644
+--- a/src/content/homepage.mjs
++++ b/src/content/homepage.mjs
+@@ -2,15 +2,15 @@ export const site = {
+   identity: 'jaredgoldberg.org',
+   footerIdentity: 'JAREDGOLDBERG.ORG',
+   name: 'Jared Goldberg',
+-  nameLines: ['Jared', 'Goldberg'],
+-  title: 'Jared Goldberg — Artist, systems designer and writer',
++  title: 'Art, Archives and Systems | Practice Index',
+   role: 'Artist · Systems designer · Writer',
++  copyright: '© 2026 Jared Goldberg',
+   googleTagId: 'G-N6X517GEQ2',
+ };
+
+ export const sectionRoutes = [
+   { key: 'media', label: 'Media, Archives and Memory', href: '/media-archives-and-memory/' },
+-  { key: 'community', label: 'Community Service', href: '/community-service/' },
++  { key: 'community', label: 'Learning, Work and Agency', href: '/community-service/' },
+   { key: 'systems', label: 'Systems and Institutions', href: '/systems-and-institutions/' },
+   { key: 'art', label: 'Art', href: '/art/' },
+ ];
+@@ -21,34 +21,56 @@ export const navigation = [
+ ];
+
+ export const homepage = {
++  description: 'An index of art, digital archives, participatory software, education projects and work with large institutions.',
++  h1: 'Art, archives and systems in practice',
++  h1Lines: ['Art, archives and', 'systems in practice'],
+   introduction: [
+-    'Jared Goldberg makes art, software, public projects and large work systems. The forms change. The main question does not: how do rules shape what people see, value and do?',
+-    'These four sections provide the shortest route through the practice.',
++    'An image becomes an archive when someone decides how it can be kept and seen. A lesson becomes a program when a student can use it. A store becomes a media system when space, data and incentives are joined. An artist\'s name becomes material when it enters public circulation.',
++    'Jared Goldberg works across these situations. His practice includes digital photography, participatory software, art, youth education and the design of large operating systems. Each project has its own form and stakes. This site traces the decisions that give those projects their shape: what is selected, who can take part, what can be changed, and how value is assigned.',
+   ],
++  indexHeading: 'Four ways into the work',
+   sections: [
+     {
+-      title: 'Media, Archives and Memory',
++      title: 'Media, archives and memory',
+       href: '/media-archives-and-memory/',
+-      summary: 'A photo is not a record on its own. Follow 640 x 480 from a cheap digital camera to a vast image stream and the Pixilation player. See how order, code, loss and time can change the past.',
+-      action: 'Explore Media, Archives and Memory',
++      summary: { parts: [
++        'How does a photograph change when it becomes a sequence, a playable archive or the input to someone else\'s image? Follow ',
++        { emphasis: '640 × 480' },
++        ', Pixilation and Picarty.',
++      ] },
++      action: 'Explore the image archives and participatory media',
+     },
+     {
+-      title: 'Community Service',
++      title: 'Learning, work and agency',
+       href: '/community-service/',
+-      summary: 'What helps people learn, work and earn? The Money Club gives young people a real build-and-sell loop. Capability Works asks how jobs can be built around what people can do.',
+-      action: 'Explore Community Service',
++      summary: 'What must a system provide before a person can act? The Money Club tests an education method with young people. Capability Works proposes a way to rebuild jobs around actual capabilities.',
++      action: 'Explore the education and employment projects',
+     },
+     {
+-      title: 'Systems and Institutions',
++      title: 'Systems and institutions',
+       href: '/systems-and-institutions/',
+-      summary: 'Rules shape what people do. Work in Chinese plants and Canadian mass retail shows how cost, culture, rights and feedback move goods, cash and choice at scale.',
+-      action: 'Explore Systems and Institutions',
++      summary: 'How do factories and retailers turn decisions into products, shelf space and media? Read an institutional account of the roles, measures and incentives behind Goldberg\'s work in China and Canadian retail.',
++      action: 'Explore the systems and institutions',
+     },
+     {
+-      title: 'Art',
++      title: 'Art and the manufacture of value',
+       href: '/art/',
+-      summary: 'Who can name a work, set a price and make the price count? Jared Goldberg, Jared the Jew, Duchamped and The Pitch form one art system built from name, power and value.',
+-      action: 'Explore Art',
++      summary: { parts: [
++        'What happens when an artist changes the frame around an object, a name or a price? Enter Duchamped, the historical stage name Jared the Jew, and ',
++        { emphasis: 'The Pitch' },
++        '.',
++      ] },
++      action: 'Explore the art practice',
+     },
+   ],
++  about: {
++    title: 'About this index',
++    paragraphs: [
++      'The projects are connected by recurring acts of selection, arrangement, participation and circulation. Those connections are a way to read the work, not a claim that all the projects mean the same thing. This index supplies context. The photographs, interfaces, artworks, programs and first-person accounts live at their own sites.',
++    ],
++    links: [
++      { label: "Read Jared Goldberg's first-person essays and work accounts", href: 'https://jaredgoldberg.ca/writing/' },
++      { label: 'Visit the art practice at Duchamped', href: 'https://duchamped.com/' },
++    ],
++  },
+ };
+diff --git a/src/content/section-pages.mjs b/src/content/section-pages.mjs
+index 5478031..b04be6d 100644
+--- a/src/content/section-pages.mjs
++++ b/src/content/section-pages.mjs
+@@ -1,169 +1,275 @@
+ export const sectionPages = [
+   {
+     slug: 'media-archives-and-memory',
+-    title: 'Media, Archives and Memory',
++    metaTitle: '640 × 480, Pixilation and Picarty | Media Archives',
++    description: 'How the 640 × 480 image archive, Pixilation player and Picarty Mashup use sequence, software and participation to change photographs.',
++    h1: 'Digital image archives, pixilation and participatory photography',
++    introduction: [
++      'A digital photograph has more than one life. There is the moment it records. Then there are the decisions that determine its future: which files survive, how they are arranged, what an interface lets the viewer do, and whether other people can add to the image.',
++      { parts: [
++        'Three related projects make those decisions visible. ',
++        { emphasis: '640 × 480' },
++        ' is a long-running photographic archive and time-based work. Pixilation supplies a player for viewing its sequences. ',
++        { emphasis: 'Narcissus As Narcosis' },
++        ' is a separate participatory project whose Mashup application now has a web presence at Picarty. The projects share an interest in images as things people use, while their sources and forms remain distinct.',
++      ] },
++    ],
+     sections: [
+       {
+-        title: 'The record is made twice',
++        title: '640 × 480: the sequence is the work',
++        paragraphs: [
++          { parts: [
++            'Goldberg began making ',
++            { emphasis: '640 × 480' },
++            ' images in Shanghai in 2002, using a small early digital camera. Its frames measured 640 by 480 pixels. At the time, an image that size could occupy much of a computer screen. The limits of the camera remain legible in the archive: noise, unstable colour and a small field of detail.',
++          ] },
++          'Looking at the files in quick succession revealed another possibility. Still frames began to behave like movement. Goldberg started photographing gestures, walks and changing rooms with the next frame in mind. An individual image could be held, but a sequence could carry time.',
++          'The full body of photographs, the chronological albums, any later selected sequence and a single frame are different ways of encountering the material. Selection makes a work legible; it also changes what the archive appears to remember. The record includes gaps. It cannot show an event the camera did not capture or an image that did not survive.',
++          { parts: [
++            'This is why ',
++            { emphasis: '640 × 480' },
++            ' needs more than a gallery of attractive stills. A frame can serve as evidence of a moment. Sequence gives that moment duration. The accumulated archive shows what repeated acts of looking leave behind.',
++          ] },
++        ],
++      },
++      {
++        title: 'Pixilation: the viewer sets the time',
+         paragraphs: [
+-          'A photograph records a moment. A system decides what that moment can become.',
+-          'The camera sets the image size. The photographer chooses where to point it. An archive preserves some pictures and loses others. An interface controls the order, pace and context in which they return. None of these acts is neutral. Each one changes the record.',
+-          '640 x 480 began with a cheap used camera. In 2002, after his Shanghai flat was robbed, Jared Goldberg bought a Pretec DC530 from a colleague. The camera produced images at 640 by 480 pixels, or 0.3 megapixels. That was also a common computer screen size at the time.',
+-          'The limits were visible. The images were small. Their colour was unstable. Digital noise spread across each frame. Yet these flaws gave the pictures their character. They also fixed the work to a brief point in the history of consumer photography, when a digital camera still had to work hard to make a JPEG.',
+-          'At first, Goldberg used the camera to take separate pictures. Then he pressed an arrow key while viewing them on his laptop. Because the files were so small, the images changed at once. One picture gave way to the next. Still photographs became movement.',
+-          'That accident changed the practice.',
+-          'Goldberg began to shoot with sequence in mind. A gesture could continue across several frames. A walk could become a pulse. A room could shift around a person. Daily life could appear as a rough form of animation known as pixilation.',
+-          'The result is not a film in the usual sense. It is a long record built from separate moments over more than two decades. Its gaps matter as much as its continuity. A missing image may mark a lost file, a private event or a day when no picture was made. The archive does not offer complete memory. It shows how memory is built from what remains.',
++          { parts: [
++            'At ',
++            { link: { label: 'Pixilation.org, the 640 × 480 player', href: 'https://pixilation.org/' } },
++            ', the viewer can move through images instead of scanning thumbnails. Pace changes the reading. Rapid playback draws out rhythm and recurrence. Slower playback restores the weight of a particular face, street or gesture. Direction changes the apparent course of an action.',
++          ] },
++          'The viewer can make a temporary edit by moving through the material, but cannot make missing files reappear. The interface gives the archive a form without turning the historical record into a complete account of the past. Its controls are part of how the work is experienced.',
+         ],
+       },
+       {
+-        title: 'The player is part of the work',
++        title: 'Picarty: the image becomes a shared decision',
+         paragraphs: [
+-          'Pixilation.org does not present the archive as a wall of thumbnails. It gives the images time.',
+-          'The player lets the viewer move through the sequence. Direction and speed affect what can be seen. Fast movement reveals rhythm. Slow movement returns attention to single frames. Moving backward can turn cause into effect and make a familiar action strange.',
+-          'The player does more than show the files. It lets the viewer help edit the flow. It keeps the files, but it also stages their return.',
+-          'This is the central question of Media, Archives and Memory: when does a collection of files become a record, and what happens when the tool used to preserve that record also changes how it is read?',
+-          '640 x 480 gives one answer. Memory does not live in the image alone. It also lives in the sequence, the missing frames and the machine that brings the archive back to life.',
++          { parts: [
++            { emphasis: 'Narcissus As Narcosis' },
++            ' asks a different question: who acts on an image, and who is allowed to call the result a work? The earlier Mashup application and the current ',
++            { link: { label: 'Picarty/Mashup web interface', href: 'https://picarty.com/' } },
++            ' belong to this larger project, but they are distinct versions.',
++          ] },
++          "A participation session has several layers: a source capture, a participant's crop or mask, a generated composite, and any later selection by the artist. Those layers should remain visible when an image is described or exhibited. The person who supplies or changes an image, the software that combines it, and the artist who selects an outcome do different things. Their roles cannot be collapsed into one signature.",
++          { parts: [
++            'Picarty also changes the position of the viewer. With ',
++            { emphasis: '640 × 480' },
++            ', a visitor navigates an existing record. With Mashup, a participant helps produce an image that did not exist before the encounter. Both projects make the interface consequential. They do so through different kinds of agency.',
++          ] },
++          { parts: [
++            "Goldberg's ",
++            { link: { label: 'essay on Marshall McLuhan and the medium', href: 'https://jaredgoldberg.ca/writing/medium-is-the-message/' } },
++            ' sets out a wider theory of how a medium shapes perception. The projects here provide particular cases: the low-resolution camera, the sequential player and the participatory composite. Each places a different decision between the world and the picture.',
++          ] },
+         ],
+       },
+     ],
+     links: [
+-      { label: 'Enter the 640 x 480 archive at Pixilation.org', href: 'https://pixilation.org/' },
+-      { label: 'Visit Picarty, a related study of photography, participation and interface', href: 'https://picarty.com/' },
++      { label: 'Experience 640 × 480 through Pixilation', href: 'https://pixilation.org/' },
++      { label: 'Try the current Picarty/Mashup interface', href: 'https://picarty.com/' },
++      { label: "Read Goldberg's essay on the medium", href: 'https://jaredgoldberg.ca/writing/medium-is-the-message/' },
+     ],
+   },
+   {
+     slug: 'community-service',
+-    title: 'Community Service',
++    metaTitle: 'The Money Club and Capability Works | Learning and Work',
++    description: 'An account of The Money Club’s youth financial-literacy pilot and Capability Works, a proposed approach to employment by design.',
++    h1: 'What does a person need in order to act?',
++    introduction: [
++      "An opportunity is shaped by its conditions. A young person can be told what a margin is, but learns more when a price has to meet a cost and another person's choice. A worker may be able to do a task, but be excluded by the hours, transport or noise attached to the job.",
++      'The Money Club and Capability Works approach different problems through the design of those conditions. Their statuses matter: one has run a first youth-program pilot; the other remains a proposed employment and housing model.',
++    ],
+     sections: [
+       {
+-        title: 'Build it, then test it',
++        title: 'The Money Club: learning inside a small economy',
+         paragraphs: [
+-          'People learn best when their choices have real effects. People can work when jobs fit what they can do. Both need clear rules, useful tools and fast feedback.',
+-          'Community Service brings two civic projects together. The Money Club tests these ideas with young people. Capability Works applies them to jobs and homes. One is a live program. The other is still a plan. Both start with the same view: when people are shut out or underused, the fault may lie in the system around them.',
++          { parts: [
++            { link: { label: 'The Money Club', href: 'https://the-money-club.org/' } },
++            ' teaches financial literacy through making, pricing, communication and testing. In August 2026, its first week-long program ran at the UTSU Student Commons in Toronto. Students researched needs, developed offers, examined costs and brought the offers to a Maker Market.',
++          ] },
++          'The market used virtual cash. This let students see peers make choices with a limited budget while keeping the financial stakes low. A purchase with virtual cash is stronger feedback than a compliment. It is still a classroom signal, and it does not establish what the same buyer would pay with their own money in another setting.',
++          'That distinction makes the pilot useful. The program can ask where students needed help, whether they understood the difference between revenue and profit, how they worked together, and what a later session should change. The first run tested a method of learning. A repeatable program will require documentation, new facilitators and further evidence.',
++          { parts: [
++            'Goldberg gives his own account in ',
++            { link: { label: 'The Money Club: Maiden Voyage', href: 'https://jaredgoldberg.ca/projects/the-money-club/maiden-voyage/' } },
++            '. His ',
++            { link: { label: 'essay on a deployable education system', href: 'https://jaredgoldberg.ca/writing/the-money-club-as-a-deployable-education-system/' } },
++            ' describes an ambition beyond one week in Toronto. This page records the difference between the completed pilot and that longer ambition.',
++          ] },
+         ],
+       },
+       {
+-        title: 'The Money Club',
++        title: 'Capability Works: redesigning the job',
+         paragraphs: [
+-          'Most financial education starts with rules. Save. Avoid debt. Make a budget. The rules may be sound, but students have no place to test them.',
+-          'The Money Club starts with a live task.',
+-          'Young people spot a need. They make a product, set a price and meet a buyer. Costs go out. Sales come in. Each choice leaves a mark. The next choice can improve because the feedback is real.',
+-          'Design, money and AI become tools for the work. Students do not pretend to make a product. They make it. They do not guess if an idea has worth. They place it in front of someone and find out.',
+-          'This changes the lesson. Money is no longer just a set of good habits. It becomes a record of choice, risk and shared work.',
+-          'The Club is a nonprofit. Its aim is not to use student work for gain. Its aim is to make the full loop clear while the stakes are low enough for safe mistakes.',
++          { parts: [
++            { link: { label: 'Capability Works', href: 'https://jaredgoldberg.ca/projects/capital-works/' } },
++            " is a proposal for matching people's capabilities and preferred working conditions to tasks with real demand. It begins with a basic observation: a job description bundles the useful task together with a schedule, setting, pace and social demands. Some of those conditions are essential. Others may be inherited habits of the organization.",
++          ] },
++          'The proposed model would examine tasks and conditions separately, then build work with the person who will do it. It also imagines a relationship between paid work and more stable housing. That relationship has not been demonstrated by an operating employment platform. It will require partners, worker participation, research and a pilot that follows what happens after a placement.',
++          { parts: [
++            "Goldberg's ",
++            { link: { label: "essay on the design of work", href: 'https://jaredgoldberg.ca/writing/the-future-of-work-is-a-design-problem/' } },
++            " explains the problem from the worker's point of view. A later ",
++            { link: { label: 'essay on dignity and continuity', href: 'https://jaredgoldberg.ca/writing/dignity-is-a-systems-output/' } },
++            ' asks what happens when a job can be performed but transport, scheduling and support fail to meet. Here the institutional question is concrete: who has the power and information to repair the connection?',
++          ] },
+         ],
+       },
+       {
+-        title: 'Capability Works',
++        title: 'What joins these projects',
+         paragraphs: [
+-          'Capability Works begins with employment. It asks why a person who wants to work can still be left out.',
+-          'The usual answer blames the person. They may lack a degree. They may have a health need or a limit. Capability Works looks at the job instead.',
+-          'Many jobs bundle tasks in a poor way. They ask one worker to meet a fixed mix of speed, motion, memory, speech and time. A person may do key parts of the work well but still fail the whole test.',
+-          'The plan maps what each person can do. It also maps real market demand. Tasks can then be split and rebuilt. Tools, training and the work site can fit the match. Income would fund the work first. In time, it could also help fund stable homes.',
+-          'This is not yet a proven employment platform. It still needs research, partners, pilots and proof. That point must stay clear. Civic work should state what is real and what is still an idea.',
+-          'Together, the two projects treat service as system design. The Money Club lets young people learn inside a real money loop. Capability Works asks how a fairer loop could link work, pay and homes. Both move past advice and good will. They build the terms that let people act.',
++          'One project gives young people a controlled way to test an offer. The other asks how adults might be given better terms for paid contribution. They differ in maturity, audience and risk. Both suggest that advice is limited when the environment gives someone no usable way to act.',
++          'For The Money Club, the next evidence is another iteration with clear observations of learning and participation. For Capability Works, it is a participatory design process and a small test of sustained, fairly paid work. In both cases, the system should learn from the people whose lives it organizes.',
+         ],
+       },
+     ],
+     links: [
+-      { label: 'Read about The Money Club', href: 'https://jaredgoldberg.ca/projects/the-money-club/' },
+-      { label: 'Read about Capability Works', href: 'https://jaredgoldberg.ca/projects/capital-works/' },
+-      { label: 'View all public projects', href: 'https://jaredgoldberg.ca/projects/' },
++      { label: "See The Money Club's account of its first pilot", href: 'https://jaredgoldberg.ca/projects/the-money-club/maiden-voyage/' },
++      { label: 'Read the Capability Works proposal', href: 'https://jaredgoldberg.ca/projects/capital-works/' },
+     ],
+   },
+   {
+     slug: 'systems-and-institutions',
+-    title: 'Systems and Institutions',
++    metaTitle: 'How Institutions Make Decisions | Systems and Retail',
++    description: 'A comparative reading of design and manufacturing in China, private label at Loblaw and retail media at Walmart and Canadian Tire.',
++    h1: 'How institutions make decisions',
++    introduction: [
++      'A product on a shelf can look like one decision. It is usually the end of many: what a factory can make, what a buyer can stock, what a store can sell, what a customer notices and what the next report measures. The same product changes meaning as it crosses those thresholds.',
++      { parts: [
++        'Goldberg has worked on different sides of this chain: teaching and product development in Shanghai; private-label portfolios at Loblaw; retail media at Walmart; and in-store media systems at Canadian Tire. His ',
++        { link: { label: 'first-person work accounts', href: 'https://jaredgoldberg.ca/work/index.html' } },
++        ' describe what he saw inside those organizations. This page compares the decision structures those accounts bring into view.',
++      ] },
++    ],
+     sections: [
+       {
+-        title: 'Rules beat intent',
++        title: 'The factory: what can be repeated?',
+         paragraphs: [
+-          'Large systems do not run on good intentions. They run on rules, incentives, roles, habits and flows of information.',
+-          'Jared Goldberg saw this from both ends of a supply chain. In China, he worked in design and manufacturing. In Canada, he worked inside large retailers. One side made the product. The other chose what earned shelf space, funding and attention.',
+-          'The jobs changed. The lesson held. Results depend on how the whole chain fits.',
++          'In China, Goldberg taught design and worked at Bestway, a maker of toys and sporting goods. His account of an innovation lab joins research, product design, manufacturing and the materials used to sell a product. A design can succeed on paper and still fail at tooling, cost, production or presentation.',
++          { parts: [
++            'This makes a factory an interesting site of authorship. A designer proposes a form. Production gives it tolerances and a price. A retailer asks for differentiation. The product that reaches a buyer is the result of negotiation among these demands. Goldberg describes that movement in his ',
++            { link: { label: 'account of China and supply chains', href: 'https://jaredgoldberg.ca/work/china.html' } },
++            '.',
++          ] },
+         ],
+       },
+       {
+-        title: 'China and manufacturing',
++        title: 'The shelf: who controls comparison?',
+         paragraphs: [
+-          'Goldberg moved to Shanghai in 2002. He first taught design. He then joined Bestway, a large maker of toys and sporting goods.',
+-          'In manufacturing, design, tooling, production, logistics, marketing and retail must act as one. A poor choice at the start gets more costly at each step. A short feedback loop lets a team fix the work before the fault grows.',
+-          'Scale sets up a clash. Plants need goods they can make again and again. Stores want new offers. Buyers want choice. The fix was not more looks. It was a clear plan for brands, goods and sales channels.',
+-          'This work also changed how Goldberg saw innovation. An idea has little worth if a firm cannot use it. A good lab needs a clear goal, access to decision makers and a path from insight to production.',
++          'At Loblaw, the retailer did more than buy products. It could develop private-label offers, compare them with national brands and decide how the assortment would appear on its own shelves. A brand invests in being chosen; a retailer controls the setting in which the choice is made.',
++          { parts: [
++            'Internal decisions also have an audience. A proposal needs evidence, a financial case and people willing to act on it. In Goldberg\'s ',
++            { link: { label: 'Loblaw account', href: 'https://jaredgoldberg.ca/work/loblaw.html' } },
++            ', the competition for investment is as important as the competition between products. Shelf space is physical; attention and approval inside the company are scarce resources too.',
++          ] },
+         ],
+       },
+       {
+-        title: 'Canadian mass retail',
++        title: 'The store: who sets the default?',
+         paragraphs: [
+-          'At Loblaw, the work dealt with portfolios, private labels and bids for capital. Data was key. Yet facts did not move the firm on their own. Teams had to earn trust and make a case that peers could use. Loblaw showed how evidence, belief and decision rights work as one.',
+-          'At Walmart, culture worked like an operating system. Cost rules shaped store layouts, supplier talks and daily rites. A familiar store reduced stress for the shopper. A clear promise could spread through a vast network because the rules did not drift.',
+-          'At Canadian Tire, the dealer model gives local operators real power. The corporation supplies national scale. Its banners also serve distinct needs. Canadian Tire, SportChek, Mark’s and Gas+ do not create the same store trip. One media system must share a core and still fit each banner.',
+-          'These cases show why an institution is more than a brand. It is a set of permissions. It decides who can act, what can change and which results count.',
++          { parts: [
++            "Goldberg's ",
++            { link: { label: 'Walmart account', href: 'https://jaredgoldberg.ca/work/walmart.html' } },
++            ' pays attention to repeated store patterns and operating rituals. Layout, price promises and routines can align many people without a new instruction for every choice. Scale depends partly on the ability to repeat a rule; it also makes exceptions harder to see.',
++          ] },
++          { parts: [
++            'At Canadian Tire, the dealer model introduces another form of control. Local operators have room to respond to their markets, while national banners and shared systems create a common network. An automotive errand, a sporting-goods purchase and a workwear trip each put a shopper in a different frame of mind. A media placement that works in one setting cannot simply be assumed to work in another. Goldberg discusses those conditions in his ',
++            { link: { label: 'Canadian Tire account', href: 'https://jaredgoldberg.ca/work/canadian-tire.html' } },
++            '.',
++          ] },
+         ],
+       },
+       {
+-        title: 'The same question at every scale',
++        title: 'The measure: what result counts?',
+         paragraphs: [
+-          'The study of systems is not apart from the work. It is how the work gets done.',
+-          'Where does information enter? Who gets to choose? What does each side gain or risk? Which result comes back as feedback? Where does one choice add cost to the next step?',
+-          'Those questions apply to a factory, a store network, a civic program and an artist-made institution. The goal may change. The need for clear rules does not.',
++          'Retail media joins physical space to advertising and measurement. A screen can be sold as an impression; a merchant still needs the right stock, price and store experience. A measured sale may include products that were never advertised. Counting what happened is different from showing what the media caused.',
++          'The question for an institution is therefore practical: whose objective is being optimized, who can change the conditions and what evidence would show an improvement for the shopper and the business? A dashboard can report an outcome while leaving the decision that produced it obscure.',
++          { parts: [
++            'Goldberg develops the incentive argument in ',
++            { link: { label: 'What Real Systems Taught Me About Incentives', href: 'https://jaredgoldberg.ca/writing/real-systems-incentives/' } },
++            ". The cases gathered here add a comparative view. The factory, the shelf and the store have different owners and constraints. Each decides what becomes visible and what can be done next. These are accounts of Goldberg's work, not statements on behalf of the organizations named.",
++          ] },
+         ],
+       },
+     ],
+     links: [
+-      { label: 'Read China: Supply Chain as Infrastructure', href: 'https://jaredgoldberg.ca/work/china.html' },
+-      { label: 'Read Loblaw: Learning How Big Systems Actually Work', href: 'https://jaredgoldberg.ca/work/loblaw.html' },
+-      { label: 'Read Walmart: Culture as a Cost Structure', href: 'https://jaredgoldberg.ca/work/walmart.html' },
+-      { label: 'Read Canadian Tire: Inside a Uniquely Canadian System', href: 'https://jaredgoldberg.ca/work/canadian-tire.html' },
++      { label: 'Read the China account', href: 'https://jaredgoldberg.ca/work/china.html' },
++      { label: 'Read the Loblaw account', href: 'https://jaredgoldberg.ca/work/loblaw.html' },
++      { label: 'Read the Walmart account', href: 'https://jaredgoldberg.ca/work/walmart.html' },
++      { label: 'Read the Canadian Tire account', href: 'https://jaredgoldberg.ca/work/canadian-tire.html' },
+     ],
+   },
+   {
+     slug: 'art',
+-    title: 'Art',
++    metaTitle: 'Duchamped, The Pitch and Artistic Value | Art',
++    description: 'An introduction to Duchamped, the historical stage name Jared the Jew, and artworks that test authorship and value.',
++    h1: 'Art and the manufacture of value',
++    introduction: [
++      "Jared Goldberg's art uses more than objects. It uses names, reproductions, storefronts, prices, interfaces and the expectation that an artist will explain what any of these are worth. Some works invite play. Others make the transaction itself uncomfortable. The frame around an artwork can carry as much of the argument as the object inside it.",
++      { parts: [
++        { link: { label: 'Duchamped', href: 'https://duchamped.com/' } },
++        " is the principal home for the art practice. This page is a route into its questions and related projects. Artwork records, available editions and the work's own promotional language belong at their source.",
++      ] },
++    ],
+     sections: [
+       {
+-        title: 'The name is the asset',
++        title: 'To Duchamp: changing the frame',
+         paragraphs: [
+-          'Jared Goldberg’s art asks a blunt question. Who can name a work, set its price and make that price count?',
+-          'The answer does not sit in one object. It sits in a system made from the person, the artist, the institution and the market.',
+-          'Jared Goldberg is the legal person. Jared the Jew is the artist and public name. Duchamped is the institution that shows and certifies the work. The Pitch turns the work into a financial claim. Each part lends force to the rest.',
++          'Goldberg uses “to Duchamp” as a verb for taking a familiar thing and making it operate inside another frame. The thing may be an image, a product, a name or a market convention. Its source can remain recognizable while its use and implied value change.',
++          { parts: [
++            "The verb is Goldberg's artistic usage, explained in the ",
++            { link: { label: 'Duchamped manifesto', href: 'https://duchamped.com/duchamped/' } },
++            '. It is useful because it names an operation rather than a style. A reproduced image, an inflated object and a staged investment page do not have to look alike to ask who is allowed to assign meaning and price.',
++          ] },
++          'That question has limits. Appropriation has a source, an owner and consequences. The relation between an artwork and the thing it borrows must be examined case by case; the verb does not settle it.',
+         ],
+       },
+       {
+-        title: 'To Duchamp',
++        title: "The artist's names",
+         paragraphs: [
+-          'Goldberg describes his method with a verb: to Duchamp.',
+-          'To Duchamp is to take a thing and build a new frame around it. The source can stay in view. Its owner, use and worth can still change.',
+-          'The act can use an image, an object, a brand, a myth or a price. Most of all, it can use Goldberg’s own name.',
+-          '“Jared the Jew” began as words used to hurt him. He took the slur and made it his mark. The insult became his public name and artistic material.',
+-          'That act does not make the name safe. Goldberg can claim it, print it and build an institution around it. He cannot control each reading. A bigot can say it. A Jewish viewer can reject it. A museum can fear it. A collector can buy it.',
+-          'Jared the Jew is a self-portrait that Goldberg can make but never own in full. That lack of control is part of the work.',
++          { parts: [
++            'Goldberg has worked under more than one public identity. ',
++            { emphasis: 'The Subversive Artist' },
++            ' appears as a persona in the current art presentation. ',
++            { emphasis: 'Jared the Jew' },
++            " is a historical stage name and part of the work's record. Its use draws on Goldberg's account of encountering antisemitic language and taking those words into an artistic identity.",
++          ] },
++          'Reclaiming a name does not empty it of its prior force. Different audiences will encounter it with different histories. The name belongs in the archive with its context, while Jared Goldberg remains the name under which the wider practice can be found.',
+         ],
+       },
+       {
+-        title: 'The Pitch',
++        title: 'The Pitch: when the offer is part of the work',
+         paragraphs: [
+-          'The Pitch turns this identity into an economic system.',
+-          { parts: ['At its core is ', { emphasis: 'Sperme d’artiste' }, '. The set has ten works at $2.5 million each. Ten times $2.5 million makes a stated value of $25 million.'] },
+-          'The arithmetic is exact. The value is not.',
+-          'Goldberg has not found the true sale price. He has set an ask. If he will not cut it, the claim stays open. He does not prove the worth. He stops a lower sale from proving him wrong.',
+-          'Price becomes part of the art. So do scarcity, investor language and the pledge to make more. The artist’s body becomes factory, stock and reserve. A blunt joke about “seed capital” turns reproduction into an edition system.',
++          { parts: [
++            { link: { label: 'The Pitch', href: 'https://duchamped.com/the-pitch/', emphasis: true } },
++            ' adopts the surface of an art-investment offer: an invitation, asset language, shares, price and claims of return. In this setting, the sales page is a performance. It asks how a number begins to feel credible when it is wrapped in the familiar signs of scarcity, expertise and financial opportunity.',
++          ] },
++          'The stated prices and returns are claims made within the work. They are not evidence here of independently verified market value, investment performance or an operating securities platform. The distinction matters because a staged offer can be read as an actual one.',
++          { parts: [
++            'Putting a Jewish stage name beside the language of finance can also evoke an antisemitic trope. The work may expose that association or be misread through it; no curatorial statement can decide the viewer\'s response in advance. The risk is part of how ',
++            { emphasis: 'The Pitch' },
++            ' circulates and must be named with care.',
++          ] },
+         ],
+       },
+       {
+-        title: 'The risk is part of the work',
++        title: 'Work, document, edition',
+         paragraphs: [
+-          'The Pitch also takes on an antisemitic myth: the lie that Jews secretly control wealth and finance. Here, nothing is hidden. Jared the Jew makes the work, controls the stock, sets the price and shows each step in public.',
+-          'The work does not say the lie is true. It takes the lie and puts it in a new frame. Yet the artist cannot rule the end. A hostile viewer may take the act at face value. A buyer may turn the critique into one more luxury good. A sale at the full ask would make a made-up sum look like proof.',
+-          'The satire could enter the system it describes.',
+-          'That risk is not a flaw around the work. It is the work.',
+-          'Duchamped holds the full art practice: the manifesto, the artists, the archive, the works and The Pitch. JaredGoldberg.org maps the parts. Duchamped puts them to work.',
++          'An artwork, a photograph documenting it, a software output and something offered for sale can look similar on a screen. They have different histories and different claims to authorship. Duchamped should hold the artwork record; a retail imprint such as Pure Kitsch can hold editions or merchandise. The institutional index can show how those manifestations relate without treating a product listing as the entire work.',
++          { parts: [
++            'This distinction also leaves room for art that does not fit ',
++            { emphasis: 'The Pitch' },
++            '. Photographic sequences, participatory composites, objects and proposed large-scale works may share an interest in circulation while asking different questions. The practice grows clearer when those differences remain visible.',
++          ] },
+         ],
+       },
+     ],
+     links: [
+-      { label: 'Enter Duchamped', href: 'https://duchamped.com/' },
++      { label: 'Read the Duchamped manifesto', href: 'https://duchamped.com/duchamped/' },
++      { label: 'See The Pitch in its original setting', href: 'https://duchamped.com/the-pitch/' },
++      { label: 'Explore the 640 × 480 player', href: 'https://pixilation.org/' },
+     ],
+   },
+ ];
+diff --git a/src/styles/components.css b/src/styles/components.css
+index 9f467b9..1f8405d 100644
+--- a/src/styles/components.css
++++ b/src/styles/components.css
+@@ -246,7 +246,7 @@
+
+ .site-footer__inner {
+   display: grid;
+-  grid-template-columns: minmax(0, 1fr) auto;
++  grid-template-columns: minmax(0, 1fr) auto auto;
+   gap: var(--space-5);
+   align-items: end;
+ }
+diff --git a/src/styles/homepage.css b/src/styles/homepage.css
+index 8569bef..2e81ebb 100644
+--- a/src/styles/homepage.css
++++ b/src/styles/homepage.css
+@@ -19,12 +19,10 @@
+ .home-hero__introduction {
+   grid-column: 8 / -1;
+   grid-row: 2;
+-  align-self: start;
++  align-self: end;
+   display: grid;
+   gap: var(--space-5);
+-  margin-top: calc(var(--home-wordmark-size) + 0.075rem);
+ }
+-.home-hero__index-note { grid-column: 1 / span 6; grid-row: 3; margin-top: var(--space-8); }
+
+ .home-hero h1 {
+   max-width: none;
+@@ -38,22 +36,6 @@
+   padding: 0.04em 0.1em 0.07em;
+   color: var(--wordmark-foreground);
+   background: var(--wordmark-background);
+-  white-space: nowrap;
+-}
+-
+-.home-hero__role {
+-  width: fit-content;
+-  max-width: 100%;
+-  margin-top: var(--space-5);
+-  padding: 0.28em 0.45em 0.34em;
+-  font-family: var(--font-family-display);
+-  font-size: var(--type-size-h4);
+-  font-weight: var(--font-weight-bold);
+-  line-height: var(--line-height-tight);
+-  letter-spacing: var(--tracking-ui);
+-  text-transform: uppercase;
+-  color: var(--wordmark-foreground);
+-  background: var(--wordmark-background);
+ }
+
+ .home-index {
+@@ -98,6 +80,16 @@
+ .index-entry p { max-width: 50ch; }
+ .index-entry__action { align-self: end; }
+
++.home-about {
++  padding-block: var(--section-space-loose);
++  border-top: var(--stroke-1) solid var(--color-border-subtle);
++  background: var(--color-background);
++}
++
++.home-about h2 { margin-bottom: var(--space-6); }
++.home-about p + p { margin-top: var(--space-5); }
++.home-about__links { max-width: none; }
++
+ @media (max-width: 63.99rem) {
+   .home-hero__heading { grid-column: 1 / span 8; }
+   .home-hero__introduction { grid-column: 7 / -1; }
+@@ -111,16 +103,13 @@
+   .home-hero__identity,
+   .home-hero__heading,
+   .home-hero__introduction,
+-  .home-hero__index-note,
+   .home-index__header h2,
+   .home-index__header p { grid-column: auto; }
+   .home-hero__identity,
+   .home-hero__heading,
+-  .home-hero__introduction,
+-  .home-hero__index-note { grid-row: auto; }
++  .home-hero__introduction { grid-row: auto; }
+   .home-hero__introduction { margin-top: 0; }
+   .home-hero h1 { font-size: clamp(3.3rem, 15vw, 4.5rem); }
+-  .home-hero__index-note { margin-top: var(--space-6); }
+   .index-grid {
+     width: 100vw;
+     margin-left: calc(50% - 50vw);
+diff --git a/src/styles/section-pages.css b/src/styles/section-pages.css
+index 0b94c2f..9a20478 100644
+--- a/src/styles/section-pages.css
++++ b/src/styles/section-pages.css
+@@ -47,7 +47,6 @@
+ }
+
+ .section-page__toc ul,
+-.section-page__destinations ul,
+ .section-page__siblings ul {
+   margin: 0;
+   padding: 0;
+@@ -73,6 +72,16 @@
+
+ .section-page__article p { max-width: none; }
+
++.section-page__introduction {
++  padding-bottom: var(--space-6);
++}
++
++.section-page__introduction p + p { margin-top: var(--space-4); }
++.section-page__introduction > p:first-child {
++  font-size: clamp(1.12rem, 1.02rem + 0.38vw, 1.38rem);
++  line-height: 1.48;
++}
++
+ .article-section {
+   padding-block: 0 var(--space-6);
+   scroll-margin-top: calc(var(--site-header-height) + var(--space-4));
+@@ -97,13 +106,12 @@
+   border-top: var(--stroke-1) solid var(--color-border-subtle);
+ }
+
+-.section-page__destinations li {
++.section-page__destinations p {
+   padding-block: var(--space-4);
+-  border-top: var(--stroke-1) solid var(--color-border-subtle);
++  padding-inline-end: var(--space-1);
++  border-block: var(--stroke-1) solid var(--color-border-subtle);
+ }
+
+-.section-page__destinations li:last-child { border-bottom: var(--stroke-1) solid var(--color-border-subtle); }
+-
+ .section-page__siblings {
+   grid-column: 1 / -1;
+   grid-row: 2;
+@@ -153,7 +161,11 @@
+   .section-page__toc,
+   .section-page__article,
+   .section-page__siblings { grid-column: auto; grid-row: auto; }
+-  .section-page__hero h1 { font-size: clamp(2.8rem, 14vw, 4rem); }
++  .section-page__hero h1 {
++    font-size: clamp(2.25rem, 10vw, 3rem);
++    overflow-wrap: normal;
++    word-break: normal;
++  }
+   .section-page__media { margin-bottom: var(--space-6); }
+   .section-page__article { padding-bottom: var(--space-7); }
+   .article-section { padding-bottom: var(--space-5); }
+diff --git a/tests/artifact.test.mjs b/tests/artifact.test.mjs
+index 629ed36..2331e9a 100644
+--- a/tests/artifact.test.mjs
++++ b/tests/artifact.test.mjs
+@@ -10,14 +10,23 @@ test('artifact contains only intended public files, verified checksums and local
+   const approvedExternalLinks=new Set([
+     'https://pixilation.org/',
+     'https://picarty.com/',
+-    'https://jaredgoldberg.ca/projects/the-money-club/',
++    'https://jaredgoldberg.ca/writing/',
++    'https://jaredgoldberg.ca/writing/medium-is-the-message/',
++    'https://the-money-club.org/',
++    'https://jaredgoldberg.ca/projects/the-money-club/maiden-voyage/',
++    'https://jaredgoldberg.ca/writing/the-money-club-as-a-deployable-education-system/',
+     'https://jaredgoldberg.ca/projects/capital-works/',
+-    'https://jaredgoldberg.ca/projects/',
++    'https://jaredgoldberg.ca/writing/the-future-of-work-is-a-design-problem/',
++    'https://jaredgoldberg.ca/writing/dignity-is-a-systems-output/',
++    'https://jaredgoldberg.ca/work/index.html',
+     'https://jaredgoldberg.ca/work/china.html',
+     'https://jaredgoldberg.ca/work/loblaw.html',
+     'https://jaredgoldberg.ca/work/walmart.html',
+     'https://jaredgoldberg.ca/work/canadian-tire.html',
++    'https://jaredgoldberg.ca/writing/real-systems-incentives/',
+     'https://duchamped.com/',
++    'https://duchamped.com/duchamped/',
++    'https://duchamped.com/the-pitch/',
+   ]);
+   const names=await files('dist');
+   const manifest=JSON.parse(await readFile('dist/artifact-manifest.json','utf8'));
+@@ -64,34 +73,50 @@ test('artifact contains only intended public files, verified checksums and local
+   assert.doesNotMatch(html,/menu-panel__icon|>×<|>○<|>\+<|emoji/i);
+   assert.match(html,/data-menu-toggle aria-label="Open menu"/);
+   assert.match(html,/menu-trigger__label">Menu<\/span><span class="menu-trigger__icon" aria-hidden="true">/);
+-  assert.match(html,/<meta name="description" content="Jared Goldberg makes art, software, public projects and large work systems\./);
+-  assert.match(html,/<h1 id="home-title" aria-label="Jared Goldberg"><span class="heading-highlight" aria-hidden="true">Jared<\/span><span class="heading-highlight" aria-hidden="true">Goldberg<\/span><\/h1>/);
+-  assert.match(html,/An institutional index of Jared's practice/);
+-  assert.match(html,/Explore Jared(?:'|&#39;)s practice/);
+-  assert.doesNotMatch(html,/Explore the practice|An institutional index of one practice/);
++  assert.match(html,/<title>Art, Archives and Systems \| Practice Index<\/title>/);
++  assert.match(html,/<meta name="description" content="An index of art, digital archives, participatory software, education projects and work with large institutions\.">/);
++  assert.match(html,/<h1 id="home-title" aria-label="Art, archives and systems in practice">/);
++  assert.match(html,/Four ways into the work/);
++  assert.match(html,/About this index/);
++  assert.match(html,/© 2026 Jared Goldberg/);
+   assert.match(html,/<footer class="site-footer"[\s\S]*?<p class="site-footer__identity type-utility">JAREDGOLDBERG\.ORG<\/p>/);
+   assert.match(html,/<section id="practice-index"/);
+   assert.equal(html.match(/class="index-entry"/g)?.length,4);
+   for(const route of ['media-archives-and-memory','community-service','systems-and-institutions','art']) assert.match(html,new RegExp(`href="/${route}/"`));
+   assert.doesNotMatch(html,/<main[\s\S]*?<img\b|Destination pending|Five areas of inquiry|Selected projects and initiatives/);
+   const sectionFiles=['media-archives-and-memory','community-service','systems-and-institutions','art'];
++  const sectionTitles=[
++    '640 × 480, Pixilation and Picarty | Media Archives',
++    'The Money Club and Capability Works | Learning and Work',
++    'How Institutions Make Decisions | Systems and Retail',
++    'Duchamped, The Pitch and Artistic Value | Art',
++  ];
++  const sectionHeadings=[
++    'Digital image archives, pixilation and participatory photography',
++    'What does a person need in order to act?',
++    'How institutions make decisions',
++    'Art and the manufacture of value',
++  ];
+   const sectionHtml=await Promise.all(sectionFiles.map(slug=>readFile(`dist/${slug}/index.html`,'utf8')));
+   for(const [index,pageHtml] of sectionHtml.entries()) {
+     assert.equal(pageHtml.match(/G-N6X517GEQ2/g)?.length,2);
+-    assert.match(pageHtml,new RegExp(`<h1><span class="heading-highlight">${['Media, Archives and Memory','Community Service','Systems and Institutions','Art'][index]}<\\/span><\\/h1>`));
++    assert.ok(pageHtml.includes(`<title>${sectionTitles[index]}</title>`));
++    assert.ok(pageHtml.includes(`<h1><span class="heading-highlight">${sectionHeadings[index]}</span></h1>`));
+     assert.match(pageHtml,/class="media-frame media-frame--banner media-frame--position-center media-placeholder" aria-hidden="true"/);
+     assert.doesNotMatch(pageHtml,/section-page__identity|section-page__kicker/);
+     assert.match(pageHtml,/<h2 id="table-of-contents-title"><span class="heading-highlight">Table of contents<\/span><\/h2>/);
+     assert.match(pageHtml,/Explore Jared(?:'|&#39;)s practice/);
+     assert.match(pageHtml,/<footer class="site-footer"[\s\S]*?<p class="site-footer__identity type-utility">JAREDGOLDBERG\.ORG<\/p>/);
++    assert.match(pageHtml,/© 2026 Jared Goldberg/);
+     assert.doesNotMatch(pageHtml,/Explore the practice/);
+     assert.doesNotMatch(pageHtml,/>On this page</);
+     assert.doesNotMatch(pageHtml,/<main[\s\S]*?<img\b|Editorial QA not for publication/);
+   }
+-  assert.match(sectionHtml[1],/This is not yet a proven employment platform\./);
++  assert.match(sectionHtml[1],/The market used virtual cash\./);
++  assert.match(sectionHtml[1],/That relationship has not been demonstrated by an operating employment platform\./);
+   assert.match(sectionHtml[1],/https:\/\/jaredgoldberg\.ca\/projects\/capital-works\//);
+   assert.match(sectionHtml[2],/https:\/\/jaredgoldberg\.ca\/work\/canadian-tire\.html/);
+-  assert.match(sectionHtml[3],/<em>Sperme d’artiste<\/em>/);
++  assert.match(sectionHtml[3],/They are not evidence here of independently verified market value, investment performance or an operating securities platform\./);
+   assert.match(sectionHtml[3],/https:\/\/duchamped\.com\//);
+   assert.deepEqual(publicFiles.slice().sort(),['favicon.svg','fonts/1Ptug8zYS_SKggPNyC0IT4ttDfA.woff2','fonts/OFL.txt']);
+   assert.doesNotMatch(names.join('\n'),/above-the-fold-prototype|fixture|test-results/);
+diff --git a/tests/browser.test.mjs b/tests/browser.test.mjs
+index 8c59c92..acd06df 100644
+--- a/tests/browser.test.mjs
++++ b/tests/browser.test.mjs
+@@ -15,10 +15,10 @@ const sizes=[[1440,900],[1024,768],[768,1024],[720,450],[667,375],[430,932],[393
+ const screenshotSizes=new Set(['1440x900','1024x768','390x844','320x568']);
+ const mobileSizes=[[430,932],[393,852],[390,844],[375,667],[320,568],[667,375],[720,450]];
+ const sectionPages=[
+-  {slug:'media-archives-and-memory',title:'Media, Archives and Memory',sections:2,links:2},
+-  {slug:'community-service',title:'Community Service',sections:3,links:3},
+-  {slug:'systems-and-institutions',title:'Systems and Institutions',sections:4,links:4},
+-  {slug:'art',title:'Art',sections:4,links:1},
++  {slug:'media-archives-and-memory',title:'640 × 480, Pixilation and Picarty | Media Archives',h1:'Digital image archives, pixilation and participatory photography',description:'How the 640 × 480 image archive, Pixilation player and Picarty Mashup use sequence, software and participation to change photographs.',sections:3,links:3},
++  {slug:'community-service',title:'The Money Club and Capability Works | Learning and Work',h1:'What does a person need in order to act?',description:'An account of The Money Club’s youth financial-literacy pilot and Capability Works, a proposed approach to employment by design.',sections:3,links:2},
++  {slug:'systems-and-institutions',title:'How Institutions Make Decisions | Systems and Retail',h1:'How institutions make decisions',description:'A comparative reading of design and manufacturing in China, private label at Loblaw and retail media at Walmart and Canadian Tire.',sections:4,links:4},
++  {slug:'art',title:'Duchamped, The Pitch and Artistic Value | Art',h1:'Art and the manufacture of value',description:'An introduction to Duchamped, the historical stage name Jared the Jew, and artworks that test authorship and value.',sections:4,links:3},
+ ];
+ const relativeLuminance=hex=>{
+   const channels=hex.match(/[\da-f]{2}/gi).map(value=>parseInt(value,16)/255).map(value=>value<=.04045?value/12.92:((value+.055)/1.055)**2.4);
+@@ -58,7 +58,8 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
+       assert.equal(await page.locator('link[rel=canonical]').count(),0);
+       if(publicEnvironment==='production') assert.equal(await page.locator('meta[name=robots]').count(),0);
+       else assert.equal(await page.locator('meta[name=robots]').getAttribute('content'),'noindex, nofollow');
+-      assert.match(await page.locator('meta[name=description]').getAttribute('content'),/^Jared Goldberg makes art, software/);
++      assert.equal(await page.title(),'Art, Archives and Systems | Practice Index');
++      assert.equal(await page.locator('meta[name=description]').getAttribute('content'),'An index of art, digital archives, participatory software, education projects and work with large institutions.');
+       const analytics=await page.evaluate(()=>window.dataLayer?.map(entry=>[entry[0],entry[1] instanceof Date?'date':entry[1]]));
+       assert.deepEqual(analytics,[['js','date'],['config','G-N6X517GEQ2']]);
+       const computed=await page.evaluate(()=>{const menuTrigger=document.querySelector('[data-menu-toggle]').getBoundingClientRect(),stage=document.querySelector('.home-index > .layout-shell').getBoundingClientRect();return {fontFamily:getComputedStyle(document.body).fontFamily,fonts:document.fonts.size,overflow:document.documentElement.scrollWidth>innerWidth,menuTrigger:menuTrigger.toJSON(),menuStageRightDelta:stage.right-menuTrigger.right};});
+@@ -70,10 +71,11 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
+         const gutters=await page.locator('main .layout-shell').evaluateAll((shells,viewportWidth)=>shells.map(shell=>{const rect=shell.getBoundingClientRect();return {left:rect.left,right:viewportWidth-rect.right};}),width);
+         for(const gutter of gutters) assert.ok(Math.abs(gutter.left-gutter.right)<.5);
+       }
+-      assert.equal(await page.getByRole('heading',{level:1,name:'Jared Goldberg',exact:true}).count(),1);
+-      assert.equal(await page.getByRole('heading',{level:2,name:"Explore Jared's practice",exact:true}).count(),1);
+-      assert.equal(await page.getByText("An institutional index of Jared's practice",{exact:true}).count(),1);
++      assert.equal(await page.getByRole('heading',{level:1,name:'Art, archives and systems in practice',exact:true}).count(),1);
++      assert.equal(await page.getByRole('heading',{level:2,name:'Four ways into the work',exact:true}).count(),1);
++      assert.equal(await page.getByRole('heading',{level:2,name:'About this index',exact:true}).count(),1);
+       assert.equal(await page.locator('.site-footer__identity').innerText(),'JAREDGOLDBERG.ORG');
++      assert.equal(await page.getByText('© 2026 Jared Goldberg',{exact:true}).count(),1);
+       assert.equal(await page.getByRole('heading',{level:3}).count(),4);
+       assert.equal(await page.locator('.index-entry').count(),4);
+       assert.equal(await page.locator('.index-entry a').count(),4);
+@@ -81,13 +83,12 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
+       assert.equal(await page.locator('main img, main picture, .media-placeholder').count(),0);
+       const displayType=await page.locator('h1').evaluate(element=>{const style=getComputedStyle(element),lines=[...element.children].map(line=>line.getBoundingClientRect().toJSON());return {fontWeight:style.fontWeight,lineHeightRatio:parseFloat(style.lineHeight)/parseFloat(style.fontSize),trackingRatio:parseFloat(style.letterSpacing)/parseFloat(style.fontSize),overflow:element.scrollWidth>element.clientWidth,lines};});
+       assert.equal(displayType.fontWeight,'900');assert.ok(Math.abs(displayType.lineHeightRatio-.9)<.001);assert.ok(Math.abs(displayType.trackingRatio+.03)<.001);assert.equal(displayType.overflow,false);assert.ok(displayType.lines.every(line=>line.width<=width));assert.ok(Math.abs(displayType.lines[1].top-displayType.lines[0].bottom)<1);
+-      const heroHighlights=await page.evaluate(()=>[...document.querySelectorAll('.home-hero h1 > span'),document.querySelector('.home-hero__role')].map(element=>({color:getComputedStyle(element).color,background:getComputedStyle(element).backgroundColor})));
++      const heroHighlights=await page.evaluate(()=>[...document.querySelectorAll('.home-hero h1 > span')].map(element=>({color:getComputedStyle(element).color,background:getComputedStyle(element).backgroundColor})));
+       for(const highlight of heroHighlights){assert.equal(highlight.color,'rgb(255, 255, 255)');assert.equal(highlight.background,'rgb(0, 0, 0)');}
+       const headingHighlights=await page.evaluate(()=>[...document.querySelectorAll('main h1, main h2, main h3')].map(heading=>{const highlights=[...heading.querySelectorAll(':scope > .heading-highlight')];return {highlights:highlights.length,valid:highlights.length>0&&highlights.every(element=>{const style=getComputedStyle(element);return style.color==='rgb(255, 255, 255)'&&style.backgroundColor==='rgb(0, 0, 0)';})};}));
+       assert.ok(headingHighlights.every(heading=>heading.valid));
+-      const homeRhythm=await page.evaluate(()=>{const hero=document.querySelector('.home-hero').getBoundingClientRect(),nameLines=[...document.querySelectorAll('.home-hero h1 > span')].map(line=>line.getBoundingClientRect()),introduction=document.querySelector('.home-hero__introduction').getBoundingClientRect(),indexHeader=document.querySelector('.home-index__header').getBoundingClientRect(),indexTitle=document.querySelector('.home-index__header h2').getBoundingClientRect(),indexIntroduction=document.querySelector('.home-index__header p').getBoundingClientRect();return {heroHeight:hero.height,introductionToGoldberg:introduction.top-nameLines[1].top,indexTitleWidth:indexTitle.width,indexHeaderWidth:indexHeader.width,indexIntroductionLeft:indexIntroduction.left,indexTitleLeft:indexTitle.left,indexIntroductionTop:indexIntroduction.top,indexTitleBottom:indexTitle.bottom};});
+-      if(width>=768){assert.ok(homeRhythm.heroHeight<=705);assert.ok(Math.abs(homeRhythm.introductionToGoldberg)<2);assert.ok(homeRhythm.indexTitleWidth/homeRhythm.indexHeaderWidth>.6);}
+-      assert.ok(Math.abs(homeRhythm.indexIntroductionLeft-homeRhythm.indexTitleLeft)<1);assert.ok(homeRhythm.indexIntroductionTop>homeRhythm.indexTitleBottom);
++      const homeRhythm=await page.evaluate(()=>{const hero=document.querySelector('.home-hero').getBoundingClientRect(),titleLines=[...document.querySelectorAll('.home-hero h1 > span')].map(line=>line.getBoundingClientRect()),introduction=document.querySelector('.home-hero__introduction').getBoundingClientRect(),indexHeader=document.querySelector('.home-index__header').getBoundingClientRect(),indexTitle=document.querySelector('.home-index__header h2').getBoundingClientRect();return {heroHeight:hero.height,introductionBottomDelta:introduction.bottom-titleLines[1].bottom,indexTitleWidth:indexTitle.width,indexHeaderWidth:indexHeader.width};});
++      if(width>=768){assert.ok(homeRhythm.heroHeight<=900);assert.ok(Math.abs(homeRhythm.introductionBottomDelta)<2);assert.ok(homeRhythm.indexTitleWidth/homeRhythm.indexHeaderWidth>.6);}
+       if(width<768){const boxed=await page.evaluate(()=>{const grid=document.querySelector('.index-grid').getBoundingClientRect(),shell=document.querySelector('.home-index > .layout-shell').getBoundingClientRect(),entry=document.querySelector('.index-entry'),heading=entry.querySelector('h3').getBoundingClientRect();return {gridLeft:grid.left,gridRight:grid.right,shellLeft:shell.left,headingLeft:heading.left};});assert.ok(Math.abs(boxed.gridLeft)<1);assert.ok(Math.abs(boxed.gridRight-width)<1);assert.ok(Math.abs(boxed.headingLeft-boxed.shellLeft)<1);}
+       const accent=await page.evaluate(()=>{const style=getComputedStyle(document.documentElement);return {value:style.getPropertyValue('--color-accent').trim(),contrast:style.getPropertyValue('--color-focus-contrast').trim(),surfaces:['--color-background','--color-surface','--color-surface-muted'].map(token=>style.getPropertyValue(token).trim()),dark:style.getPropertyValue('--color-text-primary').trim()};});
+       assert.equal(accent.value,'#990202');for(const surface of accent.surfaces) assert.ok(contrastRatio(accent.value,surface)>=4.5);assert.ok(contrastRatio(accent.contrast,accent.dark)>=3);
+@@ -112,7 +113,7 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
+       await page.keyboard.press('Escape');assert.equal(await trigger.evaluate(element=>element===document.activeElement),true);assert.equal(await page.locator('main').getAttribute('inert'),null);
+       await page.emulateMedia({reducedMotion:'reduce'});await trigger.click();const duration=await page.locator('.menu-panel__sheet').evaluate(element=>parseFloat(getComputedStyle(element).transitionDuration));assert.ok(duration<.001);await page.keyboard.press('Escape');
+       assert.deepEqual(network.errors,[]);assert.deepEqual(network.external,[googleTagUrl]);assert.deepEqual(network.badResponses,[]);
+-      report.viewports.push({width,height,...computed,homeRhythm,sheetWidth,headings:{h1:1,h2:1,h3:4},indexEntries:4,axeViolations:0,consoleErrors:0,externalRequests:1,reducedMotionSeconds:duration});
++      report.viewports.push({width,height,...computed,homeRhythm,sheetWidth,headings:{h1:1,h2:2,h3:4},indexEntries:4,axeViolations:0,consoleErrors:0,externalRequests:1,reducedMotionSeconds:duration});
+       await context.close();
+     });
+
+@@ -120,7 +121,9 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
+       const context=await newContext(browser,{viewport:{width,height},isMobile:width<768,hasTouch:width<768});
+       const page=await context.newPage(),network=observe(page,base),url=`${base}/${item.slug}/`;
+       assert.equal((await page.goto(url)).status(),200);await page.evaluate(()=>document.fonts.ready);
+-      assert.equal(await page.getByRole('heading',{level:1,name:item.title,exact:true}).count(),1);
++      assert.equal(await page.title(),item.title);
++      assert.equal(await page.locator('meta[name=description]').getAttribute('content'),item.description);
++      assert.equal(await page.getByRole('heading',{level:1,name:item.h1,exact:true}).count(),1);
+       assert.equal(await page.locator('main').getByText('JAREDGOLDBERG.ORG',{exact:true}).count(),0);
+       assert.equal(await page.getByText('PRACTICE SECTION',{exact:true}).count(),0);
+       assert.equal(await page.getByRole('heading',{level:2,name:'Table of contents',exact:true}).count(),1);
+@@ -131,6 +134,7 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
+       assert.equal(await page.locator('.section-page__siblings a').count(),4);
+       assert.equal(await page.getByRole('heading',{level:2,name:"Explore Jared's practice",exact:true}).count(),1);
+       assert.equal(await page.locator('.site-footer__identity').innerText(),'JAREDGOLDBERG.ORG');
++      assert.equal(await page.getByText('© 2026 Jared Goldberg',{exact:true}).count(),1);
+       assert.equal(await page.locator('.section-page__siblings a[aria-current=page]').getAttribute('href'),`/${item.slug}/`);
+       assert.equal(await page.locator('main img, main picture').count(),0);assert.equal(await page.locator('.media-placeholder[aria-hidden=true]').count(),1);
+       const media=await page.locator('.media-frame--banner').evaluate(element=>{const rect=element.getBoundingClientRect();return {ratio:rect.width/rect.height,overflow:document.documentElement.scrollWidth>innerWidth};});
+@@ -138,7 +142,7 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
+       const rhythm=await page.evaluate(()=>{const header=document.querySelector('.site-header--overlay'),headerRect=header.getBoundingClientRect(),menu=document.querySelector('[data-menu-toggle]').getBoundingClientRect(),title=document.querySelector('.section-page__hero h1').getBoundingClientRect(),media=document.querySelector('.media-frame--banner').getBoundingClientRect(),layout=document.querySelector('.section-page__layout').getBoundingClientRect(),tocElement=document.querySelector('.section-page__toc'),tocNav=tocElement.querySelector('nav'),toc=tocElement.getBoundingClientRect(),tocStyle=getComputedStyle(tocNav),tocItems=[...tocElement.querySelectorAll('li')].map(item=>item.getBoundingClientRect().toJSON()),article=document.querySelector('.section-page__article').getBoundingClientRect(),firstHeading=document.querySelector('.article-section h2').getBoundingClientRect(),firstParagraph=document.querySelector('.article-section p').getBoundingClientRect(),siblings=document.querySelector('.section-page__siblings ul').getBoundingClientRect(),sections=[...document.querySelectorAll('.article-section')];return {headerPosition:getComputedStyle(header).position,headerHeight:headerRect.height,headerBottom:headerRect.bottom,menuRightDelta:media.right-menu.right,titleTop:title.top,titleMenuGap:title.top-menu.bottom,titleToMedia:media.top-title.bottom,titleRightDelta:media.right-title.right,tocPosition:tocStyle.position,tocTopOffset:parseFloat(tocStyle.top),tocOverflowY:tocStyle.overflowY,tocMaxHeight:tocStyle.maxHeight,tocBorderBottom:parseFloat(getComputedStyle(tocElement).borderBottomWidth),tocToFirstHeading:firstHeading.top-toc.bottom,tocItems,mediaToLayout:layout.top-media.bottom,columnGap:article.left-toc.right,articleRightDelta:media.right-article.right,paragraphRightDelta:article.right-firstParagraph.right,siblingsLeft:siblings.left,siblingsRight:siblings.right,sectionGaps:sections.slice(1).map((section,index)=>section.querySelector('h2').getBoundingClientRect().top-sections[index].querySelector('p:last-child').getBoundingClientRect().bottom)};});
+       assert.ok(Math.abs(rhythm.titleRightDelta)<1);
+       if(width>=768){assert.equal(rhythm.headerPosition,'sticky');assert.ok(Math.abs(rhythm.headerHeight-76)<1);assert.ok(Math.abs(rhythm.menuRightDelta)<1);assert.ok(Math.abs(rhythm.titleTop-rhythm.headerBottom-32)<1);assert.ok(Math.abs(rhythm.titleToMedia-24)<1);assert.equal(rhythm.tocPosition,'sticky');assert.ok(rhythm.tocTopOffset>=rhythm.headerHeight+15);assert.ok(Math.abs(rhythm.columnGap-25.888)<1);assert.ok(Math.abs(rhythm.articleRightDelta)<1);assert.ok(Math.abs(rhythm.paragraphRightDelta)<1);}
+-      else {assert.ok(rhythm.titleMenuGap>=24&&rhythm.titleMenuGap<=36);assert.ok(Math.abs(rhythm.titleToMedia-24)<1);assert.equal(rhythm.tocPosition,'static');assert.equal(rhythm.tocOverflowY,'visible');assert.equal(rhythm.tocMaxHeight,'none');assert.equal(rhythm.tocBorderBottom,1);assert.ok(rhythm.tocToFirstHeading>=23&&rhythm.tocToFirstHeading<=25);assert.ok(Math.abs(rhythm.siblingsLeft)<1);assert.ok(Math.abs(rhythm.siblingsRight-width)<1);assert.equal(new Set(rhythm.tocItems.map(rect=>Math.round(rect.left))).size,1);for(let index=1;index<rhythm.tocItems.length;index+=1){assert.ok(rhythm.tocItems[index].top>=rhythm.tocItems[index-1].bottom);assert.ok(rhythm.tocItems[index].top-rhythm.tocItems[index-1].bottom<1);}}
++      else {assert.ok(rhythm.titleMenuGap>=24&&rhythm.titleMenuGap<=36);assert.ok(Math.abs(rhythm.titleToMedia-24)<1);assert.equal(rhythm.tocPosition,'static');assert.equal(rhythm.tocOverflowY,'visible');assert.equal(rhythm.tocMaxHeight,'none');assert.equal(rhythm.tocBorderBottom,1);assert.ok(rhythm.tocToFirstHeading>=23);assert.ok(Math.abs(rhythm.siblingsLeft)<1);assert.ok(Math.abs(rhythm.siblingsRight-width)<1);assert.equal(new Set(rhythm.tocItems.map(rect=>Math.round(rect.left))).size,1);for(let index=1;index<rhythm.tocItems.length;index+=1){assert.ok(rhythm.tocItems[index].top>=rhythm.tocItems[index-1].bottom);assert.ok(rhythm.tocItems[index].top-rhythm.tocItems[index-1].bottom<1);}}
+       const sectionHeadingHighlights=await page.evaluate(()=>[...document.querySelectorAll('main h1, main h2, main h3')].every(heading=>[...heading.querySelectorAll(':scope > .heading-highlight')].some(element=>{const style=getComputedStyle(element);return style.color==='rgb(255, 255, 255)'&&style.backgroundColor==='rgb(0, 0, 0)';})));
+       assert.equal(sectionHeadingHighlights,true);
+       assert.ok(rhythm.mediaToLayout<=(width<768?33:49));
