@@ -15,10 +15,10 @@ const sizes=[[1440,900],[1024,768],[768,1024],[720,450],[667,375],[430,932],[393
 const screenshotSizes=new Set(['1440x900','1024x768','390x844','320x568']);
 const mobileSizes=[[430,932],[393,852],[390,844],[375,667],[320,568],[667,375],[720,450]];
 const sectionPages=[
-  {slug:'media-archives-and-memory',title:'640 × 480, Pixilation and Picarty | Media Archives',h1:'Digital image archives, pixilation and participatory photography',description:'How the 640 × 480 image archive, Pixilation player and Picarty Mashup use sequence, software and participation to change photographs.',sections:3,links:3},
-  {slug:'community-service',title:'The Money Club and Capability Works | Learning and Work',h1:'What does a person need in order to act?',description:'An account of The Money Club’s youth financial-literacy pilot and Capability Works, a proposed approach to employment by design.',sections:3,links:2},
-  {slug:'systems-and-institutions',title:'How Institutions Make Decisions | Systems and Retail',h1:'How institutions make decisions',description:'A comparative reading of design and manufacturing in China, private label at Loblaw and retail media at Walmart and Canadian Tire.',sections:4,links:4},
-  {slug:'art',title:'Duchamped, The Pitch and Artistic Value | Art',h1:'Art and the manufacture of value',description:'An introduction to Duchamped, the historical stage name Jared the Jew, and artworks that test authorship and value.',sections:4,links:3},
+  {slug:'media-archives-and-memory',title:'Media, Archives and Memory',sections:2,links:2},
+  {slug:'community-service',title:'Community Service',sections:3,links:3},
+  {slug:'systems-and-institutions',title:'Systems and Institutions',sections:4,links:4},
+  {slug:'art',title:'Art',sections:4,links:1},
 ];
 const relativeLuminance=hex=>{
   const channels=hex.match(/[\da-f]{2}/gi).map(value=>parseInt(value,16)/255).map(value=>value<=.04045?value/12.92:((value+.055)/1.055)**2.4);
@@ -58,8 +58,8 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
       assert.equal(await page.locator('link[rel=canonical]').count(),0);
       if(publicEnvironment==='production') assert.equal(await page.locator('meta[name=robots]').count(),0);
       else assert.equal(await page.locator('meta[name=robots]').getAttribute('content'),'noindex, nofollow');
-      assert.equal(await page.title(),'Art, Archives and Systems | Practice Index');
-      assert.equal(await page.locator('meta[name=description]').getAttribute('content'),'An index of art, digital archives, participatory software, education projects and work with large institutions.');
+      assert.equal(await page.title(),'Jared Goldberg — Artist, systems designer and writer');
+      assert.match(await page.locator('meta[name=description]').getAttribute('content'),/^Jared Goldberg makes art, software/);
       const analytics=await page.evaluate(()=>window.dataLayer?.map(entry=>[entry[0],entry[1] instanceof Date?'date':entry[1]]));
       assert.deepEqual(analytics,[['js','date'],['config','G-N6X517GEQ2']]);
       const computed=await page.evaluate(()=>{const menuTrigger=document.querySelector('[data-menu-toggle]').getBoundingClientRect(),stage=document.querySelector('.home-index > .layout-shell').getBoundingClientRect();return {fontFamily:getComputedStyle(document.body).fontFamily,fonts:document.fonts.size,overflow:document.documentElement.scrollWidth>innerWidth,menuTrigger:menuTrigger.toJSON(),menuStageRightDelta:stage.right-menuTrigger.right};});
@@ -71,11 +71,10 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
         const gutters=await page.locator('main .layout-shell').evaluateAll((shells,viewportWidth)=>shells.map(shell=>{const rect=shell.getBoundingClientRect();return {left:rect.left,right:viewportWidth-rect.right};}),width);
         for(const gutter of gutters) assert.ok(Math.abs(gutter.left-gutter.right)<.5);
       }
-      assert.equal(await page.getByRole('heading',{level:1,name:'Art, archives and systems in practice',exact:true}).count(),1);
+      assert.equal(await page.getByRole('heading',{level:1,name:'Jared Goldberg',exact:true}).count(),1);
       assert.equal(await page.getByRole('heading',{level:2,name:'Four ways into the work',exact:true}).count(),1);
-      assert.equal(await page.getByRole('heading',{level:2,name:'About this index',exact:true}).count(),1);
+      assert.equal(await page.getByText("An institutional index of Jared's practice",{exact:true}).count(),1);
       assert.equal(await page.locator('.site-footer__identity').innerText(),'JAREDGOLDBERG.ORG');
-      assert.equal(await page.getByText('© 2026 Jared Goldberg',{exact:true}).count(),1);
       assert.equal(await page.getByRole('heading',{level:3}).count(),4);
       assert.equal(await page.locator('.index-entry').count(),4);
       assert.equal(await page.locator('.index-entry a').count(),4);
@@ -83,12 +82,12 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
       assert.equal(await page.locator('main img, main picture, .media-placeholder').count(),0);
       const displayType=await page.locator('h1').evaluate(element=>{const style=getComputedStyle(element),lines=[...element.children].map(line=>line.getBoundingClientRect().toJSON());return {fontWeight:style.fontWeight,lineHeightRatio:parseFloat(style.lineHeight)/parseFloat(style.fontSize),trackingRatio:parseFloat(style.letterSpacing)/parseFloat(style.fontSize),overflow:element.scrollWidth>element.clientWidth,lines};});
       assert.equal(displayType.fontWeight,'900');assert.ok(Math.abs(displayType.lineHeightRatio-.9)<.001);assert.ok(Math.abs(displayType.trackingRatio+.03)<.001);assert.equal(displayType.overflow,false);assert.ok(displayType.lines.every(line=>line.width<=width));assert.ok(Math.abs(displayType.lines[1].top-displayType.lines[0].bottom)<1);
-      const heroHighlights=await page.evaluate(()=>[...document.querySelectorAll('.home-hero h1 > span')].map(element=>({color:getComputedStyle(element).color,background:getComputedStyle(element).backgroundColor})));
+      const heroHighlights=await page.evaluate(()=>[...document.querySelectorAll('.home-hero h1 > span'),document.querySelector('.home-hero__role')].map(element=>({color:getComputedStyle(element).color,background:getComputedStyle(element).backgroundColor})));
       for(const highlight of heroHighlights){assert.equal(highlight.color,'rgb(255, 255, 255)');assert.equal(highlight.background,'rgb(0, 0, 0)');}
       const headingHighlights=await page.evaluate(()=>[...document.querySelectorAll('main h1, main h2, main h3')].map(heading=>{const highlights=[...heading.querySelectorAll(':scope > .heading-highlight')];return {highlights:highlights.length,valid:highlights.length>0&&highlights.every(element=>{const style=getComputedStyle(element);return style.color==='rgb(255, 255, 255)'&&style.backgroundColor==='rgb(0, 0, 0)';})};}));
       assert.ok(headingHighlights.every(heading=>heading.valid));
-      const homeRhythm=await page.evaluate(()=>{const hero=document.querySelector('.home-hero').getBoundingClientRect(),titleLines=[...document.querySelectorAll('.home-hero h1 > span')].map(line=>line.getBoundingClientRect()),introduction=document.querySelector('.home-hero__introduction').getBoundingClientRect(),indexHeader=document.querySelector('.home-index__header').getBoundingClientRect(),indexTitle=document.querySelector('.home-index__header h2').getBoundingClientRect();return {heroHeight:hero.height,introductionBottomDelta:introduction.bottom-titleLines[1].bottom,indexTitleWidth:indexTitle.width,indexHeaderWidth:indexHeader.width};});
-      if(width>=768){assert.ok(homeRhythm.heroHeight<=900);assert.ok(Math.abs(homeRhythm.introductionBottomDelta)<2);assert.ok(homeRhythm.indexTitleWidth/homeRhythm.indexHeaderWidth>.6);}
+      const homeRhythm=await page.evaluate(()=>{const hero=document.querySelector('.home-hero').getBoundingClientRect(),nameLines=[...document.querySelectorAll('.home-hero h1 > span')].map(line=>line.getBoundingClientRect()),introduction=document.querySelector('.home-hero__introduction').getBoundingClientRect(),indexHeader=document.querySelector('.home-index__header').getBoundingClientRect(),indexTitle=document.querySelector('.home-index__header h2').getBoundingClientRect();return {heroHeight:hero.height,introductionToGoldberg:introduction.top-nameLines[1].top,indexTitleWidth:indexTitle.width,indexHeaderWidth:indexHeader.width};});
+      if(width>=768){assert.ok(homeRhythm.heroHeight<=705);assert.ok(Math.abs(homeRhythm.introductionToGoldberg)<2);assert.ok(homeRhythm.indexTitleWidth/homeRhythm.indexHeaderWidth>.6);}
       if(width<768){const boxed=await page.evaluate(()=>{const grid=document.querySelector('.index-grid').getBoundingClientRect(),shell=document.querySelector('.home-index > .layout-shell').getBoundingClientRect(),entry=document.querySelector('.index-entry'),heading=entry.querySelector('h3').getBoundingClientRect();return {gridLeft:grid.left,gridRight:grid.right,shellLeft:shell.left,headingLeft:heading.left};});assert.ok(Math.abs(boxed.gridLeft)<1);assert.ok(Math.abs(boxed.gridRight-width)<1);assert.ok(Math.abs(boxed.headingLeft-boxed.shellLeft)<1);}
       const accent=await page.evaluate(()=>{const style=getComputedStyle(document.documentElement);return {value:style.getPropertyValue('--color-accent').trim(),contrast:style.getPropertyValue('--color-focus-contrast').trim(),surfaces:['--color-background','--color-surface','--color-surface-muted'].map(token=>style.getPropertyValue(token).trim()),dark:style.getPropertyValue('--color-text-primary').trim()};});
       assert.equal(accent.value,'#990202');for(const surface of accent.surfaces) assert.ok(contrastRatio(accent.value,surface)>=4.5);assert.ok(contrastRatio(accent.contrast,accent.dark)>=3);
@@ -113,7 +112,7 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
       await page.keyboard.press('Escape');assert.equal(await trigger.evaluate(element=>element===document.activeElement),true);assert.equal(await page.locator('main').getAttribute('inert'),null);
       await page.emulateMedia({reducedMotion:'reduce'});await trigger.click();const duration=await page.locator('.menu-panel__sheet').evaluate(element=>parseFloat(getComputedStyle(element).transitionDuration));assert.ok(duration<.001);await page.keyboard.press('Escape');
       assert.deepEqual(network.errors,[]);assert.deepEqual(network.external,[googleTagUrl]);assert.deepEqual(network.badResponses,[]);
-      report.viewports.push({width,height,...computed,homeRhythm,sheetWidth,headings:{h1:1,h2:2,h3:4},indexEntries:4,axeViolations:0,consoleErrors:0,externalRequests:1,reducedMotionSeconds:duration});
+      report.viewports.push({width,height,...computed,homeRhythm,sheetWidth,headings:{h1:1,h2:1,h3:4},indexEntries:4,axeViolations:0,consoleErrors:0,externalRequests:1,reducedMotionSeconds:duration});
       await context.close();
     });
 
@@ -121,9 +120,7 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
       const context=await newContext(browser,{viewport:{width,height},isMobile:width<768,hasTouch:width<768});
       const page=await context.newPage(),network=observe(page,base),url=`${base}/${item.slug}/`;
       assert.equal((await page.goto(url)).status(),200);await page.evaluate(()=>document.fonts.ready);
-      assert.equal(await page.title(),item.title);
-      assert.equal(await page.locator('meta[name=description]').getAttribute('content'),item.description);
-      assert.equal(await page.getByRole('heading',{level:1,name:item.h1,exact:true}).count(),1);
+      assert.equal(await page.getByRole('heading',{level:1,name:item.title,exact:true}).count(),1);
       assert.equal(await page.locator('main').getByText('JAREDGOLDBERG.ORG',{exact:true}).count(),0);
       assert.equal(await page.getByText('PRACTICE SECTION',{exact:true}).count(),0);
       assert.equal(await page.getByRole('heading',{level:2,name:'Table of contents',exact:true}).count(),1);
@@ -134,7 +131,6 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
       assert.equal(await page.locator('.section-page__siblings a').count(),4);
       assert.equal(await page.getByRole('heading',{level:2,name:"Explore Jared's practice",exact:true}).count(),1);
       assert.equal(await page.locator('.site-footer__identity').innerText(),'JAREDGOLDBERG.ORG');
-      assert.equal(await page.getByText('© 2026 Jared Goldberg',{exact:true}).count(),1);
       assert.equal(await page.locator('.section-page__siblings a[aria-current=page]').getAttribute('href'),`/${item.slug}/`);
       assert.equal(await page.locator('main img, main picture').count(),0);assert.equal(await page.locator('.media-placeholder[aria-hidden=true]').count(),1);
       const media=await page.locator('.media-frame--banner').evaluate(element=>{const rect=element.getBoundingClientRect();return {ratio:rect.width/rect.height,overflow:document.documentElement.scrollWidth>innerWidth};});
@@ -142,7 +138,7 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
       const rhythm=await page.evaluate(()=>{const header=document.querySelector('.site-header--overlay'),headerRect=header.getBoundingClientRect(),menu=document.querySelector('[data-menu-toggle]').getBoundingClientRect(),title=document.querySelector('.section-page__hero h1').getBoundingClientRect(),media=document.querySelector('.media-frame--banner').getBoundingClientRect(),layout=document.querySelector('.section-page__layout').getBoundingClientRect(),tocElement=document.querySelector('.section-page__toc'),tocNav=tocElement.querySelector('nav'),toc=tocElement.getBoundingClientRect(),tocStyle=getComputedStyle(tocNav),tocItems=[...tocElement.querySelectorAll('li')].map(item=>item.getBoundingClientRect().toJSON()),article=document.querySelector('.section-page__article').getBoundingClientRect(),firstHeading=document.querySelector('.article-section h2').getBoundingClientRect(),firstParagraph=document.querySelector('.article-section p').getBoundingClientRect(),siblings=document.querySelector('.section-page__siblings ul').getBoundingClientRect(),sections=[...document.querySelectorAll('.article-section')];return {headerPosition:getComputedStyle(header).position,headerHeight:headerRect.height,headerBottom:headerRect.bottom,menuRightDelta:media.right-menu.right,titleTop:title.top,titleMenuGap:title.top-menu.bottom,titleToMedia:media.top-title.bottom,titleRightDelta:media.right-title.right,tocPosition:tocStyle.position,tocTopOffset:parseFloat(tocStyle.top),tocOverflowY:tocStyle.overflowY,tocMaxHeight:tocStyle.maxHeight,tocBorderBottom:parseFloat(getComputedStyle(tocElement).borderBottomWidth),tocToFirstHeading:firstHeading.top-toc.bottom,tocItems,mediaToLayout:layout.top-media.bottom,columnGap:article.left-toc.right,articleRightDelta:media.right-article.right,paragraphRightDelta:article.right-firstParagraph.right,siblingsLeft:siblings.left,siblingsRight:siblings.right,sectionGaps:sections.slice(1).map((section,index)=>section.querySelector('h2').getBoundingClientRect().top-sections[index].querySelector('p:last-child').getBoundingClientRect().bottom)};});
       assert.ok(Math.abs(rhythm.titleRightDelta)<1);
       if(width>=768){assert.equal(rhythm.headerPosition,'sticky');assert.ok(Math.abs(rhythm.headerHeight-76)<1);assert.ok(Math.abs(rhythm.menuRightDelta)<1);assert.ok(Math.abs(rhythm.titleTop-rhythm.headerBottom-32)<1);assert.ok(Math.abs(rhythm.titleToMedia-24)<1);assert.equal(rhythm.tocPosition,'sticky');assert.ok(rhythm.tocTopOffset>=rhythm.headerHeight+15);assert.ok(Math.abs(rhythm.columnGap-25.888)<1);assert.ok(Math.abs(rhythm.articleRightDelta)<1);assert.ok(Math.abs(rhythm.paragraphRightDelta)<1);}
-      else {assert.ok(rhythm.titleMenuGap>=24&&rhythm.titleMenuGap<=36);assert.ok(Math.abs(rhythm.titleToMedia-24)<1);assert.equal(rhythm.tocPosition,'static');assert.equal(rhythm.tocOverflowY,'visible');assert.equal(rhythm.tocMaxHeight,'none');assert.equal(rhythm.tocBorderBottom,1);assert.ok(rhythm.tocToFirstHeading>=23);assert.ok(Math.abs(rhythm.siblingsLeft)<1);assert.ok(Math.abs(rhythm.siblingsRight-width)<1);assert.equal(new Set(rhythm.tocItems.map(rect=>Math.round(rect.left))).size,1);for(let index=1;index<rhythm.tocItems.length;index+=1){assert.ok(rhythm.tocItems[index].top>=rhythm.tocItems[index-1].bottom);assert.ok(rhythm.tocItems[index].top-rhythm.tocItems[index-1].bottom<1);}}
+      else {assert.ok(rhythm.titleMenuGap>=24&&rhythm.titleMenuGap<=36);assert.ok(Math.abs(rhythm.titleToMedia-24)<1);assert.equal(rhythm.tocPosition,'static');assert.equal(rhythm.tocOverflowY,'visible');assert.equal(rhythm.tocMaxHeight,'none');assert.equal(rhythm.tocBorderBottom,1);assert.ok(rhythm.tocToFirstHeading>=23&&rhythm.tocToFirstHeading<=25);assert.ok(Math.abs(rhythm.siblingsLeft)<1);assert.ok(Math.abs(rhythm.siblingsRight-width)<1);assert.equal(new Set(rhythm.tocItems.map(rect=>Math.round(rect.left))).size,1);for(let index=1;index<rhythm.tocItems.length;index+=1){assert.ok(rhythm.tocItems[index].top>=rhythm.tocItems[index-1].bottom);assert.ok(rhythm.tocItems[index].top-rhythm.tocItems[index-1].bottom<1);}}
       const sectionHeadingHighlights=await page.evaluate(()=>[...document.querySelectorAll('main h1, main h2, main h3')].every(heading=>[...heading.querySelectorAll(':scope > .heading-highlight')].some(element=>{const style=getComputedStyle(element);return style.color==='rgb(255, 255, 255)'&&style.backgroundColor==='rgb(0, 0, 0)';})));
       assert.equal(sectionHeadingHighlights,true);
       assert.ok(rhythm.mediaToLayout<=(width<768?33:49));

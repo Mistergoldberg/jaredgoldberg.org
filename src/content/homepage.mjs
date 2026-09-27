@@ -2,7 +2,8 @@ export const site = {
   identity: 'jaredgoldberg.org',
   footerIdentity: 'JAREDGOLDBERG.ORG',
   name: 'Jared Goldberg',
-  title: 'Art, Archives and Systems | Practice Index',
+  nameLines: ['Jared', 'Goldberg'],
+  title: 'Jared Goldberg — Artist, systems designer and writer',
   role: 'Artist · Systems designer · Writer',
   copyright: '© 2026 Jared Goldberg',
   googleTagId: 'G-N6X517GEQ2',
@@ -21,12 +22,8 @@ export const navigation = [
 ];
 
 export const homepage = {
-  description: 'An index of art, digital archives, participatory software, education projects and work with large institutions.',
-  h1: 'Art, archives and systems in practice',
-  h1Lines: ['Art, archives and', 'systems in practice'],
   introduction: [
-    'An image becomes an archive when someone decides how it can be kept and seen. A lesson becomes a program when a student can use it. A store becomes a media system when space, data and incentives are joined. An artist\'s name becomes material when it enters public circulation.',
-    'Jared Goldberg works across these situations. His practice includes digital photography, participatory software, art, youth education and the design of large operating systems. Each project has its own form and stakes. This site traces the decisions that give those projects their shape: what is selected, who can take part, what can be changed, and how value is assigned.',
+    'Jared Goldberg makes art, software, public projects and large work systems. The forms change. The main question does not: how do rules shape what people see, value and do?',
   ],
   indexHeading: 'Four ways into the work',
   sections: [

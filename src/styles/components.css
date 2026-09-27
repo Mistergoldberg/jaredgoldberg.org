@@ -246,7 +246,7 @@
 
 .site-footer__inner {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: var(--space-5);
   align-items: end;
 }
