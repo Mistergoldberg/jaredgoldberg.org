@@ -15,7 +15,7 @@ const sizes=[[1440,900],[1024,768],[768,1024],[720,450],[667,375],[430,932],[393
 const screenshotSizes=new Set(['1440x900','1024x768','390x844','320x568']);
 const mobileSizes=[[430,932],[393,852],[390,844],[375,667],[320,568],[667,375],[720,450]];
 const sectionPages=[
-  {slug:'media-archives-and-memory',title:'Media, Archives and Memory',h1:'Media, archives and memory',image:'media-archives-and-memory.png',alt:'A grid of early silver and blue Pretec DC530 digital cameras.',sections:2,links:2},
+  {slug:'media-archives-and-memory',title:'Media, Archives and Memory',h1:'Media, archives and memory',image:'media-archives-and-memory.png',alt:'A six-frame collage of a person holding a Pretec DC530 camera, the camera alone, and overexposed light.',sections:2,links:2},
   {slug:'community-service',title:'Community Service',h1:'Learning, work and agency',image:'learning-work-agency.png',alt:'A compass surrounded by community networks, public buildings, construction drawings and a classroom.',sections:3,links:3},
   {slug:'systems-and-institutions',title:'Systems and Institutions',h1:'Systems and institutions',image:'systems-and-institutions.png',alt:'A compass surrounded by shipping, transit, energy and industrial infrastructure.',sections:4,links:4},
   {slug:'art',title:'Art',h1:'Art and the manufacture of value',image:'art-manufacture-value.png',alt:'A gloved hand holds a specimen cup labelled The subversive Artist.',sections:4,links:1},

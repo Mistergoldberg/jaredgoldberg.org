@@ -85,7 +85,7 @@ test('artifact contains only intended public files, verified checksums and local
   assert.doesNotMatch(html,/<main[\s\S]*?<img\b|Destination pending|Five areas of inquiry|Selected projects and initiatives/);
   const sectionFiles=['media-archives-and-memory','community-service','systems-and-institutions','art'];
   const sectionImages=[
-    ['media-archives-and-memory.png','A grid of early silver and blue Pretec DC530 digital cameras.',1920,1080],
+    ['media-archives-and-memory.png','A six-frame collage of a person holding a Pretec DC530 camera, the camera alone, and overexposed light.',1920,1080],
     ['learning-work-agency.png','A compass surrounded by community networks, public buildings, construction drawings and a classroom.',1536,1024],
     ['systems-and-institutions.png','A compass surrounded by shipping, transit, energy and industrial infrastructure.',1536,1024],
     ['art-manufacture-value.png','A gloved hand holds a specimen cup labelled The subversive Artist.',1481,987],

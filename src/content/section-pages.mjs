@@ -5,7 +5,7 @@ export const sectionPages = [
     h1: 'Media, archives and memory',
     media: {
       src: '/images/media-archives-and-memory.png',
-      alt: 'A grid of early silver and blue Pretec DC530 digital cameras.',
+      alt: 'A six-frame collage of a person holding a Pretec DC530 camera, the camera alone, and overexposed light.',
       width: 1920,
       height: 1080,
       loading: 'eager',
