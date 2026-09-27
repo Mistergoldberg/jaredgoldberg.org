@@ -137,9 +137,9 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
       assert.equal(await page.locator('.section-page__siblings a[aria-current=page]').getAttribute('href'),`/${item.slug}/`);
       assert.equal(await page.locator('main img').count(),item.images??1);assert.equal(await page.locator('main picture, .media-placeholder').count(),0);
       const heroImage=await page.locator('.media-frame--banner img').evaluate(element=>{const style=getComputedStyle(element);return {src:new URL(element.src).pathname,alt:element.alt,complete:element.complete,naturalWidth:element.naturalWidth,naturalHeight:element.naturalHeight,loading:element.loading,fetchPriority:element.fetchPriority,objectFit:style.objectFit,objectPosition:style.objectPosition,transform:style.transform};});
-      assert.deepEqual(heroImage,{src:`/images/${item.image}`,alt:item.alt,complete:true,naturalWidth:Number(await page.locator('.media-frame--banner img').getAttribute('width')),naturalHeight:Number(await page.locator('.media-frame--banner img').getAttribute('height')),loading:'eager',fetchPriority:'high',objectFit:'cover',objectPosition:'50% 50%',transform:'matrix(1.25, 0, 0, 1.25, 0, 0)'});
+      assert.deepEqual(heroImage,{src:`/images/${item.image}`,alt:item.alt,complete:true,naturalWidth:Number(await page.locator('.media-frame--banner img').getAttribute('width')),naturalHeight:Number(await page.locator('.media-frame--banner img').getAttribute('height')),loading:'eager',fetchPriority:'high',objectFit:'cover',objectPosition:'50% 50%',transform:'none'});
       const media=await page.locator('.media-frame--banner').evaluate(element=>{const rect=element.getBoundingClientRect();return {ratio:rect.width/rect.height,overflow:document.documentElement.scrollWidth>innerWidth};});
-      assert.equal(media.overflow,false);assert.ok(Math.abs(media.ratio-(width<768?1:16/9))<.02);
+      assert.equal(media.overflow,false);assert.ok(Math.abs(media.ratio-(width>=1024?64/27:width<768?1:16/9))<.02);
       await page.locator('.media-frame--banner').screenshot({path:`${results}/screenshots/banner-${item.slug}-${width}x${height}.png`});
       await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));await page.evaluate(()=>new Promise(requestAnimationFrame));
       if(item.slug==='media-archives-and-memory') {
