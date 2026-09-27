@@ -2,6 +2,7 @@ export const sectionPages = [
   {
     slug: 'media-archives-and-memory',
     title: 'Media, Archives and Memory',
+    h1: 'Media, archives and memory',
     sections: [
       {
         title: 'The record is made twice',
@@ -35,6 +36,7 @@ export const sectionPages = [
   {
     slug: 'community-service',
     title: 'Community Service',
+    h1: 'Learning, work and agency',
     sections: [
       {
         title: 'Build it, then test it',
@@ -75,6 +77,7 @@ export const sectionPages = [
   {
     slug: 'systems-and-institutions',
     title: 'Systems and Institutions',
+    h1: 'Systems and institutions',
     sections: [
       {
         title: 'Rules beat intent',
@@ -121,6 +124,7 @@ export const sectionPages = [
   {
     slug: 'art',
     title: 'Art',
+    h1: 'Art and the manufacture of value',
     sections: [
       {
         title: 'The name is the asset',

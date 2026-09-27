@@ -153,7 +153,11 @@
   .section-page__toc,
   .section-page__article,
   .section-page__siblings { grid-column: auto; grid-row: auto; }
-  .section-page__hero h1 { font-size: clamp(2.8rem, 14vw, 4rem); }
+  .section-page__hero h1 {
+    font-size: clamp(2.35rem, 11.5vw, 4rem);
+    overflow-wrap: normal;
+    word-break: normal;
+  }
   .section-page__media { margin-bottom: var(--space-6); }
   .section-page__article { padding-bottom: var(--space-7); }
   .article-section { padding-bottom: var(--space-5); }

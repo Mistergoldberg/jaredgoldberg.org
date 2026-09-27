@@ -83,7 +83,7 @@ export function renderSectionPage({ site, navigation, sectionRoutes, page, style
   return `${start}
 <main id="main-content" tabindex="-1" data-page-background>
   <header class="section-page__hero"><div class="layout-shell layout-shell--stage">
-    ${renderHeading({level:1,text:page.title})}
+    ${renderHeading({level:1,text:page.h1 ?? page.title})}
   </div></header>
   <div class="layout-shell layout-shell--stage section-page__media">${renderMediaSlot({placeholder:{label:'Image pending',decorative:true}})}</div>
   <div class="layout-shell layout-shell--stage section-page__layout">

@@ -87,7 +87,7 @@ test('artifact contains only intended public files, verified checksums and local
   const sectionHtml=await Promise.all(sectionFiles.map(slug=>readFile(`dist/${slug}/index.html`,'utf8')));
   for(const [index,pageHtml] of sectionHtml.entries()) {
     assert.equal(pageHtml.match(/G-N6X517GEQ2/g)?.length,2);
-    assert.match(pageHtml,new RegExp(`<h1><span class="heading-highlight">${['Media, Archives and Memory','Community Service','Systems and Institutions','Art'][index]}<\\/span><\\/h1>`));
+    assert.match(pageHtml,new RegExp(`<h1><span class="heading-highlight">${['Media, archives and memory','Learning, work and agency','Systems and institutions','Art and the manufacture of value'][index]}<\\/span><\\/h1>`));
     assert.match(pageHtml,/class="media-frame media-frame--banner media-frame--position-center media-placeholder" aria-hidden="true"/);
     assert.doesNotMatch(pageHtml,/section-page__identity|section-page__kicker/);
     assert.match(pageHtml,/<h2 id="table-of-contents-title"><span class="heading-highlight">Table of contents<\/span><\/h2>/);
