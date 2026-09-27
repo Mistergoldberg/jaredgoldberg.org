@@ -21,6 +21,18 @@ APPROVED_PUBLIC_IMAGES = {
     'images/art-manufacture-value.png',
     'images/learning-work-agency.png',
     'images/media-archives-and-memory.png',
+    'images/narcissus-as-narcosis-ios-interface-1024.jpg',
+    'images/narcissus-as-narcosis-ios-interface-640.jpg',
+    'images/narcissus-as-narcosis-login-composition-480.jpg',
+    'images/narcissus-as-narcosis-login-composition-707.jpg',
+    'images/narcissus-as-narcosis-portrait-01-480.jpg',
+    'images/narcissus-as-narcosis-portrait-01-768.jpg',
+    'images/narcissus-as-narcosis-portrait-02-480.jpg',
+    'images/narcissus-as-narcosis-portrait-02-768.jpg',
+    'images/narcissus-as-narcosis-portrait-03-480.jpg',
+    'images/narcissus-as-narcosis-portrait-03-768.jpg',
+    'images/narcissus-as-narcosis-portrait-04-480.jpg',
+    'images/narcissus-as-narcosis-portrait-04-768.jpg',
     'images/systems-and-institutions.png',
 }
 

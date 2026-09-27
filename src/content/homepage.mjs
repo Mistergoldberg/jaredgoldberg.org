@@ -30,11 +30,7 @@ export const homepage = {
     {
       title: 'Media, archives and memory',
       href: '/media-archives-and-memory/',
-      summary: { parts: [
-        'How does a photograph change when it becomes a sequence, a playable archive or the input to someone else\'s image? Follow ',
-        { emphasis: '640 × 480' },
-        ', Pixilation and Picarty.',
-      ] },
+      summary: 'How does a photograph change when it becomes a sequence, a playable archive or material for another artist\'s self-portrait? Follow 640 × 480, Pixilation and Narcissus as Narcosis through Picarty.',
       action: 'Explore the image archives and participatory media',
     },
     {

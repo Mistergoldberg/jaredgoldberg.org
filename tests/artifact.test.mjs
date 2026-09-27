@@ -18,6 +18,7 @@ test('artifact contains only intended public files, verified checksums and local
     'https://jaredgoldberg.ca/work/walmart.html',
     'https://jaredgoldberg.ca/work/canadian-tire.html',
     'https://duchamped.com/',
+    'https://duchamped.com/narcussis-explained/',
   ]);
   const names=await files('dist');
   const manifest=JSON.parse(await readFile('dist/artifact-manifest.json','utf8'));
@@ -69,7 +70,7 @@ test('artifact contains only intended public files, verified checksums and local
   assert.match(html,/<h1 id="home-title" aria-label="Jared Goldberg"><span class="heading-highlight" aria-hidden="true">Jared<\/span><span class="heading-highlight" aria-hidden="true">Goldberg<\/span><\/h1>/);
   assert.match(html,/An institutional index of Jared's practice/);
   assert.match(html,/Four ways into the work/);
-  assert.match(html,/How does a photograph change when it becomes a sequence, a playable archive or the input to someone else(?:'|&#39;)s image\? Follow <em>640 × 480<\/em>, Pixilation and Picarty\./);
+  assert.match(html,/How does a photograph change when it becomes a sequence, a playable archive or material for another artist(?:'|&#39;)s self-portrait\? Follow 640 × 480, Pixilation and Narcissus as Narcosis through Picarty\./);
   assert.match(html,/What must a system provide before a person can act\? The Money Club tests an education method with young people\. Capability Works proposes a way to rebuild jobs around actual capabilities\./);
   assert.match(html,/How do factories and retailers turn decisions into products, shelf space and media\? Read an institutional account of the roles, measures and incentives behind Goldberg(?:'|&#39;)s work in China and Canadian retail\./);
   assert.match(html,/What happens when an artist changes the frame around an object, a name or a price\? Enter Duchamped, the historical stage name Jared the Jew, and <em>The Pitch<\/em>\./);
@@ -103,7 +104,7 @@ test('artifact contains only intended public files, verified checksums and local
     assert.match(pageHtml,/<footer class="site-footer"[\s\S]*?<p class="site-footer__identity type-utility">JAREDGOLDBERG\.ORG<\/p>/);
     assert.doesNotMatch(pageHtml,/Explore the practice/);
     assert.doesNotMatch(pageHtml,/>On this page</);
-    assert.equal(pageHtml.match(/<main[\s\S]*?<img\b/g)?.length,1);
+    assert.equal(pageHtml.match(/<img\b/g)?.length,index===0?7:1);
     assert.doesNotMatch(pageHtml,/Editorial QA not for publication/);
   }
   assert.match(sectionHtml[1],/This is not yet a proven employment platform\./);
@@ -111,6 +112,24 @@ test('artifact contains only intended public files, verified checksums and local
   assert.match(sectionHtml[2],/https:\/\/jaredgoldberg\.ca\/work\/canadian-tire\.html/);
   assert.match(sectionHtml[3],/<em>Sperme d’artiste<\/em>/);
   assert.match(sectionHtml[3],/https:\/\/duchamped\.com\//);
+  assert.equal(sectionHtml[0].match(/<title>640 × 480, Pixilation and Narcissus as Narcosis<\/title>/g)?.length,1);
+  assert.equal(sectionHtml[0].match(/<meta name="description" content="How 640 × 480, Pixilation and Narcissus as Narcosis use archives, interfaces and participation to change how photographs are made and read\.">/g)?.length,1);
+  assert.doesNotMatch(sectionHtml[0],/<title>[^<]*Jared Goldberg/);
+  assert.match(sectionHtml[0],/<li><a href="#narcissus-as-narcosis">Narcissus as Narcosis<\/a><\/li>/);
+  const narcissusHtml=sectionHtml[0].match(/<section class="article-section" aria-labelledby="narcissus-as-narcosis">[\s\S]*?<\/section>/)?.[0];
+  assert.ok(narcissusHtml);
+  assert.match(narcissusHtml,/<h2 id="narcissus-as-narcosis"><span class="heading-highlight">Narcissus as Narcosis: the subject is part of the system<\/span><\/h2>/);
+  assert.equal(narcissusHtml.match(/<p>/g)?.length,9);
+  assert.equal(narcissusHtml.match(/<img\b/g)?.length,6);
+  assert.equal(narcissusHtml.match(/ loading="lazy"/g)?.length,6);
+  assert.equal(narcissusHtml.match(/ srcset="/g)?.length,6);
+  assert.equal(narcissusHtml.match(/ sizes="/g)?.length,6);
+  assert.match(narcissusHtml,/Selected Orchestrated Self Portraits from Narcissus as Narcosis\./);
+  assert.match(narcissusHtml,/Mashup interface, iOS app, 2012–2016\./);
+  assert.match(narcissusHtml,/href="https:\/\/duchamped\.com\/narcussis-explained\/"/);
+  assert.match(narcissusHtml,/href="https:\/\/picarty\.com\/"/);
+  assert.doesNotMatch(narcissusHtml,/duchamped\.com\/wp-content\/uploads/);
+  assert.match(sectionHtml[0],/>Try the current Mashup interface at Picarty</);
   assert.deepEqual(publicFiles.slice().sort(),[
     'favicon.svg',
     'fonts/1Ptug8zYS_SKggPNyC0IT4ttDfA.woff2',
@@ -118,6 +137,18 @@ test('artifact contains only intended public files, verified checksums and local
     'images/art-manufacture-value.png',
     'images/learning-work-agency.png',
     'images/media-archives-and-memory.png',
+    'images/narcissus-as-narcosis-ios-interface-1024.jpg',
+    'images/narcissus-as-narcosis-ios-interface-640.jpg',
+    'images/narcissus-as-narcosis-login-composition-480.jpg',
+    'images/narcissus-as-narcosis-login-composition-707.jpg',
+    'images/narcissus-as-narcosis-portrait-01-480.jpg',
+    'images/narcissus-as-narcosis-portrait-01-768.jpg',
+    'images/narcissus-as-narcosis-portrait-02-480.jpg',
+    'images/narcissus-as-narcosis-portrait-02-768.jpg',
+    'images/narcissus-as-narcosis-portrait-03-480.jpg',
+    'images/narcissus-as-narcosis-portrait-03-768.jpg',
+    'images/narcissus-as-narcosis-portrait-04-480.jpg',
+    'images/narcissus-as-narcosis-portrait-04-768.jpg',
     'images/systems-and-institutions.png',
   ]);
   assert.doesNotMatch(names.join('\n'),/above-the-fold-prototype|fixture|test-results/);

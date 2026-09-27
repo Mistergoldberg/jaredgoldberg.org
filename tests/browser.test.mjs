@@ -15,7 +15,7 @@ const sizes=[[1440,900],[1024,768],[768,1024],[720,450],[667,375],[430,932],[393
 const screenshotSizes=new Set(['1440x900','1024x768','390x844','320x568']);
 const mobileSizes=[[430,932],[393,852],[390,844],[375,667],[320,568],[667,375],[720,450]];
 const sectionPages=[
-  {slug:'media-archives-and-memory',title:'Media, Archives and Memory',h1:'Media, archives and memory',image:'media-archives-and-memory.png',alt:'A six-frame collage of a person holding a Pretec DC530 camera, the camera alone, and overexposed light.',sections:2,links:2},
+  {slug:'media-archives-and-memory',title:'Media, Archives and Memory',metaTitle:'640 × 480, Pixilation and Narcissus as Narcosis',description:'How 640 × 480, Pixilation and Narcissus as Narcosis use archives, interfaces and participation to change how photographs are made and read.',h1:'Media, archives and memory',image:'media-archives-and-memory.png',alt:'A six-frame collage of a person holding a Pretec DC530 camera, the camera alone, and overexposed light.',sections:3,links:2,images:7},
   {slug:'community-service',title:'Community Service',h1:'Learning, work and agency',image:'learning-work-agency.png',alt:'A compass surrounded by community networks, public buildings, construction drawings and a classroom.',sections:3,links:3},
   {slug:'systems-and-institutions',title:'Systems and Institutions',h1:'Systems and institutions',image:'systems-and-institutions.png',alt:'A compass surrounded by shipping, transit, energy and industrial infrastructure.',sections:4,links:4},
   {slug:'art',title:'Art',h1:'Art and the manufacture of value',image:'art-manufacture-value.png',alt:'A gloved hand holds a specimen cup labelled The subversive Artist.',sections:4,links:1},
@@ -120,6 +120,9 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
       const context=await newContext(browser,{viewport:{width,height},isMobile:width<768,hasTouch:width<768});
       const page=await context.newPage(),network=observe(page,base),url=`${base}/${item.slug}/`;
       assert.equal((await page.goto(url)).status(),200);await page.evaluate(()=>document.fonts.ready);
+      assert.equal(await page.locator('link[rel=canonical]').count(),0);
+      assert.equal(await page.title(),item.metaTitle??`${item.title} — Jared Goldberg`);
+      if(item.description) assert.equal(await page.locator('meta[name=description]').getAttribute('content'),item.description);
       assert.equal(await page.getByRole('heading',{level:1,name:item.h1,exact:true}).count(),1);
       assert.equal(await page.locator('main').getByText('JAREDGOLDBERG.ORG',{exact:true}).count(),0);
       assert.equal(await page.getByText('PRACTICE SECTION',{exact:true}).count(),0);
@@ -132,11 +135,34 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
       assert.equal(await page.getByRole('heading',{level:2,name:"Explore Jared's practice",exact:true}).count(),1);
       assert.equal(await page.locator('.site-footer__identity').innerText(),'JAREDGOLDBERG.ORG');
       assert.equal(await page.locator('.section-page__siblings a[aria-current=page]').getAttribute('href'),`/${item.slug}/`);
-      assert.equal(await page.locator('main img').count(),1);assert.equal(await page.locator('main picture, .media-placeholder').count(),0);
+      assert.equal(await page.locator('main img').count(),item.images??1);assert.equal(await page.locator('main picture, .media-placeholder').count(),0);
       const heroImage=await page.locator('.media-frame--banner img').evaluate(element=>({src:new URL(element.src).pathname,alt:element.alt,complete:element.complete,naturalWidth:element.naturalWidth,naturalHeight:element.naturalHeight,loading:element.loading,fetchPriority:element.fetchPriority}));
       assert.deepEqual(heroImage,{src:`/images/${item.image}`,alt:item.alt,complete:true,naturalWidth:Number(await page.locator('.media-frame--banner img').getAttribute('width')),naturalHeight:Number(await page.locator('.media-frame--banner img').getAttribute('height')),loading:'eager',fetchPriority:'high'});
       const media=await page.locator('.media-frame--banner').evaluate(element=>{const rect=element.getBoundingClientRect();return {ratio:rect.width/rect.height,overflow:document.documentElement.scrollWidth>innerWidth};});
       assert.equal(media.overflow,false);assert.ok(Math.abs(media.ratio-(width<768?1:16/9))<.02);
+      if(item.slug==='media-archives-and-memory') {
+        assert.equal(await page.getByRole('heading',{level:2,name:'Narcissus as Narcosis: the subject is part of the system',exact:true}).count(),1);
+        assert.equal(await page.locator('.section-page__toc a[href="#narcissus-as-narcosis"]').innerText(),'Narcissus as Narcosis');
+        assert.equal(await page.locator('.narcissus-gallery img').count(),4);
+        assert.equal(await page.locator('.narcissus-figure img').count(),2);
+        assert.equal(await page.getByText('Selected Orchestrated Self Portraits from Narcissus as Narcosis.',{exact:true}).count(),1);
+        assert.equal(await page.getByText('Mashup interface, iOS app, 2012–2016.',{exact:true}).count(),1);
+        const projectImageLocator=page.locator('.narcissus-gallery img, .narcissus-figure img');
+        for(const image of await projectImageLocator.all()){await image.scrollIntoViewIfNeeded();await image.evaluate(element=>element.complete&&element.naturalWidth>0?true:new Promise((resolve,reject)=>{element.addEventListener('load',()=>resolve(true),{once:true});element.addEventListener('error',()=>reject(new Error(`Image failed: ${element.currentSrc||element.src}`)),{once:true});}));}
+        const projectImages=await projectImageLocator.evaluateAll(images=>images.map(image=>{const rect=image.getBoundingClientRect();return {complete:image.complete,naturalWidth:image.naturalWidth,naturalHeight:image.naturalHeight,renderedRatio:rect.width/rect.height,intrinsicRatio:Number(image.getAttribute('width'))/Number(image.getAttribute('height')),loading:image.loading,src:new URL(image.currentSrc||image.src).pathname,srcset:image.getAttribute('srcset'),sizes:image.getAttribute('sizes')};}));
+        assert.equal(projectImages.length,6);
+        for(const image of projectImages){assert.equal(image.complete,true);assert.ok(image.naturalWidth>0&&image.naturalHeight>0);assert.ok(Math.abs(image.renderedRatio-image.intrinsicRatio)<.02);assert.equal(image.loading,'lazy');assert.ok(image.src.startsWith('/images/narcissus-as-narcosis-'));assert.match(image.srcset,/\/images\/narcissus-as-narcosis-/);assert.ok(image.sizes);}
+        const galleryColumns=await page.locator('.narcissus-gallery__grid').evaluate(element=>getComputedStyle(element).gridTemplateColumns.split(' ').length);
+        assert.equal(galleryColumns,width<768?1:2);
+        const tocLink=page.locator('.section-page__toc a[href="#narcissus-as-narcosis"]');
+        await tocLink.focus();
+        assert.equal(await tocLink.evaluate(element=>getComputedStyle(element).outlineColor),'rgb(153, 2, 2)');
+        await page.keyboard.press('Enter');await page.waitForFunction(()=>{if(location.hash!=='#narcissus-as-narcosis')return false;const heading=document.querySelector('#narcissus-as-narcosis'),top=heading.getBoundingClientRect().top,offset=parseFloat(getComputedStyle(heading).scrollMarginTop);return Math.abs(top-offset)<2;});
+        const anchorPosition=await page.evaluate(()=>{const heading=document.querySelector('#narcissus-as-narcosis').getBoundingClientRect(),header=document.querySelector('.site-header--overlay').getBoundingClientRect(),trigger=document.querySelector('[data-menu-toggle]').getBoundingClientRect();return {headingTop:heading.top,headerBottom:header.bottom,triggerBottom:trigger.bottom};});
+        assert.ok(anchorPosition.headingTop>=Math.max(anchorPosition.headerBottom,anchorPosition.triggerBottom));
+        await page.screenshot({path:`${results}/screenshots/media-narcissus-${width}x${height}-anchor.png`});
+        await page.evaluate(()=>{history.replaceState(null,'',location.pathname);scrollTo({top:0,behavior:'instant'});});
+      }
       const rhythm=await page.evaluate(()=>{const header=document.querySelector('.site-header--overlay'),headerRect=header.getBoundingClientRect(),menu=document.querySelector('[data-menu-toggle]').getBoundingClientRect(),titleElement=document.querySelector('.section-page__hero h1'),title=titleElement.getBoundingClientRect(),titleStyle=getComputedStyle(titleElement),media=document.querySelector('.media-frame--banner').getBoundingClientRect(),layout=document.querySelector('.section-page__layout').getBoundingClientRect(),tocElement=document.querySelector('.section-page__toc'),tocNav=tocElement.querySelector('nav'),toc=tocElement.getBoundingClientRect(),tocStyle=getComputedStyle(tocNav),tocItems=[...tocElement.querySelectorAll('li')].map(item=>item.getBoundingClientRect().toJSON()),article=document.querySelector('.section-page__article').getBoundingClientRect(),firstHeading=document.querySelector('.article-section h2').getBoundingClientRect(),firstParagraph=document.querySelector('.article-section p').getBoundingClientRect(),siblings=document.querySelector('.section-page__siblings ul').getBoundingClientRect(),sections=[...document.querySelectorAll('.article-section')];return {headerPosition:getComputedStyle(header).position,headerHeight:headerRect.height,headerBottom:headerRect.bottom,menuRightDelta:media.right-menu.right,titleTop:title.top,titleMenuGap:title.top-menu.bottom,titleToMedia:media.top-title.bottom,titleRightDelta:media.right-title.right,titleOverflow:titleElement.scrollWidth>titleElement.clientWidth,titleOverflowWrap:titleStyle.overflowWrap,tocPosition:tocStyle.position,tocTopOffset:parseFloat(tocStyle.top),tocOverflowY:tocStyle.overflowY,tocMaxHeight:tocStyle.maxHeight,tocBorderBottom:parseFloat(getComputedStyle(tocElement).borderBottomWidth),tocToFirstHeading:firstHeading.top-toc.bottom,tocItems,mediaToLayout:layout.top-media.bottom,columnGap:article.left-toc.right,articleRightDelta:media.right-article.right,paragraphRightDelta:article.right-firstParagraph.right,siblingsLeft:siblings.left,siblingsRight:siblings.right,sectionGaps:sections.slice(1).map((section,index)=>section.querySelector('h2').getBoundingClientRect().top-sections[index].querySelector('p:last-child').getBoundingClientRect().bottom)};});
       assert.ok(Math.abs(rhythm.titleRightDelta)<1);
       assert.equal(rhythm.titleOverflow,false);
