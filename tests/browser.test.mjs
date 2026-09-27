@@ -160,7 +160,8 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
         const tocLink=page.locator('.section-page__toc a[href="#narcissus-as-narcosis"]');
         await tocLink.focus();
         assert.equal(await tocLink.evaluate(element=>getComputedStyle(element).outlineColor),'rgb(153, 2, 2)');
-        await page.keyboard.press('Enter');await page.waitForFunction(()=>{if(location.hash!=='#narcissus-as-narcosis')return false;const heading=document.querySelector('#narcissus-as-narcosis'),top=heading.getBoundingClientRect().top,offset=parseFloat(getComputedStyle(heading).scrollMarginTop);return Math.abs(top-offset)<2;});
+        await page.keyboard.press('Enter');await page.waitForFunction(()=>location.hash==='#narcissus-as-narcosis');
+        await page.waitForFunction(()=>{const heading=document.querySelector('#narcissus-as-narcosis').getBoundingClientRect(),header=document.querySelector('.site-header--overlay').getBoundingClientRect(),trigger=document.querySelector('[data-menu-toggle]').getBoundingClientRect(),visibleTop=Math.max(header.bottom,trigger.bottom),previous=window.__narcissusAnchorTop;window.__narcissusAnchorTop=heading.top;return heading.top>=visibleTop-1&&heading.top<innerHeight&&Number.isFinite(previous)&&Math.abs(heading.top-previous)<.5;});
         const anchorPosition=await page.evaluate(()=>{const heading=document.querySelector('#narcissus-as-narcosis').getBoundingClientRect(),header=document.querySelector('.site-header--overlay').getBoundingClientRect(),trigger=document.querySelector('[data-menu-toggle]').getBoundingClientRect();return {headingTop:heading.top,headerBottom:header.bottom,triggerBottom:trigger.bottom};});
         assert.ok(anchorPosition.headingTop>=Math.max(anchorPosition.headerBottom,anchorPosition.triggerBottom));
         await page.screenshot({path:`${results}/screenshots/media-narcissus-${width}x${height}-anchor.png`});

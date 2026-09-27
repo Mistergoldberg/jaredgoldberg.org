@@ -43,6 +43,7 @@ Explicit exclusions:
 | Low | Several portrait alternatives inferred gender unnecessarily; the Art banner alternative was awkward and the login image overstated the number of identifiable faces. | Rewrote the alternatives as factual, image-specific descriptions after inspecting the source images. |
 | Low | Responsive `sizes` hints for the four-column portrait row and matching login image overstated desktop widths. | Added desktop/tablet/mobile hints that match the rendered composition; intrinsic dimensions, aspect ratios, lazy loading, and local `srcset` remain intact. |
 | Low | Section pages were exercised at 390 px but not explicitly at the binding 320 px acceptance width. | Added 320×568 coverage for all four sections and retained 1440×900, 768×1024, and 720×450 200%-equivalent reflow checks for every route. |
+| Low | The Media table-of-contents browser gate depended on reaching an exact subpixel scroll-margin endpoint after smooth scrolling, which timed out intermittently across Chromium executables despite a visible, unobscured heading. | Reframed the assertion around the accessibility outcome: the fragment must update, the target must enter the viewport, and neither the header nor menu trigger may obscure it. Page behavior is unchanged. |
 
 ## Content and accessibility audit
 
