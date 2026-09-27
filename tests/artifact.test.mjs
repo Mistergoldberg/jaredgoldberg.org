@@ -88,7 +88,7 @@ test('artifact contains only intended public files, verified checksums and local
     ['media-archives-and-memory.png','A six-frame collage of a person holding a Pretec DC530 camera, the camera alone, and overexposed light.',1920,1080],
     ['learning-work-agency.png','A compass surrounded by community networks, public buildings, construction drawings and a classroom.',1536,1024],
     ['systems-and-institutions.png','A compass surrounded by shipping, transit, energy and industrial infrastructure.',1536,1024],
-    ['art-manufacture-value.png','A gloved hand holds a specimen cup labelled The subversive Artist.',1481,987],
+    ['art-manufacture-value.png','A gloved hand holds a specimen cup marked Jared the beside a Star of David, against a blue background.',1481,987],
   ];
   const sectionHtml=await Promise.all(sectionFiles.map(slug=>readFile(`dist/${slug}/index.html`,'utf8')));
   for(const [index,pageHtml] of sectionHtml.entries()) {

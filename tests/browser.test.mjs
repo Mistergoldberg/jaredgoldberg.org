@@ -18,7 +18,7 @@ const sectionPages=[
   {slug:'media-archives-and-memory',title:'Media, Archives and Memory',metaTitle:'640 × 480, Pixilation and Narcissus as Narcosis',description:'How 640 × 480, Pixilation and Narcissus as Narcosis use archives, interfaces and participation to change how photographs are made and read.',h1:'Media, archives and memory',image:'media-archives-and-memory.png',alt:'A six-frame collage of a person holding a Pretec DC530 camera, the camera alone, and overexposed light.',sections:3,links:2,images:7},
   {slug:'community-service',title:'Community Service',h1:'Learning, work and agency',image:'learning-work-agency.png',alt:'A compass surrounded by community networks, public buildings, construction drawings and a classroom.',sections:3,links:3},
   {slug:'systems-and-institutions',title:'Systems and Institutions',h1:'Systems and institutions',image:'systems-and-institutions.png',alt:'A compass surrounded by shipping, transit, energy and industrial infrastructure.',sections:4,links:4},
-  {slug:'art',title:'Art',h1:'Art and the manufacture of value',image:'art-manufacture-value.png',alt:'A gloved hand holds a specimen cup labelled The subversive Artist.',sections:4,links:1},
+  {slug:'art',title:'Art',h1:'Art and the manufacture of value',image:'art-manufacture-value.png',alt:'A gloved hand holds a specimen cup marked Jared the beside a Star of David, against a blue background.',sections:4,links:1},
 ];
 const relativeLuminance=hex=>{
   const channels=hex.match(/[\da-f]{2}/gi).map(value=>parseInt(value,16)/255).map(value=>value<=.04045?value/12.92:((value+.055)/1.055)**2.4);

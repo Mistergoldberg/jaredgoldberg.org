@@ -253,7 +253,7 @@ export const sectionPages = [
     h1: 'Art and the manufacture of value',
     media: {
       src: '/images/art-manufacture-value.png',
-      alt: 'A gloved hand holds a specimen cup labelled The subversive Artist.',
+      alt: 'A gloved hand holds a specimen cup marked Jared the beside a Star of David, against a blue background.',
       width: 1481,
       height: 987,
       loading: 'eager',
