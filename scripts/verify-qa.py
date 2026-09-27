@@ -13,15 +13,21 @@ MIME={'.html':['text/html'],'.css':['text/css'],'.js':['application/javascript',
       '.jpg':['image/jpeg'],'.jpeg':['image/jpeg'],'.webp':['image/webp'],
       '.json':['application/json'],'.txt':['text/plain']}
 APPROVED_EXTERNAL_URLS={
+    'https://jaredgoldberg.ca/writing/',
+    'https://jaredgoldberg.ca/writing/medium-is-the-message/',
+    'https://jaredgoldberg.ca/projects/the-money-club/maiden-voyage/',
+    'https://jaredgoldberg.ca/writing/the-money-club-as-a-deployable-education-system/',
     'https://jaredgoldberg.ca/writing/the-future-of-work-is-a-design-problem/',
     'https://jaredgoldberg.ca/writing/dignity-is-a-systems-output/',
     'https://jaredgoldberg.ca/projects/the-money-club/',
     'https://jaredgoldberg.ca/projects/capital-works/',
     'https://jaredgoldberg.ca/projects/',
+    'https://jaredgoldberg.ca/work/index.html',
     'https://jaredgoldberg.ca/work/china.html',
     'https://jaredgoldberg.ca/work/loblaw.html',
     'https://jaredgoldberg.ca/work/walmart.html',
     'https://jaredgoldberg.ca/work/canadian-tire.html',
+    'https://jaredgoldberg.ca/writing/real-systems-incentives/',
 }
 PRETTY_ROUTES={
     '/media-archives-and-memory/':'media-archives-and-memory/index.html',
