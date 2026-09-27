@@ -3,7 +3,7 @@ export const site = {
   footerIdentity: 'JAREDGOLDBERG.ORG',
   name: 'Jared Goldberg',
   nameLines: ['Jared', 'Goldberg'],
-  title: 'Jared Goldberg — Artist, systems designer and writer',
+  title: 'Art, Archives and Systems | Practice Index',
   role: 'Artist · Systems designer · Writer',
   copyright: '© 2026 Jared Goldberg',
   googleTagId: 'G-N6X517GEQ2',

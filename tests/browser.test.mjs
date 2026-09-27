@@ -16,9 +16,9 @@ const screenshotSizes=new Set(['1440x900','1024x768','768x1024','390x844','320x5
 const mobileSizes=[[430,932],[393,852],[390,844],[375,667],[320,568],[667,375],[720,450]];
 const sectionPages=[
   {slug:'media-archives-and-memory',title:'Media, Archives and Memory',metaTitle:'640 × 480, Pixilation and Narcissus as Narcosis',description:'How 640 × 480, Pixilation and Narcissus as Narcosis use archives, interfaces and participation to change how photographs are made and read.',h1:'Media, archives and memory',image:'media-archives-and-memory.png',alt:'A six-frame collage of a person holding a Pretec DC530 camera, the camera alone, and overexposed light.',sections:3,links:2,images:7},
-  {slug:'community-service',title:'Community Service',description:'People learn best when their choices have real effects. People can work when jobs fit what they can do. Both need clear rules, useful tools and fast feedback.',h1:'Learning, work and agency',image:'learning-work-agency.png',alt:'A compass surrounded by community networks, public buildings, construction drawings and a classroom.',sections:3,links:3},
-  {slug:'systems-and-institutions',title:'Systems and Institutions',description:'Large systems do not run on good intentions. They run on rules, incentives, roles, habits and flows of information.',h1:'Systems and institutions',image:'systems-and-institutions.png',alt:'A compass surrounded by shipping, transit, energy and industrial infrastructure.',sections:4,links:4},
-  {slug:'art',title:'Art',description:'Jared Goldberg’s art asks a blunt question. Who can name a work, set its price and make that price count?',h1:'Art and the manufacture of value',image:'art-manufacture-value.png',alt:'A gloved hand holds a specimen cup labeled Jared beside a small Star of David against a blue background.',sections:4,links:1},
+  {slug:'community-service',title:'Community Service',metaTitle:'The Money Club and Capability Works | Learning and Work',description:'People learn best when their choices have real effects. People can work when jobs fit what they can do. Both need clear rules, useful tools and fast feedback.',h1:'Learning, work and agency',image:'learning-work-agency.png',alt:'A compass surrounded by community networks, public buildings, construction drawings and a classroom.',sections:3,links:3},
+  {slug:'systems-and-institutions',title:'Systems and Institutions',metaTitle:'How Institutions Make Decisions | Systems and Retail',description:'Large systems do not run on good intentions. They run on rules, incentives, roles, habits and flows of information.',h1:'Systems and institutions',image:'systems-and-institutions.png',alt:'A compass surrounded by shipping, transit, energy and industrial infrastructure.',sections:4,links:4},
+  {slug:'art',title:'Art',metaTitle:'Duchamped, The Pitch and Artistic Value | Art',description:'Jared Goldberg’s art asks a blunt question. Who can name a work, set its price and make that price count?',h1:'Art and the manufacture of value',image:'art-manufacture-value.png',alt:'A gloved hand holds a specimen cup labeled Jared beside a small Star of David against a blue background.',sections:4,links:1},
 ];
 const relativeLuminance=hex=>{
   const channels=hex.match(/[\da-f]{2}/gi).map(value=>parseInt(value,16)/255).map(value=>value<=.04045?value/12.92:((value+.055)/1.055)**2.4);
@@ -58,7 +58,7 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
       assert.equal(await page.locator('link[rel=canonical]').count(),0);
       if(publicEnvironment==='production') assert.equal(await page.locator('meta[name=robots]').count(),0);
       else assert.equal(await page.locator('meta[name=robots]').getAttribute('content'),'noindex, nofollow');
-      assert.equal(await page.title(),'Jared Goldberg — Artist, systems designer and writer');
+      assert.equal(await page.title(),'Art, Archives and Systems | Practice Index');
       assert.match(await page.locator('meta[name=description]').getAttribute('content'),/^Jared Goldberg makes art, software/);
       const analytics=await page.evaluate(()=>window.dataLayer?.map(entry=>[entry[0],entry[1] instanceof Date?'date':entry[1]]));
       assert.deepEqual(analytics,[['js','date'],['config','G-N6X517GEQ2']]);
@@ -121,7 +121,7 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
       const page=await context.newPage(),network=observe(page,base),url=`${base}/${item.slug}/`;
       assert.equal((await page.goto(url)).status(),200);await page.evaluate(()=>document.fonts.ready);
       assert.equal(await page.locator('link[rel=canonical]').count(),0);
-      assert.equal(await page.title(),item.metaTitle??`${item.title} — Jared Goldberg`);
+      assert.equal(await page.title(),item.metaTitle);
       assert.equal(await page.locator('meta[name=description]').getAttribute('content'),item.description);
       assert.equal(await page.getByRole('heading',{level:1,name:item.h1,exact:true}).count(),1);
       assert.equal(await page.locator('main').getByText('JAREDGOLDBERG.ORG',{exact:true}).count(),0);

@@ -147,6 +147,7 @@ export const sectionPages = [
     slug: 'community-service',
     title: 'Community Service',
     h1: 'Learning, work and agency',
+    metaTitle: 'The Money Club and Capability Works | Learning and Work',
     media: {
       src: '/images/learning-work-agency.png',
       alt: 'A compass surrounded by community networks, public buildings, construction drawings and a classroom.',
@@ -196,6 +197,7 @@ export const sectionPages = [
     slug: 'systems-and-institutions',
     title: 'Systems and Institutions',
     h1: 'Systems and institutions',
+    metaTitle: 'How Institutions Make Decisions | Systems and Retail',
     media: {
       src: '/images/systems-and-institutions.png',
       alt: 'A compass surrounded by shipping, transit, energy and industrial infrastructure.',
@@ -251,6 +253,7 @@ export const sectionPages = [
     slug: 'art',
     title: 'Art',
     h1: 'Art and the manufacture of value',
+    metaTitle: 'Duchamped, The Pitch and Artistic Value | Art',
     media: {
       src: '/images/art-manufacture-value.png',
       alt: 'A gloved hand holds a specimen cup labeled Jared beside a small Star of David against a blue background.',

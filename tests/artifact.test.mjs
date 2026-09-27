@@ -63,7 +63,7 @@ test('artifact contains only intended public files, verified checksums and local
   assert.doesNotMatch(html,/menu-panel__icon|>×<|>○<|>\+<|emoji/i);
   assert.match(html,/data-menu-toggle aria-label="Open menu"/);
   assert.match(html,/menu-trigger__label">Menu<\/span><span class="menu-trigger__icon" aria-hidden="true">/);
-  assert.match(html,/<title>Jared Goldberg — Artist, systems designer and writer<\/title>/);
+  assert.match(html,/<title>Art, Archives and Systems \| Practice Index<\/title>/);
   assert.match(html,/<meta name="description" content="Jared Goldberg makes art, software, public projects and large work systems\./);
   assert.match(html,/<h1 id="home-title" aria-label="Jared Goldberg"><span class="heading-highlight" aria-hidden="true">Jared<\/span><span class="heading-highlight" aria-hidden="true">Goldberg<\/span><\/h1>/);
   assert.match(html,/An institutional index of Jared's practice/);
@@ -90,6 +90,19 @@ test('artifact contains only intended public files, verified checksums and local
     ['art-manufacture-value.png','A gloved hand holds a specimen cup labeled Jared beside a small Star of David against a blue background.',1481,987],
   ];
   const sectionHtml=await Promise.all(sectionFiles.map(slug=>readFile(`dist/${slug}/index.html`,'utf8')));
+  const expectedTitles=[
+    'Art, Archives and Systems | Practice Index',
+    '640 × 480, Pixilation and Narcissus as Narcosis',
+    'The Money Club and Capability Works | Learning and Work',
+    'How Institutions Make Decisions | Systems and Retail',
+    'Duchamped, The Pitch and Artistic Value | Art',
+  ];
+  assert.equal(new Set(expectedTitles).size,expectedTitles.length);
+  for(const [pageHtml,title] of [html,...sectionHtml].map((pageHtml,index)=>[pageHtml,expectedTitles[index]])) {
+    assert.equal(pageHtml.match(/<title>[^<]+<\/title>/g)?.length,1);
+    assert.ok(pageHtml.includes(`<title>${title}</title>`));
+    assert.doesNotMatch(pageHtml,/<title>[^<]*Jared Goldberg/i);
+  }
   for(const [index,pageHtml] of sectionHtml.entries()) {
     const [imageName,imageAlt,imageWidth,imageHeight]=sectionImages[index];
     assert.equal(pageHtml.match(/G-N6X517GEQ2/g)?.length,2);
@@ -110,9 +123,7 @@ test('artifact contains only intended public files, verified checksums and local
   assert.match(sectionHtml[2],/https:\/\/jaredgoldberg\.ca\/work\/canadian-tire\.html/);
   assert.match(sectionHtml[3],/<em>Sperme d’artiste<\/em>/);
   assert.match(sectionHtml[3],/https:\/\/duchamped\.com\//);
-  assert.equal(sectionHtml[0].match(/<title>640 × 480, Pixilation and Narcissus as Narcosis<\/title>/g)?.length,1);
   assert.equal(sectionHtml[0].match(/<meta name="description" content="How 640 × 480, Pixilation and Narcissus as Narcosis use archives, interfaces and participation to change how photographs are made and read\.">/g)?.length,1);
-  assert.doesNotMatch(sectionHtml[0],/<title>[^<]*Jared Goldberg/);
   assert.match(sectionHtml[0],/<li><a href="#narcissus-as-narcosis">Narcissus as Narcosis<\/a><\/li>/);
   const narcissusHtml=sectionHtml[0].match(/<section class="article-section" aria-labelledby="narcissus-as-narcosis">[\s\S]*?<\/section>/)?.[0];
   assert.ok(narcissusHtml);

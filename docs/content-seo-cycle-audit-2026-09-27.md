@@ -36,6 +36,7 @@ Explicit exclusions:
 | Severity | Finding | Resolution/status |
 |---|---|---|
 | High | No high-severity content, accessibility, crawl-control, or artifact leak was found. | No action required. |
+| Medium | Four of the five HTML titles retained `Jared Goldberg`, contrary to the binding content brief and final editorial direction. | Replaced them with the brief's distinct, descriptive titles; retained the later approved Media title; and added artifact/browser assertions covering every route. Names remain only in descriptions and visible copy where already approved. |
 | Medium | The former branch history included the isolated favicon commit and stale evidence from a subsequently reverted copy experiment. | Rebuilt this branch directly from `origin/main`, excluded the favicon work, removed stale evidence from the final diff, and consolidated the reviewed cycle into one implementation commit. |
 | Medium | At 768 px, the homepage role strap overlapped the introduction column. | Moved the tablet introduction one grid column right in page-specific CSS and added a no-collision regression assertion. Shared tokens and global layout rules are unchanged. |
 | Medium | Production serves duplicate `www`, `/index.html`, and section `/index.html` URL variants as `200`, while all five pages omit canonicals. | Open technical issue. Resolving it requires a separately approved site-wide canonical/redirect policy and live Nginx work, which this cycle explicitly excludes. |
@@ -57,13 +58,13 @@ Explicit exclusions:
 
 | Route | HTML title | Meta description | H1 |
 |---|---|---|---|
-| `/` | `Jared Goldberg — Artist, systems designer and writer` | `Jared Goldberg makes art, software, public projects and large work systems. The forms change. The main question does not: how do rules shape what people see, value and do?` | `Jared Goldberg` |
+| `/` | `Art, Archives and Systems \| Practice Index` | `Jared Goldberg makes art, software, public projects and large work systems. The forms change. The main question does not: how do rules shape what people see, value and do?` | `Jared Goldberg` |
 | `/media-archives-and-memory/` | `640 × 480, Pixilation and Narcissus as Narcosis` | `How 640 × 480, Pixilation and Narcissus as Narcosis use archives, interfaces and participation to change how photographs are made and read.` | `Media, archives and memory` |
-| `/community-service/` | `Community Service — Jared Goldberg` | `People learn best when their choices have real effects. People can work when jobs fit what they can do. Both need clear rules, useful tools and fast feedback.` | `Learning, work and agency` |
-| `/systems-and-institutions/` | `Systems and Institutions — Jared Goldberg` | `Large systems do not run on good intentions. They run on rules, incentives, roles, habits and flows of information.` | `Systems and institutions` |
-| `/art/` | `Art — Jared Goldberg` | `Jared Goldberg’s art asks a blunt question. Who can name a work, set its price and make that price count?` | `Art and the manufacture of value` |
+| `/community-service/` | `The Money Club and Capability Works \| Learning and Work` | `People learn best when their choices have real effects. People can work when jobs fit what they can do. Both need clear rules, useful tools and fast feedback.` | `Learning, work and agency` |
+| `/systems-and-institutions/` | `How Institutions Make Decisions \| Systems and Retail` | `Large systems do not run on good intentions. They run on rules, incentives, roles, habits and flows of information.` | `Systems and institutions` |
+| `/art/` | `Duchamped, The Pitch and Artistic Value \| Art` | `Jared Goldberg’s art asks a blunt question. Who can name a work, set its price and make that price count?` | `Art and the manufacture of value` |
 
-- Titles and descriptions are unique, present once, factually supported by their pages, and contain no QA language or unsupported outcome claim.
+- Titles and descriptions are unique, present once, factually supported by their pages, and contain no QA language or unsupported outcome claim. No HTML title contains `Jared Goldberg`; existing approved name references remain in descriptions and visible copy.
 - Production HTML contains no `noindex`/`nofollow`; production `robots.txt` is `Allow: /`. QA HTML and responses retain `noindex, nofollow`, and QA `robots.txt` disallows all.
 - Internal links are root-relative, crawlable anchors to the five established routes. Artifact tests verify that every internal target and table-of-contents fragment exists.
 - All ten editorial destinations returned `200` with zero redirects on 2026-09-27: Pixilation, Picarty, The Money Club, Capability Works, the `.ca` projects index, four `.ca` work accounts, and Duchamped. External links remain same-tab, visibly marked, and are not `nofollow`.
@@ -91,6 +92,5 @@ Primary guidance consulted:
 ## Decisions before closeout
 
 1. Approve a later canonical/redirect policy: apex `https://jaredgoldberg.org` as preferred host, self-referencing canonicals, and permanent redirects from `www` and `/index.html` variants. This requires a separate metadata/Nginx cycle.
-2. Decide whether the Learning, Systems, and Art pages should keep their current concise titles/descriptions or receive project-specific search copy. The present metadata is accurate; changing it is editorial optimization, not a technical repair.
-3. Decide whether to commission route-specific social titles/descriptions/images and, only where justified, structured data.
-4. In the separate global design-system cycle, consider responsive WebP/AVIF banner derivatives and extending `renderMediaSlot` with `srcset`/`sizes`; the current PNG banners are 1.4–2.4 MB each.
+2. Decide whether to commission route-specific social titles/descriptions/images and, only where justified, structured data.
+3. In the separate global design-system cycle, consider responsive WebP/AVIF banner derivatives and extending `renderMediaSlot` with `srcset`/`sizes`; the current PNG banners are 1.4–2.4 MB each.
