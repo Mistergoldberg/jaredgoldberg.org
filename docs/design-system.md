@@ -10,14 +10,14 @@ Implemented and binding:
 - `#990202` is the accent for links and the outer focus ring. The menu remains predominantly white and neutral; its control icons are CSS-drawn, not emoji.
 - The mobile menu control is a 44×44 icon button in a zero-height sticky header. It remains available while scrolling without imposing an asymmetric content gutter.
 - Desktop and tablet use a 4.75rem sticky header with the menu control inside it and a subtle lower rule. The control's right edge follows the shared stage/article edge. Sticky tables of contents and anchored article headings clear that header rather than sitting behind it.
-- Standard-page banners use 16:9 through desktop and tablet and 1:1 below 768px. Supplied banner images keep `object-fit: cover` and `object-position: center center`, with a shared centered `transform: scale(1.25)` inside the existing clipped frame. A neutral labelled placeholder remains available when a future banner asset is pending.
+- Standard-page banners use a 25%-shorter `64:27` frame at the 1024px desktop breakpoint, 16:9 on tablet and 1:1 below 768px. Supplied banner images remain unscaled with `object-fit: cover` and `object-position: center center`. A neutral labelled placeholder remains available when a future banner asset is pending.
 - The page, stage, content and reading-width shells, the spacing scale, the 48rem/64rem breakpoints and reduced-motion policy below are shared rules.
 
 Page-specific status and open inputs:
 
 - The homepage uses the approved semantic two-line wordmark treatment: white Raleway Black text in independently sized black highlights. Its role line uses the same highlight language. The earlier prototype image remains fixture-only, and the homepage uses no imagery.
 - The supporting-page architecture is established for the four practice routes. Each page uses the standard-page banner primitive, local table of contents, long-form article, supplied onward links and four-route sibling navigation.
-- The four supporting pages use their approved supplied banners through `renderMediaSlot`. Their shared centered `scale(1.25)` crop is part of the standard-page banner contract; do not add page-specific crop exceptions without review.
+- The four supporting pages use their approved supplied banners through `renderMediaSlot`. Their shared desktop-only height crop is part of the standard-page banner contract; do not add page-specific crop exceptions without review.
 - Image focal points, alt text and whether a future missing image is meaningful or decorative depend on the supplied asset and page context. Do not invent them.
 - Physical iOS Safari, VoiceOver and non-Chromium browser review remain outstanding.
 
@@ -102,7 +102,7 @@ Cards remain available for self-contained utility surfaces. Do not use `.card` a
 
 ## Images and placeholders
 
-- Wrap editorial imagery in `.media-frame`; use `.media-frame--banner` for standard-page banners. Images fill the frame with `object-fit: cover`, retain `object-position: center center`, and receive a centered `transform: scale(1.25)` inside the clipped banner frame. This banner-only transform is the exact meaning of the approved 25% centered zoom; it does not apply to inline artwork or galleries.
+- Wrap editorial imagery in `.media-frame`; use `.media-frame--banner` for standard-page banners. Images fill the frame unscaled with `object-fit: cover` and `object-position: center center`. At 1024px and wider, the frame height is reduced by 25% from 16:9, expressed exactly as `aspect-ratio: 64 / 27`; tablet remains 16:9 and mobile remains 1:1. This frame-only crop does not apply to inline artwork or galleries.
 - Supply intrinsic `width` and `height` on real images. Use descriptive alt text for meaningful images and `alt=""` for decorative images. Never reuse a filename or project title as invented alt text.
 - Set an asset-specific `object-position` only after inspecting the supplied image at desktop, tablet and mobile crops.
 - `renderMediaSlot` is the stable replacement boundary. Without `media`, it delegates to the neutral placeholder. With `media`, provide a root-relative local `src`, intentional `alt` (empty only when decorative), positive intrinsic `width`/`height`, and optional `loading`, `fetchPriority` and `position` (`center`, `top`, `bottom`, `left` or `right`). `banner` and `square` are the supported frame variants. Above-the-fold imagery uses `loading: 'eager'` and `fetchPriority: 'high'`; otherwise retain lazy/auto defaults.
@@ -123,7 +123,7 @@ Cards remain available for self-contained utility surfaces. Do not use `.card` a
 | Homepage identity, role and opening | semantic `h1`, independent highlights and prose | One accessible page title; approved name lines remain visual only; no homepage banner |
 | Four-route practice index | `.index-grid` + `.index-entry` | Every entry carries one supplied summary and one internal route; no decorative numbering or dedicated number column. On mobile the bordered grid is viewport-wide while entry content stays on the page text column |
 | Supporting-page title | `.section-page__hero` | One full-stage-width H1 with no site-name or generic section kicker; its column shares both edges with the media frame. Desktop/tablet use 2rem between the sticky header and title and 1.5rem between the title and media; title may wrap without clipping |
-| Standard-page banner | `.media-frame--banner` / `renderMediaSlot` | 16:9 desktop/tablet, 1:1 mobile; supplied images use `object-fit: cover`, `object-position: center center` and banner-only `transform: scale(1.25)` inside the clipped frame |
+| Standard-page banner | `.media-frame--banner` / `renderMediaSlot` | desktop 64:27 (25% shorter than 16:9), tablet 16:9, mobile 1:1; supplied images remain unscaled with `object-fit: cover` and `object-position: center center` |
 | Long-form section copy | `.section-page__layout`, “Table of contents” navigation and `.article-section` | Contents mirror H2 headings; mobile subjects form one compact, non-scrolling stacked column followed by the shared 24px/divider/24px section transition; desktop/tablet contents stick 1rem below the shared header through the complete article and “Continue” section, then hand off behind the opaque related-practice section; article reaches the media’s right edge; adjacent article sections use the compact spacing scale and no copy is clamped or converted into cards |
 | Supplied onward destinations | `.section-page__destinations` + `renderTextLink` | HTTPS links use the graphic external mark, stay in the same tab and are checked against the approved allowlist |
 | Related practice routes | `.section-page__siblings` | Label the group “Explore Jared's practice,” always show all four internal routes and mark the current page semantically; below 768px the bordered list is viewport-wide with link text aligned to the page column |
