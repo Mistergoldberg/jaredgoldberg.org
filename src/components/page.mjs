@@ -14,12 +14,58 @@ function analytics(site) {
 </script>` : '';
 }
 
-export function renderPageStart({ site, navigation, title, description, stylesheet, script, path, environment, bodyClass = '' }) {
+function canonicalUrl(site, path) {
+  if (site.origin !== 'https://jaredgoldberg.org') throw new Error('Invalid canonical site origin');
+  if (typeof path !== 'string' || !path.startsWith('/') || path.startsWith('//') || !path.endsWith('/')) {
+    throw new Error('Canonical paths must be root-relative directory URLs');
+  }
+  return `${site.origin}${path}`;
+}
+
+function identityData({ site, title, description, canonical }) {
+  const websiteId = `${site.origin}/#website`;
+  const personId = `${site.origin}/#person`;
+  const data = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebSite',
+        '@id': websiteId,
+        url: `${site.origin}/`,
+        name: site.identity,
+        about: {'@id': personId},
+      },
+      {
+        '@type': 'Person',
+        '@id': personId,
+        name: site.name,
+        url: `${site.origin}/`,
+        jobTitle: site.role,
+      },
+      {
+        '@type': 'WebPage',
+        '@id': `${canonical}#webpage`,
+        url: canonical,
+        name: title,
+        description,
+        isPartOf: {'@id': websiteId},
+        about: {'@id': personId},
+      },
+    ],
+  };
+  return JSON.stringify(data).replaceAll('<', '\\u003c');
+}
+
+export function renderPageStart({ site, navigation, title, description, stylesheet, script, path, environment, bodyClass = '', includeSeo = true }) {
   if (!['qa','production'].includes(environment)) throw new Error('Invalid publication environment');
   const robots = environment === 'qa' ? '\n<meta name="robots" content="noindex, nofollow">' : '';
+  const seo = includeSeo ? (() => {
+    const canonical = canonicalUrl(site, path);
+    return `<link rel="canonical" href="${e(canonical)}"><script type="application/ld+json">${identityData({site,title,description,canonical})}</script>`;
+  })() : '';
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-${robots}<meta name="description" content="${e(description)}"><title>${e(title)}</title>
+${robots}<meta name="description" content="${e(description)}">${seo}<title>${e(title)}</title>
 ${analytics(site)}
 <link rel="preload" href="/fonts/1Ptug8zYS_SKggPNyC0IT4ttDfA.woff2" as="font" type="font/woff2" crossorigin><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="${e(stylesheet)}"><script type="module" src="${e(script)}"></script></head>
 <body class="page ${e(bodyClass)}"><a class="skip-link" href="#main-content" data-page-background>Skip to main content</a>

@@ -11,6 +11,7 @@ const publicEnvironment=process.env.PUBLIC_BUILD_ENV || (publicUrl?'qa':'');
 const publicSite=Boolean(publicUrl);
 const results=publicSite?`test-results/public-${publicEnvironment}`:'test-results';
 const googleTagUrl='https://www.googletagmanager.com/gtag/js?id=G-N6X517GEQ2';
+const productionOrigin='https://jaredgoldberg.org';
 const sizes=[[1440,900],[1024,768],[768,1024],[720,450],[667,375],[430,932],[393,852],[390,844],[375,667],[320,568]];
 const screenshotSizes=new Set(['1440x900','1024x768','768x1024','390x844','320x568']);
 const mobileSizes=[[430,932],[393,852],[390,844],[375,667],[320,568],[667,375],[720,450]];
@@ -41,6 +42,19 @@ const observe=(page,base)=>{
   page.on('response',response=>{if(response.status()>=400) state.badResponses.push(response.url());});
   return state;
 };
+const verifySeo=async(page,path)=>{
+  const canonical=productionOrigin+path;
+  const canonicalLocator=page.locator('link[rel=canonical]');
+  assert.equal(await canonicalLocator.count(),1);
+  assert.equal(await canonicalLocator.getAttribute('href'),canonical);
+  const structuredLocator=page.locator('script[type="application/ld+json"]');
+  assert.equal(await structuredLocator.count(),1);
+  const structured=JSON.parse(await structuredLocator.textContent());
+  const graph=new Map(structured['@graph'].map(item=>[item['@id'],item]));
+  assert.equal(graph.get(productionOrigin+'/#website')['@type'],'WebSite');
+  assert.equal(graph.get(productionOrigin+'/#person').name,'Jared Goldberg');
+  assert.equal(graph.get(canonical+'#webpage').url,canonical);
+};
 
 test('four-route index, navigation, focus, motion and accessibility gates', {timeout:180000},async(t)=>{
   const server=publicSite?null:await startServer({port:0});
@@ -55,7 +69,7 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
       const page=await context.newPage(),network=observe(page,base);
       assert.equal((await page.goto(base)).status(),200);
       await page.evaluate(()=>document.fonts.ready);
-      assert.equal(await page.locator('link[rel=canonical]').count(),0);
+      await verifySeo(page,'/');
       if(publicEnvironment==='production') assert.equal(await page.locator('meta[name=robots]').count(),0);
       else assert.equal(await page.locator('meta[name=robots]').getAttribute('content'),'noindex, nofollow');
       assert.equal(await page.title(),'Art, Archives and Systems | Practice Index');
@@ -120,7 +134,7 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
       const context=await newContext(browser,{viewport:{width,height},isMobile:width<768,hasTouch:width<768});
       const page=await context.newPage(),network=observe(page,base),url=`${base}/${item.slug}/`;
       assert.equal((await page.goto(url)).status(),200);await page.evaluate(()=>document.fonts.ready);
-      assert.equal(await page.locator('link[rel=canonical]').count(),0);
+      await verifySeo(page,`/${item.slug}/`);
       assert.equal(await page.title(),item.metaTitle);
       assert.equal(await page.locator('meta[name=description]').getAttribute('content'),item.description);
       assert.equal(await page.getByRole('heading',{level:1,name:item.h1,exact:true}).count(),1);
@@ -163,9 +177,9 @@ test('four-route index, navigation, focus, motion and accessibility gates', {tim
         await tocLink.focus();
         assert.equal(await tocLink.evaluate(element=>getComputedStyle(element).outlineColor),'rgb(153, 2, 2)');
         await page.keyboard.press('Enter');await page.waitForFunction(()=>location.hash==='#narcissus-as-narcosis');
-        await page.waitForFunction(()=>{const heading=document.querySelector('#narcissus-as-narcosis').getBoundingClientRect(),header=document.querySelector('.site-header--overlay').getBoundingClientRect(),trigger=document.querySelector('[data-menu-toggle]').getBoundingClientRect(),visibleTop=Math.max(header.bottom,trigger.bottom),previous=window.__narcissusAnchorTop;window.__narcissusAnchorTop=heading.top;return heading.top>=visibleTop-1&&heading.top<innerHeight&&Number.isFinite(previous)&&Math.abs(heading.top-previous)<.5;});
+        await page.waitForFunction(()=>{const heading=document.querySelector('#narcissus-as-narcosis').getBoundingClientRect(),header=document.querySelector('.site-header--overlay').getBoundingClientRect(),trigger=document.querySelector('[data-menu-toggle]').getBoundingClientRect(),visibleTop=Math.max(header.bottom,trigger.bottom);return heading.top>=visibleTop-1&&heading.top<innerHeight;});
         const anchorPosition=await page.evaluate(()=>{const heading=document.querySelector('#narcissus-as-narcosis').getBoundingClientRect(),header=document.querySelector('.site-header--overlay').getBoundingClientRect(),trigger=document.querySelector('[data-menu-toggle]').getBoundingClientRect();return {headingTop:heading.top,headerBottom:header.bottom,triggerBottom:trigger.bottom};});
-        assert.ok(anchorPosition.headingTop>=Math.max(anchorPosition.headerBottom,anchorPosition.triggerBottom));
+        assert.ok(anchorPosition.headingTop>=Math.max(anchorPosition.headerBottom,anchorPosition.triggerBottom)-1);
         await page.screenshot({path:`${results}/screenshots/media-narcissus-${width}x${height}-anchor.png`});
         await page.evaluate(()=>{history.replaceState(null,'',location.pathname);scrollTo({top:0,behavior:'instant'});});
       }

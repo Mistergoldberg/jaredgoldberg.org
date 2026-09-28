@@ -28,6 +28,14 @@ export const publicFiles = [
   'images/narcissus-as-narcosis-portrait-04-768.jpg',
   'images/systems-and-institutions.png',
 ];
+export const canonicalPaths = ['/', ...sectionPages.map(page => `/${page.slug}/`)];
+
+function sitemap(origin) {
+  if (origin !== 'https://jaredgoldberg.org') throw new Error('Invalid sitemap origin');
+  if (new Set(canonicalPaths).size !== canonicalPaths.length) throw new Error('Duplicate canonical sitemap path');
+  const urls = canonicalPaths.map(path => `  <url><loc>${origin}${path}</loc></url>`).join('\n');
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
+}
 export async function files(root) {
   const result = [];
   async function walk(dir, prefix = '') {
@@ -63,9 +71,10 @@ export async function build() {
     await mkdir(resolve(root, file, '..'), {recursive: true});
     await writeFile(join(root, file), await readFile(join('public', file)));
   }
+  await writeFile(join(root, 'sitemap.xml'), sitemap(site.origin));
   await writeFile(join(root, 'robots.txt'), environment === 'qa'
     ? 'User-agent: *\nDisallow: /\n'
-    : 'User-agent: *\nAllow: /\n');
+    : `User-agent: *\nAllow: /\nSitemap: ${site.origin}/sitemap.xml\n`);
   let gitSha = process.env.BUILD_SHA || process.env.QA_BUILD_SHA;
   if (!gitSha) {
     const status = execFileSync('git', ['status','--porcelain'], {encoding:'utf8'}).trim();
@@ -80,7 +89,7 @@ export async function build() {
   const checksums = {};
   for (const file of await files(root)) checksums[file] = digest(await readFile(join(root,file)));
   await writeFile(join(root,'artifact-manifest.json'),JSON.stringify({
-    schema:2,site:site.identity,environment,gitSha,buildId,files:checksums,
+    schema:3,site:site.identity,environment,gitSha,buildId,files:checksums,
   },null,2)+'\n');
   console.log(`Built ${environment} artifact: ${Object.keys(checksums).length} files + manifest (${gitSha}, ${buildId})`);
 }

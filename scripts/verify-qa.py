@@ -6,12 +6,14 @@ import re
 import subprocess
 import sys
 import tempfile
+import xml.etree.ElementTree as ET
 
 URL = 'https://qa.jaredgoldberg.org'
+PRODUCTION_ORIGIN='https://jaredgoldberg.org'
 MIME={'.html':['text/html'],'.css':['text/css'],'.js':['application/javascript','text/javascript'],
       '.woff2':['font/woff2'],'.svg':['image/svg+xml'],'.png':['image/png'],
       '.jpg':['image/jpeg'],'.jpeg':['image/jpeg'],'.webp':['image/webp'],
-      '.json':['application/json'],'.txt':['text/plain']}
+      '.json':['application/json'],'.txt':['text/plain'],'.xml':['application/xml','text/xml']}
 APPROVED_EXTERNAL_URLS={
     'https://jaredgoldberg.ca/writing/the-future-of-work-is-a-design-problem/',
     'https://jaredgoldberg.ca/writing/dignity-is-a-systems-output/',
@@ -28,6 +30,18 @@ PRETTY_ROUTES={
     '/community-service/':'community-service/index.html',
     '/systems-and-institutions/':'systems-and-institutions/index.html',
     '/art/':'art/index.html',
+}
+CANONICAL_PATHS=['/',*PRETTY_ROUTES]
+CANONICAL_REDIRECTS={
+    '/index.html':'/',
+    **{route.rstrip('/'):route for route in PRETTY_ROUTES},
+    **{route+'index.html':route for route in PRETTY_ROUTES},
+}
+APPROVED_IDENTITY_URLS={
+    PRODUCTION_ORIGIN+'/#website',
+    PRODUCTION_ORIGIN+'/#person',
+    *(PRODUCTION_ORIGIN+path for path in CANONICAL_PATHS),
+    *(PRODUCTION_ORIGIN+path+'#webpage' for path in CANONICAL_PATHS),
 }
 APPROVED_PUBLIC_IMAGES={
     'images/art-manufacture-value.png',
@@ -48,13 +62,30 @@ APPROVED_PUBLIC_IMAGES={
     'images/systems-and-institutions.png',
 }
 
-def verify_html_policy(html):
-    if re.search(r'rel=[\"\x27]canonical',html):
-        raise ValueError('Unexpected canonical URL')
+def verify_html_policy(html,expected_path=None):
     production_urls=set(re.findall(r'https?://jaredgoldberg\.(?:ca|org)[^\s\"\x27<>]*',html))
-    unexpected=production_urls-APPROVED_EXTERNAL_URLS
+    unexpected=production_urls-APPROVED_EXTERNAL_URLS-APPROVED_IDENTITY_URLS
     if unexpected:
         raise ValueError('Unexpected production URL: '+', '.join(sorted(unexpected)))
+    if expected_path is None:return
+    canonical=PRODUCTION_ORIGIN+expected_path
+    canonicals=re.findall(r'<link rel="canonical" href="([^"]+)">',html)
+    if canonicals != [canonical]:raise ValueError('Canonical URL mismatch')
+    scripts=re.findall(r'<script type="application/ld\+json">([^<]+)</script>',html)
+    if len(scripts)!=1:raise ValueError('Identity structured data missing or duplicated')
+    data=json.loads(scripts[0]);graph={item['@id']:item for item in data.get('@graph',[])}
+    if data.get('@context')!='https://schema.org':raise ValueError('Structured data context mismatch')
+    if graph.get(PRODUCTION_ORIGIN+'/#website',{}).get('@type')!='WebSite':raise ValueError('WebSite identity mismatch')
+    if graph.get(PRODUCTION_ORIGIN+'/#person',{}).get('@type')!='Person':raise ValueError('Person identity mismatch')
+    page=graph.get(canonical+'#webpage',{})
+    if page.get('@type')!='WebPage' or page.get('url')!=canonical:raise ValueError('WebPage identity mismatch')
+
+def verify_sitemap(directory):
+    root=ET.fromstring((Path(directory)/'sitemap.xml').read_bytes())
+    namespace={'s':'http://www.sitemaps.org/schemas/sitemap/0.9'}
+    locations=[item.text for item in root.findall('s:url/s:loc',namespace)]
+    if locations != [PRODUCTION_ORIGIN+path for path in CANONICAL_PATHS]:raise ValueError('Sitemap URL inventory mismatch')
+    if root.findall('.//s:lastmod',namespace):raise ValueError('Sitemap must not claim unavailable modification dates')
 
 def request(url):
     with tempfile.TemporaryDirectory(prefix='qa-http-') as tmp:
@@ -80,7 +111,7 @@ def verify(directory, base=URL):
     directory = Path(directory)
     manifest = json.loads((directory/'artifact-manifest.json').read_text())
     release = json.loads((directory/'release.json').read_text())
-    if manifest.get('schema') == 2:
+    if manifest.get('schema') in (2,3):
         expected={'site':'jaredgoldberg.org','environment':'qa','gitSha':manifest.get('gitSha'),
                   'buildId':manifest.get('buildId'),'artifactManifest':'artifact-manifest.json'}
         images={name for name in manifest['files'] if name.startswith('images/')}
@@ -92,7 +123,8 @@ def verify(directory, base=URL):
         status,headers,_=request(base.replace('https://','http://')+path)
         if status not in (301,308) or f'location: {base+path}\n' not in headers:
             raise ValueError('HTTP must redirect directly to the same QA HTTPS path')
-    for name in ['/',*('/'+name for name in manifest['files']),'/artifact-manifest.json']:
+    artifact_routes=['/'+name for name in manifest['files'] if not name.endswith('index.html')]
+    for name in ['/',*artifact_routes,'/artifact-manifest.json']:
         status, headers, body = request(base+name)
         if status != 200: raise ValueError(f'{name}: expected HTTP 200, got {status}')
         if not re.search(r'^x-robots-tag:.*noindex.*nofollow',headers,re.M): raise ValueError(f'{name}: missing noindex header')
@@ -105,11 +137,18 @@ def verify(directory, base=URL):
         if not media or media[1] not in MIME[local.suffix]:raise ValueError(f'{name}: wrong MIME type')
         if body != local.read_bytes(): raise ValueError(f'{name}: public artifact byte mismatch')
     if (directory/'robots.txt').read_text().strip()!='User-agent: *\nDisallow: /':raise ValueError('Robots must disallow all')
-    if manifest.get('schema') == 2 and any('above-the-fold-prototype' in name or 'fixture' in name for name in manifest['files']):
+    if manifest.get('schema') in (2,3) and any('above-the-fold-prototype' in name or 'fixture' in name for name in manifest['files']):
         raise ValueError('Prototype or development fixture leaked into QA')
+    if manifest.get('schema') == 3:verify_sitemap(directory)
+    html_routes={'index.html':'/',**{name:path for path,name in PRETTY_ROUTES.items()}}
     for html in directory.rglob('*.html'):
-        verify_html_policy(html.read_text())
+        name=str(html.relative_to(directory))
+        verify_html_policy(html.read_text(),html_routes.get(name) if manifest.get('schema')==3 else None)
     verify_pretty_routes(directory,base)
+    for source,target in CANONICAL_REDIRECTS.items():
+        status,headers,_=request(base+source)
+        if status not in (301,308) or f'location: {base+target}\n' not in headers:
+            raise ValueError(f'{source}: canonical redirect mismatch')
     for name in ['/.git/config','/.env','/package.json','/src/navigation.js','/scripts/deploy-qa.py',
                  '/docs/qa-runbook.md','/assets/','/fonts/','/images/','/assets/main.js.map','/missing-qa-route']:
         status, headers, _ = request(base+name)

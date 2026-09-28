@@ -91,7 +91,7 @@ class Releases:
         legacy_info = {'site': 'jaredgoldberg.org', 'environment': 'qa', 'gitSha': sha}
         if manifest.get('schema') == 1 and release_info != legacy_info:
             raise ValueError('Invalid legacy QA artifact')
-        if manifest.get('schema') == 2:
+        if manifest.get('schema') in (2,3):
             expected = {**legacy_info,'buildId':manifest.get('buildId'),'artifactManifest':'artifact-manifest.json'}
             if (manifest.get('site'),manifest.get('environment')) != ('jaredgoldberg.org','qa') or manifest.get('buildId') != release or release_info != expected:
                 raise ValueError('Not a QA artifact')
@@ -106,14 +106,16 @@ class Releases:
         if actual != set(manifest['files']) | {'artifact-manifest.json'}:
             raise ValueError('Unexpected/missing release files')
         for name, expected in manifest['files'].items():
-            if manifest.get('schema') == 2 and name.startswith('images/') and name not in APPROVED_PUBLIC_IMAGES:
+            if manifest.get('schema') in (2,3) and name.startswith('images/') and name not in APPROVED_PUBLIC_IMAGES:
                 raise ValueError('Image is not in the current QA artifact allowlist')
-            if name not in PAGE_INDEXES and not re.fullmatch(r'(?:index\.html|robots\.txt|favicon\.svg|release\.json|assets/[\w.-]+\.(?:css|js)|fonts/OFL\.txt|fonts/[\w.-]+\.(?:woff2?|ttf|otf)|images/[\w.-]+\.(?:png|jpe?g|webp))', name):
+            if name not in PAGE_INDEXES and not re.fullmatch(r'(?:index\.html|robots\.txt|sitemap\.xml|favicon\.svg|release\.json|assets/[\w.-]+\.(?:css|js)|fonts/OFL\.txt|fonts/[\w.-]+\.(?:woff2?|ttf|otf)|images/[\w.-]+\.(?:png|jpe?g|webp))', name):
                 raise ValueError('Invalid artifact filename')
             if hashlib.sha256((path / name).read_bytes()).hexdigest() != expected:
                 raise ValueError('Artifact checksum mismatch: ' + name)
         if (path / 'robots.txt').read_text() != 'User-agent: *\nDisallow: /\n':
             raise ValueError('QA robots policy missing')
+        if manifest.get('schema') == 3 and not (path/'sitemap.xml').is_file():
+            raise ValueError('QA sitemap artifact missing')
         if 'noindex, nofollow' not in (path / 'index.html').read_text():
             raise ValueError('QA HTML robots policy missing')
         return manifest

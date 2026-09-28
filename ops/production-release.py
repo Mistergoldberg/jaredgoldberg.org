@@ -91,7 +91,8 @@ class Releases:
         manifest = json.loads((path / 'artifact-manifest.json').read_text())
         sha = manifest.get('gitSha')
         build_id = manifest.get('buildId')
-        if (manifest.get('schema'),manifest.get('site'),manifest.get('environment')) != (2,'jaredgoldberg.org','production'):
+        schema=manifest.get('schema')
+        if schema not in (2,3) or (manifest.get('site'),manifest.get('environment')) != ('jaredgoldberg.org','production'):
             raise ValueError('Not a production artifact')
         if not re.fullmatch(r'[a-f0-9]{40}',sha or '') or not release.endswith(sha[:12]) or build_id != release:
             raise ValueError('Production release identity mismatch')
@@ -105,13 +106,16 @@ class Releases:
             if file.is_file(): actual.add(str(file.relative_to(path)))
         if actual != set(manifest['files']) | {'artifact-manifest.json'}:
             raise ValueError('Unexpected/missing production files')
-        pattern=r'(?:index\.html|robots\.txt|favicon\.svg|release\.json|assets/[\w.-]+\.(?:css|js)|fonts/OFL\.txt|fonts/[\w.-]+\.(?:woff2?|ttf|otf))'
+        pattern=r'(?:index\.html|robots\.txt|sitemap\.xml|favicon\.svg|release\.json|assets/[\w.-]+\.(?:css|js)|fonts/OFL\.txt|fonts/[\w.-]+\.(?:woff2?|ttf|otf))'
         for name, expected in manifest['files'].items():
             if name not in PAGE_INDEXES and name not in APPROVED_PUBLIC_IMAGES and not re.fullmatch(pattern,name):
                 raise ValueError('Invalid production artifact filename')
             if hashlib.sha256((path/name).read_bytes()).hexdigest()!=expected:
                 raise ValueError('Artifact checksum mismatch: '+name)
-        if (path/'robots.txt').read_text() != 'User-agent: *\nAllow: /\n':
+        robots=(path/'robots.txt').read_text()
+        if schema == 3 and (robots != 'User-agent: *\nAllow: /\nSitemap: https://jaredgoldberg.org/sitemap.xml\n' or not (path/'sitemap.xml').is_file()):
+            raise ValueError('Production sitemap policy mismatch')
+        if schema == 2 and robots != 'User-agent: *\nAllow: /\n':
             raise ValueError('Production robots policy mismatch')
         for html in path.rglob('*.html'):
             if 'noindex' in html.read_text().lower() or 'nofollow' in html.read_text().lower():

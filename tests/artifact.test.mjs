@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { files, digest, publicFiles } from '../scripts/build.mjs';
+import { files, digest, publicFiles, canonicalPaths } from '../scripts/build.mjs';
 import { startServer } from '../scripts/serve.mjs';
 
 test('artifact contains only intended public files, verified checksums and local references',async()=>{
@@ -18,11 +18,12 @@ test('artifact contains only intended public files, verified checksums and local
     'https://jaredgoldberg.ca/work/walmart.html',
     'https://jaredgoldberg.ca/work/canadian-tire.html',
     'https://duchamped.com/',
+    ...canonicalPaths.map(path=>`https://jaredgoldberg.org${path}`),
   ]);
   const names=await files('dist');
   const manifest=JSON.parse(await readFile('dist/artifact-manifest.json','utf8'));
   const release=JSON.parse(await readFile('dist/release.json','utf8'));
-  assert.equal(manifest.schema,2);
+  assert.equal(manifest.schema,3);
   assert.equal(manifest.environment,'qa');
   assert.equal(manifest.site,'jaredgoldberg.org');
   assert.equal(manifest.gitSha,release.gitSha);
@@ -30,12 +31,12 @@ test('artifact contains only intended public files, verified checksums and local
   assert.equal(release.artifactManifest,'artifact-manifest.json');
   assert.deepEqual(names.filter(x=>x!=='artifact-manifest.json').sort(),Object.keys(manifest.files).sort());
   for(const name of names) {
-    assert.match(name,/^(?:[a-z-]+\/)?index\.html$|^(?:robots\.txt|favicon\.svg|release\.json|artifact-manifest\.json|assets\/[\w.-]+\.(css|js)|images\/[\w.-]+\.(png|jpe?g|webp)|fonts\/OFL\.txt|fonts\/[\w.-]+\.(woff2?|ttf|otf))$/);
+    assert.match(name,/^(?:[a-z-]+\/)?index\.html$|^(?:robots\.txt|sitemap\.xml|favicon\.svg|release\.json|artifact-manifest\.json|assets\/[\w.-]+\.(css|js)|images\/[\w.-]+\.(png|jpe?g|webp)|fonts\/OFL\.txt|fonts\/[\w.-]+\.(woff2?|ttf|otf))$/);
     const buffer=await readFile(join('dist',name));
     if(name!=='artifact-manifest.json') assert.equal(digest(buffer),manifest.files[name]);
     if(/\.(woff2?|ttf|otf|png|jpe?g|webp)$/.test(name)) continue;
     const content=buffer.toString();
-    assert.doesNotMatch(content,/GTM-[A-Z0-9]+|UA-\d+-\d+|cloudflareinsights|data-track|application\/ld\+json|rel=["']canonical|property=["']og:|https:\/\/jaredgoldberg\.org/i);
+    assert.doesNotMatch(content,/GTM-[A-Z0-9]+|UA-\d+-\d+|cloudflareinsights|data-track|property=["']og:/i);
     for(const match of content.matchAll(/(?:src|href)=["']([^"']+)|url\(["']?([^\s)"']+)/g)) {
       const ref=match[1]||match[2];
       if(ref===googleTagUrl) continue;
@@ -53,6 +54,9 @@ test('artifact contains only intended public files, verified checksums and local
     }
   }
   assert.match(await readFile('dist/robots.txt','utf8'),/User-agent: \*\s+Disallow: \//);
+  const sitemap=await readFile('dist/sitemap.xml','utf8');
+  assert.deepEqual([...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match=>match[1]),canonicalPaths.map(path=>`https://jaredgoldberg.org${path}`));
+  assert.doesNotMatch(sitemap,/<lastmod>/);
   const html=await readFile('dist/index.html','utf8');
   assert.equal(html.match(/G-N6X517GEQ2/g)?.length,2);
   assert.match(html,/<script async src="https:\/\/www\.googletagmanager\.com\/gtag\/js\?id=G-N6X517GEQ2"><\/script>/);
@@ -98,10 +102,20 @@ test('artifact contains only intended public files, verified checksums and local
     'Duchamped, The Pitch and Artistic Value | Art',
   ];
   assert.equal(new Set(expectedTitles).size,expectedTitles.length);
-  for(const [pageHtml,title] of [html,...sectionHtml].map((pageHtml,index)=>[pageHtml,expectedTitles[index]])) {
+  for(const [pageHtml,title,path] of [html,...sectionHtml].map((pageHtml,index)=>[pageHtml,expectedTitles[index],canonicalPaths[index]])) {
     assert.equal(pageHtml.match(/<title>[^<]+<\/title>/g)?.length,1);
     assert.ok(pageHtml.includes(`<title>${title}</title>`));
     assert.doesNotMatch(pageHtml,/<title>[^<]*Jared Goldberg/i);
+    const canonical=`https://jaredgoldberg.org${path}`;
+    assert.deepEqual([...pageHtml.matchAll(/<link rel="canonical" href="([^"]+)">/g)].map(match=>match[1]),[canonical]);
+    const structuredScripts=[...pageHtml.matchAll(/<script type="application\/ld\+json">([^<]+)<\/script>/g)];
+    assert.equal(structuredScripts.length,1);
+    const structured=JSON.parse(structuredScripts[0][1]);
+    const graph=new Map(structured['@graph'].map(item=>[item['@id'],item]));
+    assert.equal(structured['@context'],'https://schema.org');
+    assert.equal(graph.get('https://jaredgoldberg.org/#website')['@type'],'WebSite');
+    assert.equal(graph.get('https://jaredgoldberg.org/#person').name,'Jared Goldberg');
+    assert.equal(graph.get(`${canonical}#webpage`).url,canonical);
   }
   for(const [index,pageHtml] of sectionHtml.entries()) {
     const [imageName,imageAlt,imageWidth,imageHeight]=sectionImages[index];

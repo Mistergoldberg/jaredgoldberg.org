@@ -10,7 +10,9 @@ Private deployment ledger: `/var/www/jaredgoldberg.org/shared/qa/ledger.jsonl`.
 
 The QA allowlist includes `/` and the four published practice routes:
 `/media-archives-and-memory/`, `/community-service/`,
-`/systems-and-institutions/` and `/art/` (plus their exact artifact files). Before
+`/systems-and-institutions/` and `/art/`, plus `/sitemap.xml` and the exact
+artifact files. Clean paths are the only `200` HTML routes; slashless section
+paths and `/index.html` variants permanently redirect to them. Before
 the first deployment containing these pages, install the updated
 `ops/nginx/qa.jaredgoldberg.org.conf` with the guarded vhost installer and verify
 the live configuration checksum; the site release script deliberately does not
@@ -40,6 +42,8 @@ Staging and validation evidence stays under `shared/qa-infrastructure/`.
 The final HTTPS install evidence is `20260919T065008Z`; configuration SHA-256 is
 `27087fe9a071efa6af8cf287f11980a8676b5a4020fea26515b71ab0481926ba`.
 Existing mixed listen/protocol conventions produce warnings; nginx -t succeeds.
+The 2026-09-28 SEO-cycle template supersedes that historical configuration with
+SHA-256 `afd4c1c2165b3a55ea06e1f00c388be69c32f3242d0371bf08f99f7a5ec4464b`.
 
 See [the completion report](public-qa-validation-report.md) for the actual deployed release, manifest
 checksum, screenshots and preservation checks. The earlier validation report
@@ -180,18 +184,22 @@ build:production` emits crawlable HTML, an allow-all `robots.txt`,
 continues to emit `noindex, nofollow`, disallow-all robots and `environment: qa`.
 The explicit build allowlist contains the homepage, four practice routes, two
 hashed assets, favicon, licensed font and OFL text, robots policy, release
-metadata and manifest. The development new-page fixture and retired
+metadata, a five-URL production sitemap and manifest. Both modes emit production-
+origin canonicals and stable WebSite, Person and WebPage identity data; QA does
+not advertise its sitemap. The development new-page fixture and retired
 above-the-fold prototype are excluded from both modes.
 
 Before any production action, record the strongest available legacy baseline:
 
 ```sh
-PRODUCTION_PREVIOUS=20260918213922
-PRODUCTION_PREVIOUS_INDEX_SHA256=24431c40c90228f6b910b038aaa1b57c6e352b80bba6d0c6723997a6e56a5275
+PRODUCTION_CURRENT_RELEASE=20260927T222128Z-78c3aa5f8477
+PRODUCTION_LEGACY_RELEASE=20260918213922
+PRODUCTION_LEGACY_INDEX_SHA256=24431c40c90228f6b910b038aaa1b57c6e352b80bba6d0c6723997a6e56a5275
 ```
 
-That release has no Git metadata. These values verify its immutable path and
-homepage bytes only; they do not establish an exact production Git SHA.
+The current release identifies Git SHA `78c3aa5f84779144d5cfc4b3af31a843a9443b9e`.
+The retained legacy release has no Git metadata; its fingerprint verifies only
+that fallback release's immutable path and homepage bytes.
 
 ### Exact-SHA dry run
 
@@ -209,14 +217,16 @@ EXPECTED_MAIN_SHA=$(git rev-parse origin/main)
 python3 scripts/deploy-production.py \
   --sha "$RELEASE_SHA" --source-branch "$RELEASE_BRANCH" \
   --expected-main-sha "$EXPECTED_MAIN_SHA" \
-  --expected-current-release "$PRODUCTION_PREVIOUS" \
-  --legacy-release "$PRODUCTION_PREVIOUS" \
-  --legacy-index-sha256 "$PRODUCTION_PREVIOUS_INDEX_SHA256"
+  --expected-current-release "$PRODUCTION_CURRENT_RELEASE" \
+  --legacy-release "$PRODUCTION_LEGACY_RELEASE" \
+  --legacy-index-sha256 "$PRODUCTION_LEGACY_INDEX_SHA256"
 ```
 
 The reviewed `ops/nginx/jaredgoldberg.org.conf` exposes only allowlisted routes
 and assets, applies immutable caching only to hashed CSS/JS, and does not emit a
-QA robots header. Installing that vhost is a separate production change: back up
+QA robots header. It redirects HTTP and `www` to the apex HTTPS origin and
+normalizes slashless and `/index.html` variants to the five canonical paths.
+Installing that vhost is a separate production change: back up
 the live file, stage the reviewed template, compare its SHA-256, run `nginx -t`,
 atomically replace the site file, run `nginx -t` again and gracefully reload.
 Do not combine configuration installation with a site release. The deployment
@@ -237,9 +247,9 @@ RELEASE_SHA=$(git rev-parse HEAD)
 python3 scripts/deploy-production.py \
   --sha "$RELEASE_SHA" --source-branch main \
   --expected-main-sha "$RELEASE_SHA" \
-  --expected-current-release "$PRODUCTION_PREVIOUS" \
-  --legacy-release "$PRODUCTION_PREVIOUS" \
-  --legacy-index-sha256 "$PRODUCTION_PREVIOUS_INDEX_SHA256" \
+  --expected-current-release "$PRODUCTION_CURRENT_RELEASE" \
+  --legacy-release "$PRODUCTION_LEGACY_RELEASE" \
+  --legacy-index-sha256 "$PRODUCTION_LEGACY_INDEX_SHA256" \
   --apply
 ```
 
@@ -263,12 +273,12 @@ MAIN_SHA=$(git rev-parse HEAD)
 python3 scripts/rollback-production.py \
   --sha "$MAIN_SHA" \
   --expected-current-release 'ACTUAL_CURRENT_RELEASE_ID' \
-  --target "$PRODUCTION_PREVIOUS" \
-  --legacy-release "$PRODUCTION_PREVIOUS" \
-  --legacy-index-sha256 "$PRODUCTION_PREVIOUS_INDEX_SHA256"
+  --target "$PRODUCTION_CURRENT_RELEASE" \
+  --legacy-release "$PRODUCTION_LEGACY_RELEASE" \
+  --legacy-index-sha256 "$PRODUCTION_LEGACY_INDEX_SHA256"
 ```
 
 After rollback, confirm `/var/www/jaredgoldberg.org/current` resolves to the
-recorded target and that the public homepage SHA-256 is the known legacy hash.
+recorded target and re-run the public manifest/route verifier.
 Retain both the failed release and its deployment evidence. Branch deletion is a
 later, separately approved cleanup step after production verification.

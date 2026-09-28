@@ -32,6 +32,7 @@ export function renderNewPageFixture({ stylesheet = '/assets/site.css', script =
     path:'/',
     environment:'qa',
     bodyClass:'design-system-fixture',
+    includeSeo:false,
   });
   return `${start}
 <main id="main-content" tabindex="-1" data-page-background>

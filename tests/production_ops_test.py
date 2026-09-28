@@ -30,14 +30,15 @@ class ProductionReleaseTests(unittest.TestCase):
 
     def candidate(self,extra=None):
         self.store.prepare(CANDIDATE);path=self.store.path(CANDIDATE)
-        files={'index.html':b'production','robots.txt':b'User-agent: *\nAllow: /\n'}
+        files={'index.html':b'production','robots.txt':b'User-agent: *\nAllow: /\nSitemap: https://jaredgoldberg.org/sitemap.xml\n',
+            'sitemap.xml':b'<?xml version="1.0"?><urlset></urlset>'}
         files.update(extra or {})
         metadata={'site':'jaredgoldberg.org','environment':'production','gitSha':SHA,
             'buildId':CANDIDATE,'artifactManifest':'artifact-manifest.json'}
         files['release.json']=(json.dumps(metadata)+'\n').encode()
         for name,content in files.items():
             target=path/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(content)
-        manifest={'schema':2,'site':'jaredgoldberg.org','environment':'production','gitSha':SHA,'buildId':CANDIDATE,
+        manifest={'schema':3,'site':'jaredgoldberg.org','environment':'production','gitSha':SHA,'buildId':CANDIDATE,
             'files':{name:hashlib.sha256(content).hexdigest() for name,content in files.items()}}
         (path/'artifact-manifest.json').write_text(json.dumps(manifest))
         manifest_hash=hashlib.sha256((path/'artifact-manifest.json').read_bytes()).hexdigest()

@@ -50,8 +50,8 @@ Other supported environments should use the normally installed Playwright browse
 - `src/content/section-pages.mjs`: approved long-form copy and audited destinations for
   Media, Archives and Memory; Community Service; Systems and Institutions; and Art.
 - `src/navigation.js`: menu behavior; contains no navigation data.
-- `public/`: only allowlisted source assets. Robots policy is generated for the
-  selected build mode; unlisted files are never copied. No source-site images are transferred. The verified source-served Raleway
+- `public/`: only allowlisted source assets. Robots and sitemap files are generated
+  for the selected build mode; unlisted files are never copied. No source-site images are transferred. The verified source-served Raleway
   webfont and its OFL license are self-hosted under `public/fonts/`. The favicon is a neutral QA square.
 - `scripts/`: build, local server, source captures, isolated QA deployment and
   guarded production deployment/rollback.
@@ -86,6 +86,10 @@ Public QA is verified at https://qa.jaredgoldberg.org/. See the
 [QA runbook](docs/qa-runbook.md). The isolated QA DNS record, separate
 certificate and virtual host are configured. Public deployment runs HTTP and
 browser verification inside the automatic rollback boundary.
+QA carries production-origin canonical and identity metadata for release
+verification, while its response headers, HTML robots directive and robots file
+remain independently noindex/disallow-all. Its sitemap lists only the five
+canonical production URLs and is not advertised by QA robots.
 The workflow accepts an exact clean commit only when it is the authoritative tip
 of a named pushed branch and still descends from the explicitly recorded
 `origin/main` baseline. It runs tests and prepares an artifact before any upload.
@@ -102,7 +106,8 @@ Serve `dist/` through the provided commands, not the repository root.
 
 ## Production release
 
-Production builds are explicitly indexable and carry their exact Git SHA,
+Production builds are explicitly indexable, expose a five-URL XML sitemap,
+advertise it in robots.txt, and carry their exact Git SHA,
 environment, build ID and artifact-manifest identity. The production workflow
 accepts only the exact clean remote `main` tip for `--apply`, uploads only
 manifest-listed files to a new immutable release, verifies public bytes/routes,

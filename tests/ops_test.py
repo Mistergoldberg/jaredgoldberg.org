@@ -160,13 +160,19 @@ class NginxTemplateTests(unittest.TestCase):
     def test_qa_vhost_allows_image_files_and_preserves_noarchive(self):
         text=(Path(__file__).resolve().parents[1]/'ops/nginx/qa.jaredgoldberg.org.conf').read_text()
         self.assertIn(r'location ~ ^/images/[a-zA-Z0-9_.-]+\.(png|jpe?g|webp)$ { try_files $uri =404; }',text)
+        self.assertIn('location = /sitemap.xml { try_files $uri =404; }',text)
         for route in verify_module.PRETTY_ROUTES:
             self.assertIn(f'location = {route}',text)
+        for source,target in verify_module.CANONICAL_REDIRECTS.items():
+            self.assertIn(f'location = {source} {{ return 301 {target}; }}',text)
         self.assertEqual(text.count('X-Robots-Tag "noindex, nofollow, noarchive"'),3)
 
     def test_production_vhost_allows_only_image_file_paths(self):
         text=(Path(__file__).resolve().parents[1]/'ops/nginx/jaredgoldberg.org.conf').read_text()
         self.assertIn(r'location ~ ^/images/[a-zA-Z0-9_.-]+\.(png|jpe?g|webp)$ { try_files $uri =404; }',text)
+        self.assertIn('server_name www.jaredgoldberg.org;',text)
+        self.assertIn('return 301 https://jaredgoldberg.org$request_uri;',text)
+        self.assertIn('location = /sitemap.xml { try_files $uri =404; }',text)
 
 
 class PublicHtmlPolicyTests(unittest.TestCase):
@@ -175,11 +181,13 @@ class PublicHtmlPolicyTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'Unexpected production URL'):
             verify_module.verify_html_policy('https://jaredgoldberg.ca/unverified/')
         with self.assertRaisesRegex(ValueError,'Unexpected production URL'):
-            verify_module.verify_html_policy('https://jaredgoldberg.org/')
+            verify_module.verify_html_policy('https://jaredgoldberg.org/unverified/')
 
-    def test_canonical_remains_forbidden(self):
-        with self.assertRaisesRegex(ValueError,'Unexpected canonical URL'):
-            verify_module.verify_html_policy('<link rel="canonical" href="https://example.com/">')
+    def test_canonical_and_identity_metadata_are_validated(self):
+        html=(Path(__file__).resolve().parents[1]/'dist/index.html').read_text()
+        verify_module.verify_html_policy(html,'/')
+        with self.assertRaisesRegex(ValueError,'Canonical URL mismatch'):
+            verify_module.verify_html_policy(html.replace('https://jaredgoldberg.org/"','https://example.com/"',1),'/')
 
     def test_pretty_routes_support_new_and_legacy_release_artifacts(self):
         headers='x-robots-tag: noindex, nofollow\ncache-control: no-store\n'
