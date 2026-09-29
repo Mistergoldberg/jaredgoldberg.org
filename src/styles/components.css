@@ -189,6 +189,21 @@
   object-fit: cover;
 }
 
+/* Shared full-column surface for inline editorial galleries and figures. */
+.article-media {
+  width: 100%;
+  background: var(--color-media-surface);
+}
+
+.article-media__caption {
+  margin: 0;
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  color: var(--color-text-secondary);
+  font-size: var(--type-size-meta);
+  line-height: var(--line-height-body);
+  text-align: center;
+}
+
 .media-frame--position-center > img,
 .media-frame--position-center picture > img { object-position: center; }
 .media-frame--position-top > img,

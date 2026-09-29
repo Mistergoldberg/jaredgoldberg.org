@@ -30,6 +30,7 @@ Use semantic tokens from `src/styles/tokens.css`; do not place raw palette value
 | Role | Token | Value/use |
 | --- | --- | --- |
 | Page / raised / muted surfaces | `--color-background`, `--color-surface`, `--color-surface-muted` | `#eceae4`, `#f7f5f0`, `#e3e0d9` |
+| Inline editorial media surface | `--color-media-surface` | White; extends across the full article column behind artwork and captions |
 | Primary / secondary text | `--color-text-primary`, `--color-text-secondary` | `#141412`, `#57544f` |
 | Accent and links | `--color-accent`, `--color-link` | `#990202` |
 | Link hover | `--color-link-hover` | `#650101` |
@@ -103,6 +104,7 @@ Cards remain available for self-contained utility surfaces. Do not use `.card` a
 ## Images and placeholders
 
 - Wrap editorial imagery in `.media-frame`; use `.media-frame--banner` for standard-page banners. Images fill the frame unscaled with `object-fit: cover` and `object-position: center center`. At 1024px and wider, the frame height is reduced by 25% from 16:9, expressed exactly as `aspect-ratio: 64 / 27`; tablet remains 16:9 and mobile remains 1:1. This frame-only crop does not apply to inline artwork or galleries.
+- Wrap inline editorial galleries and figures in `.article-media` and their captions in `.article-media__caption`. The shared component supplies a full-column white surface and centered caption; page CSS may arrange the images without redefining that surface or caption treatment.
 - Supply intrinsic `width` and `height` on real images. Use descriptive alt text for meaningful images and `alt=""` for decorative images. Never reuse a filename or project title as invented alt text.
 - Set an asset-specific `object-position` only after inspecting the supplied image at desktop, tablet and mobile crops.
 - `renderMediaSlot` is the stable replacement boundary. Without `media`, it delegates to the neutral placeholder. With `media`, provide a root-relative local `src`, intentional `alt` (empty only when decorative), positive intrinsic `width`/`height`, and optional `loading`, `fetchPriority` and `position` (`center`, `top`, `bottom`, `left` or `right`). `banner` and `square` are the supported frame variants. Above-the-fold imagery uses `loading: 'eager'` and `fetchPriority: 'high'`; otherwise retain lazy/auto defaults.

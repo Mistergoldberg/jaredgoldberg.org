@@ -148,12 +148,15 @@ test('artifact contains only intended public files, verified checksums and local
   assert.equal(narcissusHtml.match(/ loading="lazy"/g)?.length,6);
   assert.equal(narcissusHtml.match(/ srcset="/g)?.length,6);
   assert.equal(narcissusHtml.match(/ sizes="/g)?.length,6);
+  assert.equal(narcissusHtml.match(/<figure class="article-media /g)?.length,3);
+  assert.equal(narcissusHtml.match(/<figcaption class="article-media__caption">/g)?.length,3);
   assert.match(narcissusHtml,/Selected Orchestrated Self Portraits from Narcissus as Narcosis\./);
+  assert.match(narcissusHtml,/Mashup login screen with a composite portrait, iOS app, 2012–2016\./);
   assert.match(narcissusHtml,/Mashup interface, iOS app, 2012–2016\./);
   assert.match(narcissusHtml,/<p><em>Narcissus as Narcosis<\/em> begins where/);
   assert.match(narcissusHtml,/<p>Picarty is Mashup(?:'|&#39;)s current web form/);
   assert.doesNotMatch(narcissusHtml,/href="https:\/\/(?:duchamped\.com\/narcussis-explained|picarty\.com)\//);
-  assert.match(narcissusHtml,/class="narcissus-figure narcissus-figure--portrait-row-height"/);
+  assert.match(narcissusHtml,/class="article-media narcissus-figure narcissus-figure--portrait-row-height"/);
   assert.doesNotMatch(narcissusHtml,/duchamped\.com\/wp-content\/uploads/);
   assert.match(sectionHtml[0],/>Try the current Mashup interface at Picarty</);
   assert.deepEqual(publicFiles.slice().sort(),[

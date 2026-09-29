@@ -120,14 +120,6 @@
   margin-inline: auto;
 }
 
-.narcissus-gallery figcaption,
-.narcissus-figure figcaption {
-  margin-top: var(--space-3);
-  color: var(--color-text-secondary);
-  font-size: var(--type-size-meta);
-  line-height: var(--line-height-body);
-}
-
 @media (min-width: 64rem) {
   .narcissus-gallery__grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));

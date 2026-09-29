@@ -126,12 +126,12 @@ function renderArticleContent(block) {
   if (typeof block === 'string' || Array.isArray(block?.parts)) return renderRichParagraph(block);
   if (block?.type === 'gallery') {
     const images = block.images.map(image => `<div class="narcissus-gallery__item">${renderResponsiveImage(image)}</div>`).join('');
-    return `<figure class="narcissus-gallery"><div class="narcissus-gallery__grid">${images}</div><figcaption>${e(block.caption)}</figcaption></figure>`;
+    return `<figure class="article-media narcissus-gallery"><div class="narcissus-gallery__grid">${images}</div><figcaption class="article-media__caption">${e(block.caption)}</figcaption></figure>`;
   }
   if (block?.type === 'figure') {
     if (block.variant && block.variant !== 'portrait-row-height') throw new Error('Unsupported figure variant');
     const variant = block.variant ? ` narcissus-figure--${block.variant}` : '';
-    return `<figure class="narcissus-figure${variant}">${renderResponsiveImage(block.image)}<figcaption>${e(block.caption)}</figcaption></figure>`;
+    return `<figure class="article-media narcissus-figure${variant}">${renderResponsiveImage(block.image)}<figcaption class="article-media__caption">${e(block.caption)}</figcaption></figure>`;
   }
   throw new Error('Unsupported article content block');
 }
