@@ -52,7 +52,9 @@ Other supported environments should use the normally installed Playwright browse
 - `src/navigation.js`: menu behavior; contains no navigation data.
 - `public/`: only allowlisted source assets. Robots and sitemap files are generated
   for the selected build mode; unlisted files are never copied. No source-site images are transferred. The verified source-served Raleway
-  webfont and its OFL license are self-hosted under `public/fonts/`. The favicon is a neutral QA square.
+  webfont and its OFL license are self-hosted under `public/fonts/`. The favicon
+  uses the supplied circular artwork while retaining the established
+  `/favicon.svg` release and cache-policy contract.
 - `scripts/`: build, local server, source captures, isolated QA deployment and
   guarded production deployment/rollback.
 - `ops/`: QA and production Nginx templates, immutable release operations and
